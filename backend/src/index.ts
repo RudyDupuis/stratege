@@ -1,12 +1,19 @@
-import express, { Request, Response } from 'express'
+import express from 'express'
+import http from 'http'
+import { Server } from 'socket.io'
+import socketHandlers from './socketHandlers/index'
 
 const app = express()
-const PORT = 3000
-
-app.get('/', (_req: Request, res: Response) => {
-  res.send('Stratège Backend Api')
+const server = http.createServer(app)
+const io = new Server(server, {
+  cors: {
+    origin: 'http://localhost:5173' // mettre dans un .env
+  }
 })
 
-app.listen(PORT, () => {
+socketHandlers(io)
+
+const PORT = 3000
+server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`)
 })
