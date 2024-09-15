@@ -13,7 +13,7 @@ const shareableLink = ref<string | undefined>(undefined)
 function createRoom() {
   props.socket.emit('createPrivateRoom', (id: string) => {
     roomId.value = id
-    shareableLink.value = `http://localhost:5173/jouer/?roomId=${roomId.value}` // mettre dans un .env
+    shareableLink.value = `http://localhost:5173/jouer?roomId=${roomId.value}` // mettre dans un .env
   })
 }
 
@@ -21,7 +21,6 @@ createRoom()
 </script>
 
 <template>
-  <h1>Salle privée</h1>
   <p>Vous avez créé une salle privée avec l'ID : {{ roomId }}</p>
   <p>
     Partagez ce lien : <a :href="shareableLink" target="_blank">{{ shareableLink }}</a>

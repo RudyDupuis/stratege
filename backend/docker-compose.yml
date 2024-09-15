@@ -3,8 +3,9 @@ services:
     build: .
     volumes:
       - .:/usr/src/app
+      - ../shared:/usr/src/shared
     ports:
-      - "3000:3000"
+      - '3000:3000'
     networks:
       - backend-network
 

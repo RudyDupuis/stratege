@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { isDefined } from '@/helpers/TypeGuard'
+import { isDefined } from '@shared/helpers/TypeGuard'
 import { Socket } from 'socket.io-client'
 import { ref } from 'vue'
 import PlayerCountInRoom from './shared/PlayerCountInRoom.vue'

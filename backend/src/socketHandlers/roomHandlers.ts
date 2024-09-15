@@ -1,10 +1,11 @@
 import { Server, Socket } from "socket.io";
+import { isUndefined } from "@shared/helpers/TypeGuard"
 
 const rooms: Record<string, Set<string>> = {};
 
 export function createPrivateRoom(socket: Socket, io: Server) {
   socket.on('createPrivateRoom', (callback: Function) => {
-    const roomId = `room-${socket.id}`;
+    const roomId = socket.id;
     socket.join(roomId);
 
     rooms[roomId] = new Set();
@@ -19,7 +20,7 @@ export function createPrivateRoom(socket: Socket, io: Server) {
 
 export function joinRoom(socket: Socket, io: Server) {
   socket.on('joinRoom', (roomId: string, callback: Function) => {
-    if (rooms[roomId] === undefined) {
+    if (isUndefined(rooms[roomId])) {
       console.log(`Room ${roomId} non trouvée`);
       return callback({ error: "Cet url ne fonctionne pas" });
     }

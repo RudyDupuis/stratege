@@ -1,5 +1,5 @@
 import { Server } from 'socket.io'
-import { createPrivateRoom, joinRoom, leaveRoom } from './roomHandlers'
+import { createPrivateRoom, joinRoom, leaveRoom } from '@/socketHandlers/roomHandlers'
 
 export default function socketHandlers(io: Server) {
   io.on('connection', (socket) => {

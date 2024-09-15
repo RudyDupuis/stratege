@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { io } from 'socket.io-client'
 import RoomTypeSelector from '@/components/playview/RoomTypeSelector.vue'
-import { isDefined, isUndefined } from '@/helpers/TypeGuard'
+import { isDefined, isUndefined } from '@shared/helpers/TypeGuard'
 import { ref } from 'vue'
 import CreatePrivateRoom from '@/components/playview/CreatePrivateRoom.vue'
 import { useRoute } from 'vue-router'
