@@ -1,14 +1,8 @@
 {
-  "name": "stratege-backend",
-  "version": "0.1.0",
-  "author": "Rudy Dupuis",
-  "main": "src/index.js",
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only -r tsconfig-paths/register src/index.ts",
     "build": "tsc",
-    "start": "node dist/index.js",
-    "analyse": "eslint",
-    "format": "prettier --write \"src/**/*.ts\""
+    "start": "node dist/index.js"
   },
   "dependencies": {
     "cors": "^2.8.5",
@@ -16,17 +10,11 @@
     "socket.io": "^4.7.5"
   },
   "devDependencies": {
-    "@eslint/js": "^9.10.0",
     "@types/express": "^4.17.21",
     "@types/node": "^22.5.5",
-    "eslint": "^9.10.0",
-    "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-prettier": "^5.2.1",
     "globals": "^15.9.0",
-    "prettier": "^3.3.3",
     "ts-node-dev": "^2.0.0",
     "tsconfig-paths": "^4.2.0",
-    "typescript": "^5.6.2",
-    "typescript-eslint": "^8.5.0"
+    "typescript": "^5.6.2"
   }
 }

@@ -10,7 +10,7 @@ export default function socketHandlers(io: Server) {
 
     socket.on('disconnect', () => {
       console.log('Un joueur est déconnecté')
-      
+
       leaveRoom(socket, io)
     })
   })

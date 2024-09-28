@@ -1,0 +1,10 @@
+*node_modules
+*.local
+logs
+*.log
+.vscode/*
+
+
+#Frontend
+frontend/dist
+!frontend/.vscode/extensions.json
