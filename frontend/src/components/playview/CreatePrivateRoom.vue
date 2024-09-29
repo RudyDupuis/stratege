@@ -27,5 +27,5 @@ createRoom()
     Partagez ce lien : <a :href="shareableLink" target="_blank">{{ shareableLink }}</a>
   </p>
   <PlayerCountInRoom :socket="props.socket" />
-  <BoardGame :socket="props.socket" />
+  <BoardGame :player="'player1'" :socket="props.socket" />
 </template>

@@ -4,6 +4,7 @@ export default {
   theme: {
     colors: {
       dark: '#121212',
+      warning: '#fcd34d',
       player1: '#f97316',
       player2: '#65a30d'
     },

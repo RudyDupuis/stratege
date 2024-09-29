@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { Pawn } from '@shared/entities/Pawn'
-import { computed } from 'vue'
+import { computed, type PropType } from 'vue'
 
 const props = defineProps({
-  pawn: { type: Pawn, required: true }
+  pawn: { type: Object as PropType<Pawn>, required: true }
 })
 
 const pawnColor = computed(() => {
