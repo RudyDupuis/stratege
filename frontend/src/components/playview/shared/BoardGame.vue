@@ -3,6 +3,7 @@ import { ref, onMounted } from 'vue'
 import { Socket } from 'socket.io-client'
 import { GameState } from '@shared/entities/GameState'
 import { isDefined } from '@shared/helpers/TypeGuard'
+import PawnComponent from './PawnComponent.vue'
 
 const props = defineProps({
   socket: { type: Socket, required: true }
@@ -27,11 +28,12 @@ onMounted(() => {
         <div
           v-for="(_cell, colIndex) in row"
           :key="colIndex"
-          class="flex items-center justify-center border border-gray-500"
+          class="flex justify-center items-center border border-gray-500"
         >
-          <span v-if="gameState.board[rowIndex][colIndex] !== null">
-            {{ gameState.board[rowIndex][colIndex].orientation }}
-          </span>
+          <PawnComponent
+            v-if="gameState.board[rowIndex][colIndex] !== null"
+            :pawn="gameState.board[rowIndex][colIndex]"
+          />
         </div>
       </div>
     </div>
