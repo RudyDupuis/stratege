@@ -1,5 +1,6 @@
 import { Server, Socket } from 'socket.io'
 import { isUndefined } from '@shared/helpers/TypeGuard'
+import { GameState } from '@shared/entities/GameState'
 
 const rooms: Record<string, Set<string>> = {}
 type Callback = (value: unknown) => void
@@ -38,6 +39,11 @@ export function joinRoom(socket: Socket, io: Server) {
 
     emitPlayerCount(io, roomId)
     callback(null)
+
+    if (rooms[roomId].size === 2) {
+      const initialGameState = new GameState(1, GameState.initialBoard())
+      io.to(roomId).emit('gameState', initialGameState)
+    }
   })
 }
 

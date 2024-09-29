@@ -2,6 +2,7 @@
 import { Socket } from 'socket.io-client'
 import { ref } from 'vue'
 import PlayerCountInRoom from './shared/PlayerCountInRoom.vue'
+import BoardGame from './shared/BoardGame.vue'
 
 const props = defineProps({
   socket: { type: Socket, required: true }
@@ -26,4 +27,5 @@ createRoom()
     Partagez ce lien : <a :href="shareableLink" target="_blank">{{ shareableLink }}</a>
   </p>
   <PlayerCountInRoom :socket="props.socket" />
+  <BoardGame :socket="props.socket" />
 </template>
