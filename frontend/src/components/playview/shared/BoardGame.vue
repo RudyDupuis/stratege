@@ -15,6 +15,7 @@ const props = defineProps({
 
 const gameState = ref<GameState | undefined>(undefined)
 const availablePawnMove = ref<PawnPosition[]>([])
+const availableKillPawn = ref<PawnPosition[]>([])
 const targetPawn = ref<Pawn | undefined>(undefined)
 const errorMessage = ref<string | undefined>(undefined)
 const isPlayerTurn = computed(() => {
@@ -24,13 +25,24 @@ const isPlayerTurn = computed(() => {
   return gameState.value.determinesPlayerBasedOnTurn() === props.player
 })
 
+function resetTarget() {
+  targetPawn.value = undefined
+  availablePawnMove.value = []
+  availableKillPawn.value = []
+}
+
 function selectPawn(pawn: Pawn) {
   if (isUndefined(gameState.value) || pawn.owner !== props.player || !isPlayerTurn.value) {
     return
   }
 
   targetPawn.value = pawn
-  availablePawnMove.value = gameState.value.calculateAvailableMoves(pawn)
+  const { availableMoves, availableKills } = gameState.value.calculateAvailableMovesAndKills(
+    pawn,
+    props.player
+  )
+  availablePawnMove.value = availableMoves
+  availableKillPawn.value = availableKills
 }
 
 function passTurn() {
@@ -43,6 +55,8 @@ function passTurn() {
       errorMessage.value = response.error
     }
   })
+
+  resetTarget()
 }
 
 function movePawn(pawnPosition: PawnPosition) {
@@ -63,8 +77,28 @@ function movePawn(pawnPosition: PawnPosition) {
     }
   )
 
-  targetPawn.value = undefined
-  availablePawnMove.value = []
+  resetTarget()
+}
+
+function killPawn(pawnPosition: PawnPosition) {
+  if (isUndefined(targetPawn.value) || !isPlayerTurn.value) {
+    return
+  }
+
+  props.socket.emit(
+    'killPawn',
+    props.roomId,
+    props.player,
+    targetPawn.value,
+    pawnPosition,
+    (response: any) => {
+      if (response?.error) {
+        errorMessage.value = response.error
+      }
+    }
+  )
+
+  resetTarget()
 }
 
 function rotatePawn(orientation: 'NW' | 'SE' | 'NE' | 'SW') {
@@ -85,8 +119,7 @@ function rotatePawn(orientation: 'NW' | 'SE' | 'NE' | 'SW') {
     }
   )
 
-  targetPawn.value = undefined
-  availablePawnMove.value = []
+  resetTarget()
 }
 
 onMounted(() => {
@@ -111,7 +144,7 @@ onMounted(() => {
         <div
           v-for="(_col, colIndex) in row"
           :key="colIndex"
-          class="flex justify-center items-center border border-dark"
+          class="flex justify-center items-center border border-dark relative"
         >
           <div
             v-if="
@@ -121,6 +154,15 @@ onMounted(() => {
             "
             class="bg-warning size-full"
             @click="movePawn(new PawnPosition(rowIndex, colIndex))"
+          ></div>
+          <div
+            v-if="
+              availableKillPawn.some(
+                (pawnPosition) => pawnPosition.row === rowIndex && pawnPosition.col === colIndex
+              ) && isPlayerTurn
+            "
+            class="bg-danger size-full absolute inset-0 z-10 opacity-40"
+            @click="killPawn(new PawnPosition(rowIndex, colIndex))"
           ></div>
           <PawnComponent
             v-if="gameState.board[rowIndex][colIndex] !== null"

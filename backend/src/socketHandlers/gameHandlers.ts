@@ -38,6 +38,44 @@ function checkPawnExistAndPawnOwner(
   }
 }
 
+function checkPawnPosition(game: GameState, pawn: Pawn, callback: Callback) {
+  try {
+    game.calculatePawnPosition(pawn)
+  } catch (error) {
+    return callback({ error: error })
+  }
+}
+
+function checkPawnMovement(
+  availablePawnMovement: PawnPosition[],
+  pawnPosition: PawnPosition,
+  callback: Callback
+) {
+  if (availablePawnMovement.length === 0) {
+    return callback({ error: 'Le pion ne peut pas bouger' })
+  }
+
+  if (
+    !availablePawnMovement.some(
+      (pos) => pos.row === pawnPosition.row && pos.col === pawnPosition.col
+    )
+  ) {
+    return callback({ error: 'Le pion ne peut pas aller dans cette direction' })
+  }
+}
+
+function calculatePawnRemainingMoves(
+  currentPawnPosition: PawnPosition,
+  desiredPawnPosition: PawnPosition,
+  instancedPawn: Pawn
+) {
+  const moveDistance =
+    Math.abs(currentPawnPosition.row - desiredPawnPosition.row) +
+    Math.abs(currentPawnPosition.col - desiredPawnPosition.col)
+
+  instancedPawn.remainingMove -= moveDistance
+}
+
 export function createGame(roomId: string, io: Server) {
   const newGame = new GameState(1, GameState.initialBoard())
   games[roomId] = newGame
@@ -65,43 +103,79 @@ export function movePawn(socket: Socket, io: Server) {
       roomId: string,
       player: 'player1' | 'player2',
       pawn: Pawn,
-      pawnPosition: PawnPosition,
+      desiredPawnPosition: PawnPosition,
       callback: Callback
     ) => {
       const game = games[roomId]
       checkGameAndPlayerTurn(game, player, callback)
       checkPawnExistAndPawnOwner(game, pawn, player, callback)
 
-      let currentPawnPosition: PawnPosition | undefined = undefined
+      const instancedPawn = game.findPawn(pawn)
+
+      checkPawnPosition(game, pawn, callback)
+
+      const currentPawnPosition = game.calculatePawnPosition(pawn)
+      const availableMoves = game.calculateAvailableMovesAndKills(pawn, player).availableMoves
+
+      checkPawnMovement(availableMoves, desiredPawnPosition, callback)
+
+      calculatePawnRemainingMoves(currentPawnPosition, desiredPawnPosition, instancedPawn)
+      console.log(
+        `Déplacement d'un pion dans la room: ${roomId}. Pion: ${pawn.id}. Position: (col:${desiredPawnPosition.col},row:${desiredPawnPosition.row}). Tour: ${game.turn}.`
+      )
+
+      game.board[currentPawnPosition.row][currentPawnPosition.col] = null
+      game.board[desiredPawnPosition.row][desiredPawnPosition.col] = instancedPawn
+
+      io.to(roomId).emit('gameState', game)
+      callback(null)
+    }
+  )
+}
+
+export function killPawn(socket: Socket, io: Server) {
+  socket.on(
+    'killPawn',
+    (
+      roomId: string,
+      player: 'player1' | 'player2',
+      pawn: Pawn,
+      desiredPawnPosition: PawnPosition,
+      callback: Callback
+    ) => {
+      const game = games[roomId]
+      checkGameAndPlayerTurn(game, player, callback)
+      checkPawnExistAndPawnOwner(game, pawn, player, callback)
+
+      const instancedPawn = game.findPawn(pawn)
+
+      checkPawnPosition(game, pawn, callback)
+
+      const currentPawnPosition = game.calculatePawnPosition(pawn)
+      const availableKills = game.calculateAvailableMovesAndKills(pawn, player).availableKills
+
+      checkPawnMovement(availableKills, desiredPawnPosition, callback)
+
       try {
-        currentPawnPosition = game.calculatePawnPosition(pawn)
+        game.findPawnByPosition(desiredPawnPosition)
       } catch (error) {
         return callback({ error: error })
       }
 
-      const availableMoves = game.calculateAvailableMoves(pawn)
-      if (availableMoves.length === 0) {
-        return callback({ error: 'Le pion ne peut pas bouger' })
+      const pawnToKill = game.findPawnByPosition(desiredPawnPosition)
+
+      if (pawnToKill.owner === player) {
+        return callback({ error: 'Le pion à prendre appartient au même joueur' })
       }
 
-      if (
-        !availableMoves.some((pos) => pos.row === pawnPosition.row && pos.col === pawnPosition.col)
-      ) {
-        return callback({ error: 'Le pion ne peut pas aller dans cette direction' })
-      }
-
-      const instancedPawn = game.findPawn(pawn)
-      const moveDistance =
-        Math.abs(currentPawnPosition.row - pawnPosition.row) +
-        Math.abs(currentPawnPosition.col - pawnPosition.col)
+      calculatePawnRemainingMoves(currentPawnPosition, desiredPawnPosition, instancedPawn)
 
       console.log(
-        `Déplacement d'un pion dans la room: ${roomId}. Pion: ${pawn.id}. Position: (col:${pawnPosition.col},row:${pawnPosition.row}). Tour: ${game.turn}. Distance: ${moveDistance}`
+        `Élimination d'un pion dans la room: ${roomId}. Pion: ${pawn.id}. Pion prit: ${pawnToKill.id}. Position: (col:${desiredPawnPosition.col},row:${desiredPawnPosition.row}). Tour: ${game.turn}.`
       )
 
-      instancedPawn.remainingMove -= moveDistance
       game.board[currentPawnPosition.row][currentPawnPosition.col] = null
-      game.board[pawnPosition.row][pawnPosition.col] = instancedPawn
+      game.board[desiredPawnPosition.row][desiredPawnPosition.col] = instancedPawn
 
       io.to(roomId).emit('gameState', game)
       callback(null)

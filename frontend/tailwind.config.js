@@ -5,6 +5,7 @@ export default {
     colors: {
       dark: '#121212',
       warning: '#fcd34d',
+      danger: '#dc2626',
       player1: '#f97316',
       player2: '#65a30d'
     },
