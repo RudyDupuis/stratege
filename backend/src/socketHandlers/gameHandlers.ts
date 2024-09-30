@@ -16,8 +16,25 @@ function checkGameAndPlayerTurn(
     return callback({ error: "L'état de la partie est introuvable" })
   }
 
-  if (game.determinesPayerBasedOnTurn() !== player) {
+  if (game.determinesPlayerBasedOnTurn() !== player) {
     return callback({ error: "Ce n'est pas le tour de ce joueur" })
+  }
+}
+
+function checkPawnExistAndPawnOwner(
+  game: GameState,
+  pawn: Pawn,
+  player: 'player1' | 'player2',
+  callback: Callback
+) {
+  try {
+    game.findPawn(pawn)
+  } catch (error) {
+    return callback({ error: error })
+  }
+
+  if (pawn.owner !== player) {
+    return callback({ error: "Le pion n'appartient pas au bon joueur" })
   }
 }
 
@@ -53,10 +70,7 @@ export function movePawn(socket: Socket, io: Server) {
     ) => {
       const game = games[roomId]
       checkGameAndPlayerTurn(game, player, callback)
-
-      if (pawn.owner !== player) {
-        return callback({ error: "Le pion n'appartient pas au bon joueur" })
-      }
+      checkPawnExistAndPawnOwner(game, pawn, player, callback)
 
       let currentPawnPosition: PawnPosition | undefined = undefined
       try {
@@ -76,6 +90,7 @@ export function movePawn(socket: Socket, io: Server) {
         return callback({ error: 'Le pion ne peut pas aller dans cette direction' })
       }
 
+      const instancedPawn = game.findPawn(pawn)
       const moveDistance =
         Math.abs(currentPawnPosition.row - pawnPosition.row) +
         Math.abs(currentPawnPosition.col - pawnPosition.col)
@@ -84,9 +99,34 @@ export function movePawn(socket: Socket, io: Server) {
         `Déplacement d'un pion dans la room: ${roomId}. Pion: ${pawn.id}. Position: (col:${pawnPosition.col},row:${pawnPosition.row}). Tour: ${game.turn}. Distance: ${moveDistance}`
       )
 
-      pawn.remainingMove -= moveDistance
+      instancedPawn.remainingMove -= moveDistance
       game.board[currentPawnPosition.row][currentPawnPosition.col] = null
-      game.board[pawnPosition.row][pawnPosition.col] = pawn
+      game.board[pawnPosition.row][pawnPosition.col] = instancedPawn
+
+      io.to(roomId).emit('gameState', game)
+      callback(null)
+    }
+  )
+}
+
+export function rotatePawn(socket: Socket, io: Server) {
+  socket.on(
+    'rotatePawn',
+    (
+      roomId: string,
+      player: 'player1' | 'player2',
+      pawn: Pawn,
+      orientation: 'NW' | 'SE' | 'NE' | 'SW',
+      callback: Callback
+    ) => {
+      const game = games[roomId]
+      checkGameAndPlayerTurn(game, player, callback)
+      checkPawnExistAndPawnOwner(game, pawn, player, callback)
+
+      const instancedPawn = game.findPawn(pawn)
+
+      console.log(`Rotation d'un pion en direction: ${orientation} dans la room: ${roomId}.`)
+      instancedPawn.orientation = orientation
 
       io.to(roomId).emit('gameState', game)
       callback(null)

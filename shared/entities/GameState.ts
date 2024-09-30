@@ -56,7 +56,7 @@ export class GameState {
     ]
   }
 
-  public determinesPayerBasedOnTurn() {
+  public determinesPlayerBasedOnTurn() {
     if (this.turn % 2 === 0) {
       return 'player2'
     } else {
@@ -73,6 +73,19 @@ export class GameState {
         }
       }
     }
+  }
+
+  public findPawn(pawnToFind: Pawn) {
+    for (let row = 0; row < this.board.length; row++) {
+      for (let col = 0; col < this.board[row].length; col++) {
+        const pawn = this.board[row][col]
+        if (pawn?.id === pawnToFind.id) {
+          return pawn
+        }
+      }
+    }
+
+    throw new Error('Le pion est introuvable')
   }
 
   public calculatePawnPosition(pawn: Pawn) {

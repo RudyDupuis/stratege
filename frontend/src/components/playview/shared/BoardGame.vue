@@ -21,10 +21,10 @@ const isPlayerTurn = computed(() => {
   if (isUndefined(gameState.value)) {
     return false
   }
-  return gameState.value.determinesPayerBasedOnTurn() === props.player
+  return gameState.value.determinesPlayerBasedOnTurn() === props.player
 })
 
-function calculateAvailablePawnMove(pawn: Pawn) {
+function selectPawn(pawn: Pawn) {
   if (isUndefined(gameState.value) || pawn.owner !== props.player || !isPlayerTurn.value) {
     return
   }
@@ -56,6 +56,28 @@ function movePawn(pawnPosition: PawnPosition) {
     props.player,
     targetPawn.value,
     pawnPosition,
+    (response: any) => {
+      if (response?.error) {
+        errorMessage.value = response.error
+      }
+    }
+  )
+
+  targetPawn.value = undefined
+  availablePawnMove.value = []
+}
+
+function rotatePawn(orientation: 'NW' | 'SE' | 'NE' | 'SW') {
+  if (isUndefined(targetPawn.value) || !isPlayerTurn.value) {
+    return
+  }
+
+  props.socket.emit(
+    'rotatePawn',
+    props.roomId,
+    props.player,
+    targetPawn.value,
+    orientation,
     (response: any) => {
       if (response?.error) {
         errorMessage.value = response.error
@@ -106,10 +128,16 @@ onMounted(() => {
             :class="{
               'border-4 border-warning': targetPawn === gameState.board[rowIndex][colIndex]
             }"
-            @click="calculateAvailablePawnMove(gameState.board[rowIndex][colIndex])"
+            @click="selectPawn(gameState.board[rowIndex][colIndex])"
           />
         </div>
       </div>
+    </div>
+    <div v-if="isPlayerTurn && isDefined(targetPawn)">
+      <button @click="rotatePawn('NW')">Nord-Ouest</button>
+      <button @click="rotatePawn('SE')">Sud-Est</button>
+      <button @click="rotatePawn('NE')">Nord-Est</button>
+      <button @click="rotatePawn('SW')">Sud-Ouest</button>
     </div>
     <button v-if="isPlayerTurn" @click="passTurn">Passer son tour</button>
     <div v-if="isDefined(errorMessage)">

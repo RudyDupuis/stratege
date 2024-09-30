@@ -27,6 +27,18 @@ const pawnOrientation = computed(() => {
       return 'rotate-270'
   }
 })
+const remainingMoveOrientation = computed(() => {
+  switch (props.pawn.orientation) {
+    case 'NW':
+      return 'rotate-0'
+    case 'SE':
+      return 'rotate-180'
+    case 'NE':
+      return 'rotate-270'
+    case 'SW':
+      return 'rotate-90'
+  }
+})
 </script>
 
 <template>
@@ -34,7 +46,9 @@ const pawnOrientation = computed(() => {
     class="relative size-11/12 rounded-lg overflow-hidden"
     :class="[pawnColor, pawnOrientation].join(' ')"
   >
-    <p class="text-warning z-10 absolute p-2" :class="pawnOrientation">{{ pawn.remainingMove }}</p>
+    <p class="text-warning z-10 absolute px-4 py-2" :class="remainingMoveOrientation">
+      {{ pawn.remainingMove }}
+    </p>
     <div class="absolute inset-0 bg-dark clip-triangle"></div>
   </div>
 </template>

@@ -8,7 +8,11 @@ export default {
       player1: '#f97316',
       player2: '#65a30d'
     },
-    extend: {}
+    extend: {
+      rotate: {
+        270: '270deg'
+      }
+    }
   },
   plugins: []
 }
