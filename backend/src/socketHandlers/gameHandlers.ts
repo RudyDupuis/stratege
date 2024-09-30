@@ -7,10 +7,38 @@ import { isUndefined } from '@shared/helpers/TypeGuard'
 
 const games: Record<string, GameState> = {}
 
+function checkGameAndPlayerTurn(
+  game: GameState,
+  player: 'player1' | 'player2',
+  callback: Callback
+) {
+  if (isUndefined(game)) {
+    return callback({ error: "L'état de la partie est introuvable" })
+  }
+
+  if (game.determinesPayerBasedOnTurn() !== player) {
+    return callback({ error: "Ce n'est pas le tour de ce joueur" })
+  }
+}
+
 export function createGame(roomId: string, io: Server) {
   const newGame = new GameState(1, GameState.initialBoard())
   games[roomId] = newGame
   io.to(roomId).emit('gameState', newGame)
+}
+
+export function passTurn(socket: Socket, io: Server) {
+  socket.on('passTurn', (roomId: string, player: 'player1' | 'player2', callback: Callback) => {
+    const game = games[roomId]
+    checkGameAndPlayerTurn(game, player, callback)
+
+    console.log(`Joueur ${player === 'player1' ? '1' : '2'} passe son tour`)
+    game.turn += 1
+    game.resetRemainingMoves()
+
+    io.to(roomId).emit('gameState', game)
+    callback(null)
+  })
 }
 
 export function movePawn(socket: Socket, io: Server) {
@@ -24,9 +52,7 @@ export function movePawn(socket: Socket, io: Server) {
       callback: Callback
     ) => {
       const game = games[roomId]
-      if (isUndefined(game)) {
-        return callback({ error: "L'état de la partie est introuvable" })
-      }
+      checkGameAndPlayerTurn(game, player, callback)
 
       if (pawn.owner !== player) {
         return callback({ error: "Le pion n'appartient pas au bon joueur" })
@@ -50,12 +76,17 @@ export function movePawn(socket: Socket, io: Server) {
         return callback({ error: 'Le pion ne peut pas aller dans cette direction' })
       }
 
+      const moveDistance =
+        Math.abs(currentPawnPosition.row - pawnPosition.row) +
+        Math.abs(currentPawnPosition.col - pawnPosition.col)
+
       console.log(
-        `Déplacement d'un pion dans la room: ${roomId}. Pion: ${pawn.id}. Position: (col:${pawnPosition.col},row:${pawnPosition.row}). Tour: ${game.turn}`
+        `Déplacement d'un pion dans la room: ${roomId}. Pion: ${pawn.id}. Position: (col:${pawnPosition.col},row:${pawnPosition.row}). Tour: ${game.turn}. Distance: ${moveDistance}`
       )
+
+      pawn.remainingMove -= moveDistance
       game.board[currentPawnPosition.row][currentPawnPosition.col] = null
       game.board[pawnPosition.row][pawnPosition.col] = pawn
-      game.turn = game.turn + 1
 
       io.to(roomId).emit('gameState', game)
       callback(null)

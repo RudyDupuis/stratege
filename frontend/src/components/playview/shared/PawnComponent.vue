@@ -34,6 +34,7 @@ const pawnOrientation = computed(() => {
     class="relative size-11/12 rounded-lg overflow-hidden"
     :class="[pawnColor, pawnOrientation].join(' ')"
   >
+    <p class="text-warning z-10 absolute p-2" :class="pawnOrientation">{{ pawn.remainingMove }}</p>
     <div class="absolute inset-0 bg-dark clip-triangle"></div>
   </div>
 </template>
