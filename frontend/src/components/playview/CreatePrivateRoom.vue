@@ -3,6 +3,7 @@ import { Socket } from 'socket.io-client'
 import { ref } from 'vue'
 import PlayerCountInRoom from './shared/PlayerCountInRoom.vue'
 import BoardGame from './shared/BoardGame.vue'
+import { isDefined } from '@shared/helpers/TypeGuard'
 
 const props = defineProps({
   socket: { type: Socket, required: true }
@@ -27,5 +28,10 @@ createRoom()
     Partagez ce lien : <a :href="shareableLink" target="_blank">{{ shareableLink }}</a>
   </p>
   <PlayerCountInRoom :socket="props.socket" />
-  <BoardGame :player="'player1'" :socket="props.socket" />
+  <BoardGame
+    v-if="isDefined(roomId)"
+    :room-id="roomId"
+    :player="'player1'"
+    :socket="props.socket"
+  />
 </template>

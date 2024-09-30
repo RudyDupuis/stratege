@@ -1,9 +1,9 @@
 import { Server, Socket } from 'socket.io'
 import { isUndefined } from '@shared/helpers/TypeGuard'
-import { GameState } from '@shared/entities/GameState'
+import { createGame } from './gameHandlers'
+import { Callback } from '.'
 
 const rooms: Record<string, Set<string>> = {}
-type Callback = (value: unknown) => void
 
 export function createPrivateRoom(socket: Socket, io: Server) {
   socket.on('createPrivateRoom', (callback: Callback) => {
@@ -41,8 +41,7 @@ export function joinRoom(socket: Socket, io: Server) {
     callback(null)
 
     if (rooms[roomId].size === 2) {
-      const initialGameState = new GameState(1, GameState.initialBoard())
-      io.to(roomId).emit('gameState', initialGameState)
+      createGame(roomId, io)
     }
   })
 }

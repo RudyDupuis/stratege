@@ -26,6 +26,6 @@ props.socket.emit('joinRoom', props.roomId, (response: any) => {
   <div v-else>
     <p>Vous avez rejoint la room avec l'ID : {{ roomId }}</p>
     <PlayerCountInRoom :socket="props.socket" />
-    <BoardGame :player="'player2'" :socket="props.socket" />
+    <BoardGame :room-id="props.roomId" :player="'player2'" :socket="props.socket" />
   </div>
 </template>

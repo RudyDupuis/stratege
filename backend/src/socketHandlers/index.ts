@@ -1,5 +1,8 @@
 import { Server } from 'socket.io'
 import { createPrivateRoom, joinRoom, leaveRoom } from '@/socketHandlers/roomHandlers'
+import { movePawn } from './gameHandlers'
+
+export type Callback = (value: unknown) => void
 
 export default function socketHandlers(io: Server) {
   io.on('connection', (socket) => {
@@ -7,6 +10,8 @@ export default function socketHandlers(io: Server) {
 
     createPrivateRoom(socket, io)
     joinRoom(socket, io)
+
+    movePawn(socket, io)
 
     socket.on('disconnect', () => {
       console.log('Un joueur est déconnecté')

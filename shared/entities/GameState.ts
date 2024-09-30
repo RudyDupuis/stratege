@@ -12,20 +12,20 @@ export class GameState {
       [
         null,
         null,
-        new Pawn('player2', 2, 'NW'),
-        new Pawn('player2', 2, 'NW'),
-        new Pawn('player2', 2, 'NW'),
-        new Pawn('player2', 2, 'NW'),
+        new Pawn('p2-1', 'player2', 2, 'NW'),
+        new Pawn('p2-2', 'player2', 2, 'NW'),
+        new Pawn('p2-3', 'player2', 2, 'NW'),
+        new Pawn('p2-4', 'player2', 2, 'NW'),
         null,
         null
       ],
       [
         null,
         null,
-        new Pawn('player2', 2, 'NW'),
-        new Pawn('player2', 2, 'NW'),
-        new Pawn('player2', 2, 'NW'),
-        new Pawn('player2', 2, 'NW'),
+        new Pawn('p2-5', 'player2', 2, 'NW'),
+        new Pawn('p2-6', 'player2', 2, 'NW'),
+        new Pawn('p2-7', 'player2', 2, 'NW'),
+        new Pawn('p2-8', 'player2', 2, 'NW'),
         null,
         null
       ],
@@ -36,20 +36,20 @@ export class GameState {
       [
         null,
         null,
-        new Pawn('player1', 2, 'SE'),
-        new Pawn('player1', 2, 'SE'),
-        new Pawn('player1', 2, 'SE'),
-        new Pawn('player1', 2, 'SE'),
+        new Pawn('p1-1', 'player1', 2, 'SE'),
+        new Pawn('p1-2', 'player1', 2, 'SE'),
+        new Pawn('p1-3', 'player1', 2, 'SE'),
+        new Pawn('p1-4', 'player1', 2, 'SE'),
         null,
         null
       ],
       [
         null,
         null,
-        new Pawn('player1', 2, 'SE'),
-        new Pawn('player1', 2, 'SE'),
-        new Pawn('player1', 2, 'SE'),
-        new Pawn('player1', 2, 'SE'),
+        new Pawn('p1-5', 'player1', 2, 'SE'),
+        new Pawn('p1-6', 'player1', 2, 'SE'),
+        new Pawn('p1-7', 'player1', 2, 'SE'),
+        new Pawn('p1-8', 'player1', 2, 'SE'),
         null,
         null
       ]
@@ -59,7 +59,7 @@ export class GameState {
   public calculatePawnPosition(pawn: Pawn) {
     for (let row = 0; row < this.board.length; row++) {
       for (let col = 0; col < this.board[row].length; col++) {
-        if (this.board[row][col] === pawn) {
+        if (this.board[row][col]?.id === pawn.id) {
           return new PawnPosition(row, col)
         }
       }
