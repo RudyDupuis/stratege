@@ -6,8 +6,6 @@ export type Callback = (value: unknown) => void
 
 export default function socketHandlers(io: Server) {
   io.on('connection', (socket) => {
-    console.log('Un joueur est connecté')
-
     createPrivateRoom(socket, io)
     joinRoom(socket, io)
 
@@ -17,8 +15,6 @@ export default function socketHandlers(io: Server) {
     rotatePawn(socket, io)
 
     socket.on('disconnect', () => {
-      console.log('Un joueur est déconnecté')
-
       leaveRoom(socket, io)
     })
   })

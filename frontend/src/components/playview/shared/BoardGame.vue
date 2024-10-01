@@ -6,6 +6,12 @@ import { isDefined, isUndefined } from '@shared/helpers/TypeGuard'
 import PawnComponent from './PawnComponent.vue'
 import { PawnPosition } from '@shared/entities/PawnPosition'
 import type { Pawn } from '@shared/entities/Pawn'
+import {
+  killPawnSocket,
+  movePawnSocket,
+  passTurnSocket,
+  rotatePawnSocket
+} from '@/sockets/gameSockets'
 
 const props = defineProps({
   socket: { type: Socket, required: true },
@@ -18,11 +24,12 @@ const availablePawnMove = ref<PawnPosition[]>([])
 const availableKillPawn = ref<PawnPosition[]>([])
 const targetPawn = ref<Pawn | undefined>(undefined)
 const errorMessage = ref<string | undefined>(undefined)
+
 const isPlayerTurn = computed(() => {
   if (isUndefined(gameState.value)) {
     return false
   }
-  return gameState.value.determinesPlayerBasedOnTurn() === props.player
+  return gameState.value.determinePlayerBasedOnTurn() === props.player
 })
 
 function resetTarget() {
@@ -50,12 +57,7 @@ function passTurn() {
     return
   }
 
-  props.socket.emit('passTurn', props.roomId, props.player, (response: any) => {
-    if (response?.error) {
-      errorMessage.value = response.error
-    }
-  })
-
+  passTurnSocket(props.socket, props.roomId, props.player, errorMessage)
   resetTarget()
 }
 
@@ -64,19 +66,14 @@ function movePawn(pawnPosition: PawnPosition) {
     return
   }
 
-  props.socket.emit(
-    'movePawn',
+  movePawnSocket(
+    props.socket,
     props.roomId,
     props.player,
     targetPawn.value,
     pawnPosition,
-    (response: any) => {
-      if (response?.error) {
-        errorMessage.value = response.error
-      }
-    }
+    errorMessage
   )
-
   resetTarget()
 }
 
@@ -85,19 +82,14 @@ function killPawn(pawnPosition: PawnPosition) {
     return
   }
 
-  props.socket.emit(
-    'killPawn',
+  killPawnSocket(
+    props.socket,
     props.roomId,
     props.player,
     targetPawn.value,
     pawnPosition,
-    (response: any) => {
-      if (response?.error) {
-        errorMessage.value = response.error
-      }
-    }
+    errorMessage
   )
-
   resetTarget()
 }
 
@@ -106,19 +98,14 @@ function rotatePawn(orientation: 'NW' | 'SE' | 'NE' | 'SW') {
     return
   }
 
-  props.socket.emit(
-    'rotatePawn',
+  rotatePawnSocket(
+    props.socket,
     props.roomId,
     props.player,
     targetPawn.value,
     orientation,
-    (response: any) => {
-      if (response?.error) {
-        errorMessage.value = response.error
-      }
-    }
+    errorMessage
   )
-
   resetTarget()
 }
 

@@ -56,7 +56,7 @@ export class GameState {
     ]
   }
 
-  public determinesPlayerBasedOnTurn() {
+  public determinePlayerBasedOnTurn() {
     if (this.turn % 2 === 0) {
       return 'player2'
     } else {
