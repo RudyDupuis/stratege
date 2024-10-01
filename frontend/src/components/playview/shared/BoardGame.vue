@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, type PropType, watchEffect, computed } from 'vue'
+import { ref, onMounted, type PropType, computed } from 'vue'
 import { Socket } from 'socket.io-client'
 import { GameState } from '@shared/entities/GameState'
 import { isDefined, isUndefined } from '@shared/helpers/TypeGuard'
@@ -7,11 +7,11 @@ import PawnComponent from './PawnComponent.vue'
 import { PawnPosition } from '@shared/entities/PawnPosition'
 import type { Pawn } from '@shared/entities/Pawn'
 import {
-  killPawnSocket,
-  movePawnSocket,
-  passTurnSocket,
-  rotatePawnSocket
-} from '@/sockets/gameSockets'
+  killPawnSocketHanlder,
+  movePawnSocketHandler,
+  passTurnSocketHandler,
+  rotatePawnSocketHandler
+} from '@/sockets/gameSocketHandlers'
 
 const props = defineProps({
   socket: { type: Socket, required: true },
@@ -53,58 +53,45 @@ function selectPawn(pawn: Pawn) {
 }
 
 function passTurn() {
-  if (!isPlayerTurn.value) {
-    return
-  }
-
-  passTurnSocket(props.socket, props.roomId, props.player, errorMessage)
+  passTurnSocketHandler(props.socket, props.roomId, props.player, errorMessage, isPlayerTurn.value)
   resetTarget()
 }
 
-function movePawn(pawnPosition: PawnPosition) {
-  if (isUndefined(targetPawn.value) || !isPlayerTurn.value) {
-    return
-  }
-
-  movePawnSocket(
+function movePawn(desiredPawnPosition: PawnPosition) {
+  movePawnSocketHandler(
     props.socket,
     props.roomId,
     props.player,
     targetPawn.value,
-    pawnPosition,
-    errorMessage
+    desiredPawnPosition,
+    errorMessage,
+    isPlayerTurn.value
   )
   resetTarget()
 }
 
 function killPawn(pawnPosition: PawnPosition) {
-  if (isUndefined(targetPawn.value) || !isPlayerTurn.value) {
-    return
-  }
-
-  killPawnSocket(
+  killPawnSocketHanlder(
     props.socket,
     props.roomId,
     props.player,
     targetPawn.value,
     pawnPosition,
-    errorMessage
+    errorMessage,
+    isPlayerTurn.value
   )
   resetTarget()
 }
 
 function rotatePawn(orientation: 'NW' | 'SE' | 'NE' | 'SW') {
-  if (isUndefined(targetPawn.value) || !isPlayerTurn.value) {
-    return
-  }
-
-  rotatePawnSocket(
+  rotatePawnSocketHandler(
     props.socket,
     props.roomId,
     props.player,
     targetPawn.value,
     orientation,
-    errorMessage
+    errorMessage,
+    isPlayerTurn.value
   )
   resetTarget()
 }
