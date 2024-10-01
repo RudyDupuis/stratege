@@ -4,7 +4,10 @@ import { PawnPosition } from './PawnPosition'
 export class GameState {
   constructor(
     public turn: number,
-    public board: (Pawn | null)[][]
+    public board: (Pawn | null)[][],
+    public player1sLostPawns: Pawn[],
+    public player2sLostPawns: Pawn[],
+    public winner: 'player1' | 'player2' | undefined
   ) {}
 
   public static initialBoard() {
@@ -61,6 +64,15 @@ export class GameState {
       return 'player2'
     } else {
       return 'player1'
+    }
+  }
+
+  public determineWinner() {
+    if (this.player1sLostPawns.length === 8) {
+      this.winner = 'player2'
+    }
+    if (this.player2sLostPawns.length === 8) {
+      this.winner = 'player1'
     }
   }
 
@@ -152,7 +164,7 @@ export class GameState {
 
       if (this.isInBoardGameBounds(newRow, newCol)) {
         if (this.isCellOccupied(newRow, newCol)) {
-          const otherPawn = this.findPawn(this.board[newRow][newCol])
+          const otherPawn = this.findPawn(this.board[newRow][newCol] as Pawn)
 
           if (otherPawn.owner !== player) {
             switch (direction) {

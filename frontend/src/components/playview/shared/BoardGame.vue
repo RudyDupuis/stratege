@@ -98,7 +98,13 @@ function rotatePawn(orientation: 'NW' | 'SE' | 'NE' | 'SW') {
 
 onMounted(() => {
   props.socket.on('gameState', (state: GameState) => {
-    gameState.value = new GameState(state.turn, state.board)
+    gameState.value = new GameState(
+      state.turn,
+      state.board,
+      state.player1sLostPawns,
+      state.player2sLostPawns,
+      state.winner
+    )
   })
 })
 </script>
@@ -108,6 +114,11 @@ onMounted(() => {
     <p>
       Tour n° {{ gameState.turn }} -
       {{ isPlayerTurn ? 'A vous de jouer !' : 'Au tour de votre adversaire ...' }}
+    </p>
+    <p>Pions perdu du joueur 1 : {{ gameState.player1sLostPawns.length }}</p>
+    <p>Pions perdu du joueur 2 : {{ gameState.player2sLostPawns.length }}</p>
+    <p v-if="isDefined(gameState.winner)">
+      {{ gameState.winner === player ? 'Vous avez gagnez !' : 'Vous avez perdu ...' }}
     </p>
     <div
       class="grid grid-cols-8 grid-rows-8 border border-dark"

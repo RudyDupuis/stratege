@@ -25,7 +25,7 @@ function calculatePawnRemainingMoves(
 }
 
 export function createGame(roomId: string, io: Server) {
-  const newGame = new GameState(1, GameState.initialBoard())
+  const newGame = new GameState(1, GameState.initialBoard(), [], [], undefined)
   games[roomId] = newGame
   io.to(roomId).emit('gameState', newGame)
 }
@@ -127,9 +127,17 @@ export function killPawn(socket: Socket, io: Server) {
 
       calculatePawnRemainingMoves(currentPawnPosition, desiredPawnPosition, instancedPawn)
 
+      if (player === 'player1') {
+        game.player2sLostPawns.push(pawnToKill)
+      }
+      if (player === 'player2') {
+        game.player1sLostPawns.push(pawnToKill)
+      }
+
       game.board[currentPawnPosition.row][currentPawnPosition.col] = null
       game.board[desiredPawnPosition.row][desiredPawnPosition.col] = instancedPawn
 
+      game.determineWinner()
       io.to(roomId).emit('gameState', game)
     }
   )
