@@ -10,6 +10,7 @@ import {
   killPawnSocketHanlder,
   movePawnSocketHandler,
   passTurnSocketHandler,
+  pushPawnSocketHandler,
   rotatePawnSocketHandler
 } from '@/sockets/gameSocketHandlers'
 import { Orientation, Player } from '@shared/Enum'
@@ -82,13 +83,26 @@ function movePawn(desiredPawnPosition: PawnPosition) {
   resetTarget()
 }
 
-function killPawn(pawnPosition: PawnPosition) {
+function killPawn(desiredPawnPositionForKill: PawnPosition) {
   killPawnSocketHanlder(
     props.socket,
     props.roomId,
     props.player,
     targetPawn.value,
-    pawnPosition,
+    desiredPawnPositionForKill,
+    errorMessage,
+    isPlayerTurn.value
+  )
+  resetTarget()
+}
+
+function pushpawn(desiredPushedPawnPosition: PawnPosition) {
+  pushPawnSocketHandler(
+    props.socket,
+    props.roomId,
+    props.player,
+    targetPawn.value,
+    desiredPushedPawnPosition,
     errorMessage,
     isPlayerTurn.value
   )
@@ -168,6 +182,7 @@ onMounted(() => {
               ) && isPlayerTurn
             "
             class="bg-pushing size-full"
+            @click="pushpawn(new PawnPosition(rowIndex, colIndex))"
           ></div>
           <div
             v-if="
@@ -176,7 +191,6 @@ onMounted(() => {
               ) && isPlayerTurn
             "
             class="bg-pulling size-full"
-            @click="killPawn(new PawnPosition(rowIndex, colIndex))"
           ></div>
           <PawnComponent
             v-if="isNotNull(gameState.board[rowIndex][colIndex])"

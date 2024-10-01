@@ -61,7 +61,7 @@ export function killPawnSocketHanlder(
   roomId: string,
   player: Player,
   targetPawn: Pawn | undefined,
-  desiredPawnPosition: PawnPosition,
+  desiredPawnPositionForKill: PawnPosition,
   errorMessage: Ref<string | undefined>,
   isPlayerTurn: boolean
 ) {
@@ -74,7 +74,32 @@ export function killPawnSocketHanlder(
     roomId,
     player,
     targetPawn,
-    desiredPawnPosition,
+    desiredPawnPositionForKill,
+    (response: SocketResponse) => {
+      handleSocketResponse(errorMessage, response)
+    }
+  )
+}
+
+export function pushPawnSocketHandler(
+  socket: Socket,
+  roomId: string,
+  player: Player,
+  targetPawn: Pawn | undefined,
+  desiredPushedPawnPosition: PawnPosition,
+  errorMessage: Ref<string | undefined>,
+  isPlayerTurn: boolean
+) {
+  if (isUndefined(targetPawn) || !isPlayerTurn) {
+    return
+  }
+
+  socket.emit(
+    'pushPawn',
+    roomId,
+    player,
+    targetPawn,
+    desiredPushedPawnPosition,
     (response: SocketResponse) => {
       handleSocketResponse(errorMessage, response)
     }

@@ -34,18 +34,16 @@ export function checkPawnPositionOnGameBoard(game: GameState, pawn: Pawn) {
   }
 }
 
-export function checkPawnPositionsAvailableForMoving(
-  positionsAvailableForMoving: PawnPosition[],
+export function checkPawnPositionsAvailable(
+  positionsAvailable: PawnPosition[],
   pawnPosition: PawnPosition
 ) {
-  if (positionsAvailableForMoving.length === 0) {
+  if (positionsAvailable.length === 0) {
     throw new Error('Le pion ne peut pas bouger')
   }
 
   if (
-    !positionsAvailableForMoving.some(
-      (pos) => pos.row === pawnPosition.row && pos.col === pawnPosition.col
-    )
+    !positionsAvailable.some((pos) => pos.row === pawnPosition.row && pos.col === pawnPosition.col)
   ) {
     throw new Error('Le pion ne peut pas aller dans cette direction')
   }

@@ -6,7 +6,7 @@ import { PawnPosition } from '@shared/entities/PawnPosition'
 import {
   checkIfGameExistAndIfIsPlayerTurn,
   checkIfPawnExistAndIfIsPawnOwner,
-  checkPawnPositionsAvailableForMoving,
+  checkPawnPositionsAvailable,
   checkPawnPositionOnGameBoard
 } from '@/helpers/gameChecks'
 import { Orientation, Player } from '@shared/Enum'
@@ -77,7 +77,7 @@ export function movePawn(socket: Socket, io: Server) {
         ).returnedPositionsAvailableForMoving
 
       try {
-        checkPawnPositionsAvailableForMoving(positionsAvailableForMoving, desiredPawnPosition)
+        checkPawnPositionsAvailable(positionsAvailableForMoving, desiredPawnPosition)
       } catch (error) {
         return callback({ error: error })
       }
@@ -99,7 +99,7 @@ export function killPawn(socket: Socket, io: Server) {
       roomId: string,
       player: Player,
       pawn: Pawn,
-      desiredPawnPosition: PawnPosition,
+      desiredPawnPositionForKill: PawnPosition,
       callback: Callback
     ) => {
       const game = games[roomId]
@@ -122,19 +122,19 @@ export function killPawn(socket: Socket, io: Server) {
         ).returnedPositionsAvailableForKilling
 
       try {
-        checkPawnPositionsAvailableForMoving(positionsAvailableForKilling, desiredPawnPosition)
-        game.findPawnByPosition(desiredPawnPosition)
+        checkPawnPositionsAvailable(positionsAvailableForKilling, desiredPawnPositionForKill)
+        game.findPawnByPosition(desiredPawnPositionForKill)
       } catch (error) {
         return callback({ error: error })
       }
 
-      const pawnToKill = game.findPawnByPosition(desiredPawnPosition)
+      const pawnToKill = game.findPawnByPosition(desiredPawnPositionForKill)
 
       if (pawnToKill.owner === player) {
         return callback({ error: 'Le pion à prendre appartient au même joueur' })
       }
 
-      calculatePawnRemainingMoves(currentPawnPosition, desiredPawnPosition, instancedPawn)
+      calculatePawnRemainingMoves(currentPawnPosition, desiredPawnPositionForKill, instancedPawn)
 
       if (player === Player.Player1) {
         game.player2sLostPawns.push(pawnToKill)
@@ -144,9 +144,71 @@ export function killPawn(socket: Socket, io: Server) {
       }
 
       game.board[currentPawnPosition.row][currentPawnPosition.col] = null
-      game.board[desiredPawnPosition.row][desiredPawnPosition.col] = instancedPawn
+      game.board[desiredPawnPositionForKill.row][desiredPawnPositionForKill.col] = instancedPawn
 
       game.determineWinner()
+      io.to(roomId).emit('gameState', game)
+    }
+  )
+}
+
+export function pushPawn(socket: Socket, io: Server) {
+  socket.on(
+    'pushPawn',
+    (
+      roomId: string,
+      player: Player,
+      pawn: Pawn,
+      desiredPushedPawnPosition: PawnPosition,
+      callback: Callback
+    ) => {
+      const game = games[roomId]
+
+      try {
+        checkIfGameExistAndIfIsPlayerTurn(game, player)
+        checkIfPawnExistAndIfIsPawnOwner(game, pawn, player)
+        checkPawnPositionOnGameBoard(game, pawn)
+      } catch (error) {
+        return callback({ error: error })
+      }
+
+      const instancedPawn = game.findPawn(pawn)
+      const currentPawnPosition = game.calculatePawnPosition(pawn)
+      const positionsAvailableForPushing =
+        game.calculatePositionsAvailableForMovingKillingPushingOrPulling(
+          pawn,
+          player
+        ).returnedPositionsAvailableForPushing
+
+      try {
+        checkPawnPositionsAvailable(positionsAvailableForPushing, desiredPushedPawnPosition)
+      } catch (error) {
+        return callback({ error: error })
+      }
+
+      //Is used to calculate the position of the pion to push
+      const minCol = Math.min(currentPawnPosition.col, desiredPushedPawnPosition.col)
+      const maxCol = Math.max(currentPawnPosition.col, desiredPushedPawnPosition.col)
+      const minRow = Math.min(currentPawnPosition.row, desiredPushedPawnPosition.row)
+      const maxRow = Math.max(currentPawnPosition.row, desiredPushedPawnPosition.row)
+
+      let pawnToPushPosition: PawnPosition
+
+      if (maxCol - minCol > 0) {
+        pawnToPushPosition = new PawnPosition(minRow, minCol + 1)
+      }
+      if (maxRow - minRow > 0) {
+        pawnToPushPosition = new PawnPosition(minRow + 1, minCol)
+      }
+
+      const pawnToPush = game.findPawnByPosition(pawnToPushPosition)
+
+      calculatePawnRemainingMoves(currentPawnPosition, pawnToPushPosition, instancedPawn)
+
+      game.board[currentPawnPosition.row][currentPawnPosition.col] = null
+      game.board[pawnToPushPosition.row][pawnToPushPosition.col] = instancedPawn
+      game.board[desiredPushedPawnPosition.row][desiredPushedPawnPosition.col] = pawnToPush
+
       io.to(roomId).emit('gameState', game)
     }
   )
