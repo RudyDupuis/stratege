@@ -4,6 +4,7 @@ import { ref } from 'vue'
 import PlayerCountInRoom from './shared/PlayerCountInRoom.vue'
 import BoardGame from './shared/BoardGame.vue'
 import { isDefined } from '@shared/helpers/TypeGuard'
+import { Player } from '@shared/Enum'
 
 const props = defineProps({
   socket: { type: Socket, required: true }
@@ -31,7 +32,7 @@ createRoom()
   <BoardGame
     v-if="isDefined(roomId)"
     :room-id="roomId"
-    :player="'player1'"
+    :player="Player.Player1"
     :socket="props.socket"
   />
 </template>

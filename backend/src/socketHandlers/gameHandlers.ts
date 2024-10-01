@@ -6,9 +6,10 @@ import { PawnPosition } from '@shared/entities/PawnPosition'
 import {
   checkIfGameExistAndIfIsPlayerTurn,
   checkIfPawnExistAndIfIsPawnOwner,
-  checkPawnMovements,
+  checkPawnPositionsAvailableForMoving,
   checkPawnPositionOnGameBoard
 } from '@/helpers/gameChecks'
+import { Orientation, Player } from '@shared/Enum'
 
 const games: Record<string, GameState> = {}
 
@@ -31,7 +32,7 @@ export function createGame(roomId: string, io: Server) {
 }
 
 export function passTurn(socket: Socket, io: Server) {
-  socket.on('passTurn', (roomId: string, player: 'player1' | 'player2', callback: Callback) => {
+  socket.on('passTurn', (roomId: string, player: Player, callback: Callback) => {
     const game = games[roomId]
 
     try {
@@ -52,7 +53,7 @@ export function movePawn(socket: Socket, io: Server) {
     'movePawn',
     (
       roomId: string,
-      player: 'player1' | 'player2',
+      player: Player,
       pawn: Pawn,
       desiredPawnPosition: PawnPosition,
       callback: Callback
@@ -69,10 +70,14 @@ export function movePawn(socket: Socket, io: Server) {
 
       const instancedPawn = game.findPawn(pawn)
       const currentPawnPosition = game.calculatePawnPosition(pawn)
-      const availableMoves = game.calculateAvailableMovesAndKills(pawn, player).availableMoves
+      const positionsAvailableForMoving =
+        game.calculatePositionsAvailableForMovingKillingPushingOrPulling(
+          pawn,
+          player
+        ).returnedPositionsAvailableForMoving
 
       try {
-        checkPawnMovements(availableMoves, desiredPawnPosition)
+        checkPawnPositionsAvailableForMoving(positionsAvailableForMoving, desiredPawnPosition)
       } catch (error) {
         return callback({ error: error })
       }
@@ -92,7 +97,7 @@ export function killPawn(socket: Socket, io: Server) {
     'killPawn',
     (
       roomId: string,
-      player: 'player1' | 'player2',
+      player: Player,
       pawn: Pawn,
       desiredPawnPosition: PawnPosition,
       callback: Callback
@@ -110,10 +115,14 @@ export function killPawn(socket: Socket, io: Server) {
       const instancedPawn = game.findPawn(pawn)
 
       const currentPawnPosition = game.calculatePawnPosition(pawn)
-      const availableKills = game.calculateAvailableMovesAndKills(pawn, player).availableKills
+      const positionsAvailableForKilling =
+        game.calculatePositionsAvailableForMovingKillingPushingOrPulling(
+          pawn,
+          player
+        ).returnedPositionsAvailableForKilling
 
       try {
-        checkPawnMovements(availableKills, desiredPawnPosition)
+        checkPawnPositionsAvailableForMoving(positionsAvailableForKilling, desiredPawnPosition)
         game.findPawnByPosition(desiredPawnPosition)
       } catch (error) {
         return callback({ error: error })
@@ -127,10 +136,10 @@ export function killPawn(socket: Socket, io: Server) {
 
       calculatePawnRemainingMoves(currentPawnPosition, desiredPawnPosition, instancedPawn)
 
-      if (player === 'player1') {
+      if (player === Player.Player1) {
         game.player2sLostPawns.push(pawnToKill)
       }
-      if (player === 'player2') {
+      if (player === Player.Player2) {
         game.player1sLostPawns.push(pawnToKill)
       }
 
@@ -146,13 +155,7 @@ export function killPawn(socket: Socket, io: Server) {
 export function rotatePawn(socket: Socket, io: Server) {
   socket.on(
     'rotatePawn',
-    (
-      roomId: string,
-      player: 'player1' | 'player2',
-      pawn: Pawn,
-      orientation: 'NW' | 'SE' | 'NE' | 'SW',
-      callback: Callback
-    ) => {
+    (roomId: string, player: Player, pawn: Pawn, orientation: Orientation, callback: Callback) => {
       const game = games[roomId]
 
       try {

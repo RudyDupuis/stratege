@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Pawn } from '@shared/entities/Pawn'
+import { Orientation, Player } from '@shared/Enum'
 import { computed, type PropType } from 'vue'
 
 const props = defineProps({
@@ -8,34 +9,34 @@ const props = defineProps({
 
 const pawnColor = computed(() => {
   switch (props.pawn.owner) {
-    case 'player1':
+    case Player.Player1:
       return 'bg-player1'
-    case 'player2':
+    case Player.Player2:
       return 'bg-player2'
   }
 })
 
 const pawnOrientation = computed(() => {
   switch (props.pawn.orientation) {
-    case 'NW':
+    case Orientation.NW:
       return 'rotate-0'
-    case 'SE':
+    case Orientation.SE:
       return 'rotate-180'
-    case 'NE':
+    case Orientation.NE:
       return 'rotate-90'
-    case 'SW':
+    case Orientation.SW:
       return 'rotate-270'
   }
 })
 const remainingMoveOrientation = computed(() => {
   switch (props.pawn.orientation) {
-    case 'NW':
+    case Orientation.NW:
       return 'rotate-0'
-    case 'SE':
+    case Orientation.SE:
       return 'rotate-180'
-    case 'NE':
+    case Orientation.NE:
       return 'rotate-270'
-    case 'SW':
+    case Orientation.SW:
       return 'rotate-90'
   }
 })

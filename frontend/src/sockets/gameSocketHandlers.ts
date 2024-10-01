@@ -1,5 +1,6 @@
 import type { Pawn } from '@shared/entities/Pawn'
 import type { PawnPosition } from '@shared/entities/PawnPosition'
+import type { Orientation, Player } from '@shared/Enum'
 import { isUndefined } from '@shared/helpers/TypeGuard'
 import { Socket } from 'socket.io-client'
 import type { Ref } from 'vue'
@@ -17,7 +18,7 @@ function handleSocketResponse(errorMessage: Ref<string | undefined>, response: S
 export function passTurnSocketHandler(
   socket: Socket,
   roomId: string,
-  player: 'player1' | 'player2',
+  player: Player,
   errorMessage: Ref<string | undefined>,
   isPlayerTurn: boolean
 ) {
@@ -33,7 +34,7 @@ export function passTurnSocketHandler(
 export function movePawnSocketHandler(
   socket: Socket,
   roomId: string,
-  player: 'player1' | 'player2',
+  player: Player,
   targetPawn: Pawn | undefined,
   desiredPawnPosition: PawnPosition,
   errorMessage: Ref<string | undefined>,
@@ -58,7 +59,7 @@ export function movePawnSocketHandler(
 export function killPawnSocketHanlder(
   socket: Socket,
   roomId: string,
-  player: 'player1' | 'player2',
+  player: Player,
   targetPawn: Pawn | undefined,
   desiredPawnPosition: PawnPosition,
   errorMessage: Ref<string | undefined>,
@@ -83,9 +84,9 @@ export function killPawnSocketHanlder(
 export function rotatePawnSocketHandler(
   socket: Socket,
   roomId: string,
-  player: 'player1' | 'player2',
+  player: Player,
   targetPawn: Pawn | undefined,
-  orientation: 'NW' | 'SE' | 'NE' | 'SW',
+  orientation: Orientation,
   errorMessage: Ref<string | undefined>,
   isPlayerTurn: boolean
 ) {

@@ -2,8 +2,9 @@ import { GameState } from '@shared/entities/GameState'
 import { Pawn } from '@shared/entities/Pawn'
 import { PawnPosition } from '@shared/entities/PawnPosition'
 import { isUndefined } from '@shared/helpers/TypeGuard'
+import { Player } from '@shared/Enum'
 
-export function checkIfGameExistAndIfIsPlayerTurn(game: GameState, player: 'player1' | 'player2') {
+export function checkIfGameExistAndIfIsPlayerTurn(game: GameState, player: Player) {
   if (isUndefined(game)) {
     throw new Error("L'état de la partie est introuvable")
   }
@@ -13,11 +14,7 @@ export function checkIfGameExistAndIfIsPlayerTurn(game: GameState, player: 'play
   }
 }
 
-export function checkIfPawnExistAndIfIsPawnOwner(
-  game: GameState,
-  pawn: Pawn,
-  player: 'player1' | 'player2'
-) {
+export function checkIfPawnExistAndIfIsPawnOwner(game: GameState, pawn: Pawn, player: Player) {
   try {
     game.findPawn(pawn)
   } catch (error) {
@@ -37,16 +34,16 @@ export function checkPawnPositionOnGameBoard(game: GameState, pawn: Pawn) {
   }
 }
 
-export function checkPawnMovements(
-  availablePawnMovement: PawnPosition[],
+export function checkPawnPositionsAvailableForMoving(
+  positionsAvailableForMoving: PawnPosition[],
   pawnPosition: PawnPosition
 ) {
-  if (availablePawnMovement.length === 0) {
+  if (positionsAvailableForMoving.length === 0) {
     throw new Error('Le pion ne peut pas bouger')
   }
 
   if (
-    !availablePawnMovement.some(
+    !positionsAvailableForMoving.some(
       (pos) => pos.row === pawnPosition.row && pos.col === pawnPosition.col
     )
   ) {

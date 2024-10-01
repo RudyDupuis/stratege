@@ -2,7 +2,7 @@
 import { ref, onMounted, type PropType, computed } from 'vue'
 import { Socket } from 'socket.io-client'
 import { GameState } from '@shared/entities/GameState'
-import { isDefined, isUndefined } from '@shared/helpers/TypeGuard'
+import { isDefined, isNotNull, isUndefined } from '@shared/helpers/TypeGuard'
 import PawnComponent from './PawnComponent.vue'
 import { PawnPosition } from '@shared/entities/PawnPosition'
 import type { Pawn } from '@shared/entities/Pawn'
@@ -12,16 +12,19 @@ import {
   passTurnSocketHandler,
   rotatePawnSocketHandler
 } from '@/sockets/gameSocketHandlers'
+import { Orientation, Player } from '@shared/Enum'
 
 const props = defineProps({
   socket: { type: Socket, required: true },
-  player: { type: String as PropType<'player1' | 'player2'>, required: true },
+  player: { type: String as PropType<Player>, required: true },
   roomId: { type: String, required: true }
 })
 
 const gameState = ref<GameState | undefined>(undefined)
-const availablePawnMove = ref<PawnPosition[]>([])
-const availableKillPawn = ref<PawnPosition[]>([])
+const positionsAvailableForMoving = ref<PawnPosition[]>([])
+const positionsAvailableForKilling = ref<PawnPosition[]>([])
+const positionsAvailableForPushing = ref<PawnPosition[]>([])
+const positionsAvailableForPulling = ref<PawnPosition[]>([])
 const targetPawn = ref<Pawn | undefined>(undefined)
 const errorMessage = ref<string | undefined>(undefined)
 
@@ -34,8 +37,10 @@ const isPlayerTurn = computed(() => {
 
 function resetTarget() {
   targetPawn.value = undefined
-  availablePawnMove.value = []
-  availableKillPawn.value = []
+  positionsAvailableForMoving.value = []
+  positionsAvailableForKilling.value = []
+  positionsAvailableForPushing.value = []
+  positionsAvailableForPulling.value = []
 }
 
 function selectPawn(pawn: Pawn) {
@@ -44,12 +49,19 @@ function selectPawn(pawn: Pawn) {
   }
 
   targetPawn.value = pawn
-  const { availableMoves, availableKills } = gameState.value.calculateAvailableMovesAndKills(
+  const {
+    returnedPositionsAvailableForMoving,
+    returnedPositionsAvailableForKilling,
+    returnedPositionsAvailableForPushing,
+    returnedPositionsAvailableForPulling
+  } = gameState.value.calculatePositionsAvailableForMovingKillingPushingOrPulling(
     pawn,
     props.player
   )
-  availablePawnMove.value = availableMoves
-  availableKillPawn.value = availableKills
+  positionsAvailableForMoving.value = returnedPositionsAvailableForMoving
+  positionsAvailableForKilling.value = returnedPositionsAvailableForKilling
+  positionsAvailableForPushing.value = returnedPositionsAvailableForPushing
+  positionsAvailableForPulling.value = returnedPositionsAvailableForPulling
 }
 
 function passTurn() {
@@ -83,7 +95,7 @@ function killPawn(pawnPosition: PawnPosition) {
   resetTarget()
 }
 
-function rotatePawn(orientation: 'NW' | 'SE' | 'NE' | 'SW') {
+function rotatePawn(orientation: Orientation) {
   rotatePawnSocketHandler(
     props.socket,
     props.roomId,
@@ -133,24 +145,41 @@ onMounted(() => {
         >
           <div
             v-if="
-              availablePawnMove.some(
+              positionsAvailableForMoving.some(
                 (pawnPosition) => pawnPosition.row === rowIndex && pawnPosition.col === colIndex
               ) && isPlayerTurn
             "
-            class="bg-warning size-full"
+            class="bg-moving size-full"
             @click="movePawn(new PawnPosition(rowIndex, colIndex))"
           ></div>
           <div
             v-if="
-              availableKillPawn.some(
+              positionsAvailableForKilling.some(
                 (pawnPosition) => pawnPosition.row === rowIndex && pawnPosition.col === colIndex
               ) && isPlayerTurn
             "
-            class="bg-danger size-full absolute inset-0 z-10 opacity-40"
+            class="bg-killing size-full absolute inset-0 z-10 opacity-40"
+            @click="killPawn(new PawnPosition(rowIndex, colIndex))"
+          ></div>
+          <div
+            v-if="
+              positionsAvailableForPushing.some(
+                (pawnPosition) => pawnPosition.row === rowIndex && pawnPosition.col === colIndex
+              ) && isPlayerTurn
+            "
+            class="bg-pushing size-full"
+          ></div>
+          <div
+            v-if="
+              positionsAvailableForPulling.some(
+                (pawnPosition) => pawnPosition.row === rowIndex && pawnPosition.col === colIndex
+              ) && isPlayerTurn
+            "
+            class="bg-pulling size-full"
             @click="killPawn(new PawnPosition(rowIndex, colIndex))"
           ></div>
           <PawnComponent
-            v-if="gameState.board[rowIndex][colIndex] !== null"
+            v-if="isNotNull(gameState.board[rowIndex][colIndex])"
             :pawn="gameState.board[rowIndex][colIndex]"
             :class="{
               'border-4 border-warning': targetPawn === gameState.board[rowIndex][colIndex]
@@ -161,10 +190,10 @@ onMounted(() => {
       </div>
     </div>
     <div v-if="isPlayerTurn && isDefined(targetPawn)">
-      <button @click="rotatePawn('NW')">Nord-Ouest</button>
-      <button @click="rotatePawn('SE')">Sud-Est</button>
-      <button @click="rotatePawn('NE')">Nord-Est</button>
-      <button @click="rotatePawn('SW')">Sud-Ouest</button>
+      <button @click="rotatePawn(Orientation.NW)">Nord-Ouest</button>
+      <button @click="rotatePawn(Orientation.SE)">Sud-Est</button>
+      <button @click="rotatePawn(Orientation.NE)">Nord-Est</button>
+      <button @click="rotatePawn(Orientation.SW)">Sud-Ouest</button>
     </div>
     <button v-if="isPlayerTurn" @click="passTurn">Passer son tour</button>
     <div v-if="isDefined(errorMessage)">
