@@ -1,6 +1,6 @@
 import { Server } from 'socket.io'
 import { createPrivateRoom, joinRoom, leaveRoom } from '@/socketHandlers/roomHandlers'
-import { killPawn, movePawn, passTurn, pushPawn, rotatePawn } from './gameHandlers'
+import { killPawn, movePawn, passTurn, pullPawn, pushPawn, rotatePawn } from './gameHandlers'
 
 export type Callback = (value: unknown) => void
 
@@ -13,6 +13,7 @@ export default function socketHandlers(io: Server) {
     movePawn(socket, io)
     killPawn(socket, io)
     pushPawn(socket, io)
+    pullPawn(socket, io)
     rotatePawn(socket, io)
 
     socket.on('disconnect', () => {

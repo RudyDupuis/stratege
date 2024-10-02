@@ -105,6 +105,30 @@ export function pushPawnSocketHandler(
     }
   )
 }
+export function pullPawnSocketHandler(
+  socket: Socket,
+  roomId: string,
+  player: Player,
+  targetPawn: Pawn | undefined,
+  desiredPawnPositionAfterPulling: PawnPosition,
+  errorMessage: Ref<string | undefined>,
+  isPlayerTurn: boolean
+) {
+  if (isUndefined(targetPawn) || !isPlayerTurn) {
+    return
+  }
+
+  socket.emit(
+    'pullPawn',
+    roomId,
+    player,
+    targetPawn,
+    desiredPawnPositionAfterPulling,
+    (response: SocketResponse) => {
+      handleSocketResponse(errorMessage, response)
+    }
+  )
+}
 
 export function rotatePawnSocketHandler(
   socket: Socket,
