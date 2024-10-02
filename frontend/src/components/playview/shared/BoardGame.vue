@@ -135,7 +135,7 @@ function rotatePawn(orientation: Orientation) {
 </script>
 
 <template>
-  <div v-if="isDefined(gameState)" class="flex flex-col justify-center items-center">
+  <div class="flex flex-col justify-center items-center">
     <p>
       Tour n° {{ gameState.turn }} -
       {{ isPlayerTurn ? 'A vous de jouer !' : 'Au tour de votre adversaire ...' }}

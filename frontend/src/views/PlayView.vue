@@ -19,14 +19,16 @@ watch(roomType, () => {
       window.history.pushState({}, '', `http://localhost:5173/jouer?roomId=${id}`) // mettre dans un .env
     })
   }
+  if (roomType.value === 'public') {
+    socket.emit('searchPublicRoom', (id: string) => {
+      roomId.value = id
+      window.history.pushState({}, '', `http://localhost:5173/jouer?roomId=${id}`) // mettre dans un .env
+    })
+  }
 })
 </script>
 
 <template>
-  <template v-if="isDefined(roomId)">
-    <JoinRoom v-if="!isUndefined(roomId)" :socket="socket" :roomId="roomId" />
-  </template>
-  <template v-if="isUndefined(roomId)">
-    <RoomTypeSelector v-if="isUndefined(roomType)" v-model="roomType" />
-  </template>
+  <JoinRoom v-if="isDefined(roomId)" :socket="socket" :roomId="roomId" :room-type="roomType" />
+  <RoomTypeSelector v-else v-model="roomType" />
 </template>

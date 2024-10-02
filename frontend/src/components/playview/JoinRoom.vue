@@ -10,7 +10,8 @@ import { gameStateDtoToEntity } from '@shared/helpers/Mapper'
 
 const props = defineProps({
   socket: { type: Socket, required: true },
-  roomId: { type: String, required: true }
+  roomId: { type: String, required: true },
+  roomType: { type: String }
 })
 
 const shareableLink = `http://localhost:5173/jouer?roomId=${props.roomId}`
@@ -37,7 +38,7 @@ props.socket.on('gameState', (state: GameStateDto) => {
     <p>{{ errorMessage }}</p>
   </div>
   <div v-else>
-    <p>
+    <p v-if="roomType === 'private'">
       Partagez ce lien : <a :href="shareableLink" target="_blank">{{ shareableLink }}</a>
     </p>
     <PlayerCountInRoom :socket="props.socket" />

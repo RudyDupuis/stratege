@@ -4,6 +4,7 @@ import { Server, Socket } from 'socket.io'
 
 export default function leaveRoomHandler(
   socket: Socket,
+  availablePublicRooms: Record<string, Set<string>>,
   rooms: Record<string, Set<string>>,
   playerRoles: Record<string, Record<string, Player>>,
   io: Server
@@ -23,6 +24,12 @@ export default function leaveRoomHandler(
           delete rooms[roomId]
           delete playerRoles[roomId]
         }
+      }
+    }
+
+    for (const roomId in availablePublicRooms) {
+      if (availablePublicRooms[roomId].has(socket.id)) {
+        delete availablePublicRooms[roomId]
       }
     }
   })
