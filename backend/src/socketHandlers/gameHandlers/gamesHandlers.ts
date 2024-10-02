@@ -6,10 +6,15 @@ import killPawnHandler from './killPawnHandler'
 import pushPawnHandler from './pushPawnHandler'
 import pullPawnHandler from './pullPawnHandler'
 import rotatePawnHandler from './rotatePawnHandler'
+import { isDefined } from '@shared/helpers/TypeGuard'
 
 const games: Record<string, GameState> = {}
 
-export function createGame(roomId: string, io: Server) {
+export function createOrRetrieveGame(roomId: string, io: Server) {
+  if (isDefined(games[roomId])) {
+    return io.to(roomId).emit('gameState', games[roomId])
+  }
+
   const newGame = new GameState(1, GameState.initialBoard(), [], [], undefined)
   games[roomId] = newGame
   io.to(roomId).emit('gameState', newGame)

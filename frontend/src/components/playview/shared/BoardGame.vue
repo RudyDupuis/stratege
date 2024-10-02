@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, type PropType, computed } from 'vue'
+import { ref, type PropType, computed } from 'vue'
 import { Socket } from 'socket.io-client'
 import { GameState } from '@shared/entities/GameState'
 import { isDefined, isNotNull, isUndefined } from '@shared/helpers/TypeGuard'
@@ -17,12 +17,12 @@ import {
 import { Orientation, Player } from '@shared/Enum'
 
 const props = defineProps({
+  roomId: { type: String, required: true },
   socket: { type: Socket, required: true },
   player: { type: String as PropType<Player>, required: true },
-  roomId: { type: String, required: true }
+  gameState: { type: GameState, required: true }
 })
 
-const gameState = ref<GameState | undefined>(undefined)
 const positionsAvailableForMoving = ref<PawnPosition[]>([])
 const positionsAvailableForKilling = ref<PawnPosition[]>([])
 const positionsAvailableForPushing = ref<PawnPosition[]>([])
@@ -31,10 +31,7 @@ const targetPawn = ref<Pawn | undefined>(undefined)
 const errorMessage = ref<string | undefined>(undefined)
 
 const isPlayerTurn = computed(() => {
-  if (isUndefined(gameState.value)) {
-    return false
-  }
-  return gameState.value.determinePlayerBasedOnTurn() === props.player
+  return props.gameState.determinePlayerBasedOnTurn() === props.player
 })
 
 function resetTarget() {
@@ -46,7 +43,7 @@ function resetTarget() {
 }
 
 function selectPawn(pawn: Pawn) {
-  if (isUndefined(gameState.value) || pawn.owner !== props.player || !isPlayerTurn.value) {
+  if (pawn.owner !== props.player || !isPlayerTurn.value) {
     return
   }
 
@@ -56,7 +53,7 @@ function selectPawn(pawn: Pawn) {
     returnedPositionsAvailableForKilling,
     returnedPositionsAvailableForPushing,
     returnedPositionsAvailableForPulling
-  } = gameState.value.calculatePositionsAvailableForMovingKillingPushingOrPulling(
+  } = props.gameState.calculatePositionsAvailableForMovingKillingPushingOrPulling(
     pawn,
     props.player
   )
@@ -135,18 +132,6 @@ function rotatePawn(orientation: Orientation) {
   )
   resetTarget()
 }
-
-onMounted(() => {
-  props.socket.on('gameState', (state: GameState) => {
-    gameState.value = new GameState(
-      state.turn,
-      state.board,
-      state.player1sLostPawns,
-      state.player2sLostPawns,
-      state.winner
-    )
-  })
-})
 </script>
 
 <template>

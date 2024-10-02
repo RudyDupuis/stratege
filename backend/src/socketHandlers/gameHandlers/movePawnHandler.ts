@@ -1,6 +1,6 @@
 import { GameState } from '@shared/entities/GameState'
-import { Pawn } from '@shared/entities/Pawn'
-import { PawnPosition } from '@shared/entities/PawnPosition'
+import { PawnDto } from '@shared/entities/Pawn'
+import { PawnPositionDto } from '@shared/entities/PawnPosition'
 import { Player } from '@shared/Enum'
 import { Server, Socket } from 'socket.io'
 import { Callback } from '../socketHandlers'
@@ -11,6 +11,7 @@ import {
   checkPawnPositionsAvailable
 } from '@/helpers/gameChecks'
 import { calculatePawnRemainingMoves } from '@/helpers/gameMethods'
+import { pawnDtoToEntity, pawnPositionDtoToEntity } from '@shared/helpers/Mapper'
 
 export default function movePawnHandler(
   socket: Socket,
@@ -22,11 +23,13 @@ export default function movePawnHandler(
     (
       roomId: string,
       player: Player,
-      pawn: Pawn,
-      desiredPawnPosition: PawnPosition,
+      pawnDto: PawnDto,
+      desiredPawnPositionDto: PawnPositionDto,
       callback: Callback
     ) => {
       const game = games[roomId]
+      const pawn = pawnDtoToEntity(pawnDto)
+      const desiredPawnPosition = pawnPositionDtoToEntity(desiredPawnPositionDto)
 
       try {
         checkIfGameExistAndIfIsPlayerTurn(game, player)

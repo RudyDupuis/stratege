@@ -9,10 +9,7 @@ export default function createPrivateRoomHandler(
 ) {
   socket.on('createPrivateRoom', (callback: Callback) => {
     const roomId = socket.id
-    socket.join(roomId)
-
     rooms[roomId] = new Set()
-    rooms[roomId].add(socket.id)
 
     callback(roomId)
     emitPlayerCount(io, rooms, roomId)

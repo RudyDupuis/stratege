@@ -2,24 +2,31 @@
 import { io } from 'socket.io-client'
 import RoomTypeSelector from '@/components/playview/RoomTypeSelector.vue'
 import { isDefined, isUndefined } from '@shared/helpers/TypeGuard'
-import { ref } from 'vue'
-import CreatePrivateRoom from '@/components/playview/CreatePrivateRoom.vue'
+import { ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import JoinPrivateRoom from '@/components/playview/JoinPrivateRoom.vue'
+import JoinRoom from '@/components/playview/JoinRoom.vue'
 
 const route = useRoute()
-const roomId = route.query.roomId as string | undefined
+const roomId = ref<string | undefined>(route.query.roomId as string | undefined)
 
 const socket = io('http://localhost:3000') // mettre dans un .env
 const roomType = ref<'private' | 'public' | undefined>(undefined)
+
+watch(roomType, () => {
+  if (roomType.value === 'private') {
+    socket.emit('createPrivateRoom', (id: string) => {
+      roomId.value = id
+      window.history.pushState({}, '', `http://localhost:5173/jouer?roomId=${id}`) // mettre dans un .env
+    })
+  }
+})
 </script>
 
 <template>
   <template v-if="isDefined(roomId)">
-    <JoinPrivateRoom v-if="!isUndefined(roomId)" :socket="socket" :roomId="roomId" />
+    <JoinRoom v-if="!isUndefined(roomId)" :socket="socket" :roomId="roomId" />
   </template>
   <template v-if="isUndefined(roomId)">
     <RoomTypeSelector v-if="isUndefined(roomType)" v-model="roomType" />
-    <CreatePrivateRoom v-if="roomType === 'private'" :socket="socket" />
   </template>
 </template>

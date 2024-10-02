@@ -2,11 +2,13 @@ import { Server, Socket } from 'socket.io'
 import { Callback } from '../socketHandlers'
 import { isUndefined } from '@shared/helpers/TypeGuard'
 import { emitPlayerCount } from '@/helpers/roomMethods'
-import { createGame } from '../gameHandlers/gamesHandlers'
+import { createOrRetrieveGame } from '../gameHandlers/gamesHandlers'
+import { Player } from '@shared/Enum'
 
 export default function joinRoomHanlder(
   socket: Socket,
   rooms: Record<string, Set<string>>,
+  playerRoles: Record<string, Record<string, Player>>,
   io: Server
 ) {
   socket.on('joinRoom', (roomId: string, callback: Callback) => {
@@ -21,11 +23,25 @@ export default function joinRoomHanlder(
     socket.join(roomId)
     rooms[roomId].add(socket.id)
 
+    if (!playerRoles[roomId]) {
+      playerRoles[roomId] = {}
+    }
+
+    if (!playerRoles[roomId][socket.id]) {
+      const rolesInRoom = Object.values(playerRoles[roomId])
+
+      if (!rolesInRoom.includes(Player.Player1)) {
+        playerRoles[roomId][socket.id] = Player.Player1
+      } else {
+        playerRoles[roomId][socket.id] = Player.Player2
+      }
+    }
+
+    callback({ playerRole: playerRoles[roomId][socket.id] })
     emitPlayerCount(io, rooms, roomId)
-    callback(null)
 
     if (rooms[roomId].size === 2) {
-      createGame(roomId, io)
+      createOrRetrieveGame(roomId, io)
     }
   })
 }

@@ -1,8 +1,15 @@
 import { Orientation, Player } from '../Enum'
-import { Pawn } from './Pawn'
+import { Pawn, type PawnDto } from './Pawn'
 import { PawnPosition } from './PawnPosition'
 import { isDefined, isNotNull } from '../helpers/TypeGuard'
 
+export interface GameStateDto {
+  turn: number
+  board: (PawnDto | null)[][]
+  player1sLostPawns: PawnDto[]
+  player2sLostPawns: PawnDto[]
+  winner: Player | undefined
+}
 export class GameState {
   constructor(
     public turn: number,
@@ -151,13 +158,18 @@ export class GameState {
     }
   }
 
-  private top = new PawnPosition(-1, 0)
-  private bottom = new PawnPosition(1, 0)
-  private left = new PawnPosition(0, -1)
-  private right = new PawnPosition(0, 1)
-  private directions = [this.top, this.bottom, this.left, this.right]
+  public static readonly TOP = new PawnPosition(-1, 0)
+  public static readonly BOTTOM = new PawnPosition(1, 0)
+  public static readonly LEFT = new PawnPosition(0, -1)
+  public static readonly RIGHT = new PawnPosition(0, 1)
+  public static readonly DIRECTIONS = [
+    GameState.TOP,
+    GameState.BOTTOM,
+    GameState.LEFT,
+    GameState.RIGHT
+  ]
 
-  private pawnCanPushOrPullOtherPawn(
+  public pawnCanPushOrPullOtherPawn(
     arrivalPositionRow: number,
     arrivalPositionCol: number,
     positionsAvailable: PawnPosition[]
@@ -172,7 +184,7 @@ export class GameState {
     }
   }
 
-  private calculatePositionsAvailableForPushingOrPulling(
+  public calculatePositionsAvailableForPushingOrPulling(
     currentPosition: PawnPosition,
     remainingMove: number,
     positionsAvailableForPushing: PawnPosition[],
@@ -182,28 +194,28 @@ export class GameState {
       return
     }
 
-    for (const direction of this.directions) {
+    for (const direction of GameState.DIRECTIONS) {
       const newRow = currentPosition.row + direction.row
       const newCol = currentPosition.col + direction.col
 
       if (this.isInBoardGameBounds(newRow, newCol) && this.isCellOccupied(newRow, newCol)) {
         switch (direction) {
-          case this.top:
+          case GameState.TOP:
             this.pawnCanPushOrPullOtherPawn(newRow - 1, newCol, positionsAvailableForPushing)
             this.pawnCanPushOrPullOtherPawn(newRow + 2, newCol, positionsAvailableForPulling)
             break
 
-          case this.bottom:
+          case GameState.BOTTOM:
             this.pawnCanPushOrPullOtherPawn(newRow + 1, newCol, positionsAvailableForPushing)
             this.pawnCanPushOrPullOtherPawn(newRow - 2, newCol, positionsAvailableForPulling)
             break
 
-          case this.left:
+          case GameState.LEFT:
             this.pawnCanPushOrPullOtherPawn(newRow, newCol - 1, positionsAvailableForPushing)
             this.pawnCanPushOrPullOtherPawn(newRow, newCol + 2, positionsAvailableForPulling)
             break
 
-          case this.right:
+          case GameState.RIGHT:
             this.pawnCanPushOrPullOtherPawn(newRow, newCol + 1, positionsAvailableForPushing)
             this.pawnCanPushOrPullOtherPawn(newRow, newCol - 2, positionsAvailableForPulling)
         }
@@ -211,7 +223,7 @@ export class GameState {
     }
   }
 
-  private pawnCanKillOtherPawn(
+  public pawnCanKillOtherPawn(
     otherPawn: Pawn,
     orientation1: Orientation,
     orientation2: Orientation,
@@ -223,7 +235,7 @@ export class GameState {
     }
   }
 
-  private calculatePositionsAvailableForMovingOrKillingByMovingOneCellAtATime(
+  public calculatePositionsAvailableForMovingOrKillingByMovingOneCellAtATime(
     currentPosition: PawnPosition,
     remainingMove: number,
     player: Player,
@@ -234,7 +246,7 @@ export class GameState {
       return
     }
 
-    for (const direction of this.directions) {
+    for (const direction of GameState.DIRECTIONS) {
       const newRow = currentPosition.row + direction.row
       const newCol = currentPosition.col + direction.col
       const newPosition = new PawnPosition(newRow, newCol)
@@ -245,7 +257,7 @@ export class GameState {
 
           if (otherPawn.owner !== player) {
             switch (direction) {
-              case this.top:
+              case GameState.TOP:
                 this.pawnCanKillOtherPawn(
                   otherPawn,
                   Orientation.NW,
@@ -255,7 +267,7 @@ export class GameState {
                 )
                 break
 
-              case this.bottom:
+              case GameState.BOTTOM:
                 this.pawnCanKillOtherPawn(
                   otherPawn,
                   Orientation.SW,
@@ -265,7 +277,7 @@ export class GameState {
                 )
                 break
 
-              case this.left:
+              case GameState.LEFT:
                 this.pawnCanKillOtherPawn(
                   otherPawn,
                   Orientation.NW,
@@ -275,7 +287,7 @@ export class GameState {
                 )
                 break
 
-              case this.right:
+              case GameState.RIGHT:
                 this.pawnCanKillOtherPawn(
                   otherPawn,
                   Orientation.SE,
@@ -304,10 +316,10 @@ export class GameState {
     }
   }
 
-  private isInBoardGameBounds(row: number, col: number) {
+  public isInBoardGameBounds(row: number, col: number) {
     return row >= 0 && row < this.board.length && col >= 0 && col < this.board[0].length
   }
-  private isCellOccupied(row: number, col: number) {
+  public isCellOccupied(row: number, col: number) {
     return isNotNull(this.board[row][col])
   }
 }
