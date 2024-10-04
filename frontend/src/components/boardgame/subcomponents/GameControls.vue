@@ -14,7 +14,7 @@ const props = defineProps<{
 
 const actions = defineModel<'move_kill' | 'push_pull'>()
 const errorMessage = ref<string | undefined>(undefined)
-const playerCount = ref<number | undefined>(undefined)
+const opponentIsNotConnectedErrorMessage = ref<string | undefined>(undefined)
 
 function passTurn() {
   if (!props.gameData.isPlayerTurn) {
@@ -84,7 +84,11 @@ const pawnColor = computed(() => {
 })
 
 props.gameData.socket.on('playerCount', (count: number) => {
-  playerCount.value = count
+  if (count === 2) {
+    return (opponentIsNotConnectedErrorMessage.value = undefined)
+  }
+
+  opponentIsNotConnectedErrorMessage.value = 'Votre adversaire est déconnecté ...'
 })
 </script>
 
@@ -143,9 +147,6 @@ props.gameData.socket.on('playerCount', (count: number) => {
 
       <button @click="passTurn" class="button mb-10">Passer son tour</button>
     </section>
-    <p v-if="isDefined(playerCount) && playerCount === 1" class="mb-20">
-      Votre adversaire est déconnecté ...
-    </p>
   </section>
   <p v-else class="medium-title size-full mb-20">
     {{
@@ -153,4 +154,8 @@ props.gameData.socket.on('playerCount', (count: number) => {
     }}
   </p>
   <ErrorDisplayer v-if="isDefined(errorMessage)" v-model="errorMessage" />
+  <ErrorDisplayer
+    v-if="isDefined(opponentIsNotConnectedErrorMessage)"
+    v-model="opponentIsNotConnectedErrorMessage"
+  />
 </template>
