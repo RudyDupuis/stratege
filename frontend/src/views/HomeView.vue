@@ -2,7 +2,7 @@
 
 <template>
   <main>
-    <h1>Stratège</h1>
-    <RouterLink :to="{ name: 'play' }"><button>Jouer</button></RouterLink>
+    <h1 class="very-large-title mb-16">Stratège</h1>
+    <RouterLink :to="{ name: 'play' }" class="button">Jouer !</RouterLink>
   </main>
 </template>

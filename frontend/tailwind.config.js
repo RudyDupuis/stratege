@@ -3,14 +3,25 @@ export default {
   content: ['./index.html', './src/**/*.{vue,js,ts,jsx,tsx}'],
   theme: {
     colors: {
-      dark: '#121212',
-      warning: '#fcd34d',
-      moving: '#fcd34d',
-      killing: '#dc2626',
-      pulling: '#0284c7',
-      pushing: '#059669',
-      player1: '#f97316',
-      player2: '#65a30d'
+      dark: '#1E0802',
+      light: '#DFCAA1',
+      dark_light: '#caaf79',
+
+      error: '#ef4444',
+      warning: '#d1af3f',
+
+      moving: '#d1af3f',
+      killing: '#ef4444',
+      pulling: '#A593B9',
+      pushing: '#93B0B9',
+      player1: '#d17c3f',
+      player2: '#7f995a'
+    },
+    fontFamily: {
+      secondary_bold: ['Kalam-Bold', 'Arial'],
+      secondary_regular: ['Kalam-Regular', 'Arial'],
+      primary_bold: ['Lato-Bold', 'Arial'],
+      primary_regular: ['Lato-Regular', 'Arial']
     },
     extend: {
       rotate: {
