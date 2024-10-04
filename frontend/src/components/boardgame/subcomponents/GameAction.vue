@@ -45,7 +45,6 @@ const cellColor = computed(() => {
       return 'bg-pulling'
   }
 })
-//Todo Changer les couleurs
 </script>
 
 <template>

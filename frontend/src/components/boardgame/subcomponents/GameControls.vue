@@ -14,6 +14,7 @@ const props = defineProps<{
 
 const actions = defineModel<'move_kill' | 'push_pull'>()
 const errorMessage = ref<string | undefined>(undefined)
+const playerCount = ref<number | undefined>(undefined)
 
 function passTurn() {
   if (!props.gameData.isPlayerTurn) {
@@ -81,7 +82,10 @@ const pawnColor = computed(() => {
       return 'bg-player2'
   }
 })
-//Todo Comtage des pions morts, message si joueurs deco
+
+props.gameData.socket.on('playerCount', (count: number) => {
+  playerCount.value = count
+})
 </script>
 
 <template>
@@ -104,22 +108,22 @@ const pawnColor = computed(() => {
         </button>
 
         <p class="small-title mb-3">Orienter</p>
-        <div class="flex justify-center items-center">
-          <button @click="rotatePawn(Orientation.NW)" class="mr-8">
+        <div class="flex space-x-8 justify-center items-center">
+          <button @click="rotatePawn(Orientation.NW)">
             <PawnComponent
               sizeClass="size-10"
               :colorClass="pawnColor"
               orientationClass="rotate-0"
             />
           </button>
-          <button @click="rotatePawn(Orientation.NE)" class="mr-8">
+          <button @click="rotatePawn(Orientation.NE)">
             <PawnComponent
               sizeClass="size-10"
               :colorClass="pawnColor"
               orientationClass="rotate-90"
             />
           </button>
-          <button @click="rotatePawn(Orientation.SW)" class="mr-8">
+          <button @click="rotatePawn(Orientation.SW)">
             <PawnComponent
               sizeClass="size-10"
               :colorClass="pawnColor"
@@ -137,8 +141,11 @@ const pawnColor = computed(() => {
       </div>
       <p v-show="isUndefined(gameData.targetPawn)" class="mb-10">Cliquez sur l'un de vos pions</p>
 
-      <button @click="passTurn" class="button mb-20">Passer son tour</button>
+      <button @click="passTurn" class="button mb-10">Passer son tour</button>
     </section>
+    <p v-if="isDefined(playerCount) && playerCount === 1" class="mb-20">
+      Votre adversaire est déconnecté ...
+    </p>
   </section>
   <p v-else class="medium-title size-full mb-20">
     {{

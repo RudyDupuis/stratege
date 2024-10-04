@@ -8,12 +8,11 @@ export default {
       dark_light: '#caaf79',
 
       error: '#ef4444',
-      warning: '#d1af3f',
 
-      moving: '#d1af3f',
+      moving: '#b9b6a9',
       killing: '#ef4444',
       pulling: '#A593B9',
-      pushing: '#93B0B9',
+      pushing: '#93b9b7',
       player1: '#d17c3f',
       player2: '#7f995a'
     },

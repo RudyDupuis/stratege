@@ -10,6 +10,7 @@ import ErrorDisplayer from '../shared/ErrorDisplayer.vue'
 import GameControls from './subcomponents/GameControls.vue'
 import GameAction from './subcomponents/GameAction.vue'
 import PawnHandler from './PawnHandler.vue'
+import PawnComponent from './subcomponents/PawnComponent.vue'
 
 const props = defineProps<{
   roomId: string
@@ -89,8 +90,27 @@ const gameData = computed<gameData>(() => {
 
 <template>
   <section class="flex flex-col xl:flex-row justify-center w-full items-center">
-    <section class="flex flex-col justify-center items-center py-20 xl:py-0">
-      <p class="small-title">Tour n° {{ gameState.turn }}</p>
+    <section class="flex flex-col justify-center items-center py-10 xl:py-0">
+      <div class="flex space-x-5">
+        <p class="small-title">Tour n° {{ gameState.turn }}</p>
+        <p class="small-title">-</p>
+        <p class="flex items-center space-x-2 text-xl">
+          <span class="small-title">{{
+            GameState.MAX_PAWNS_PER_PLAYER -
+            gameState.player1sLostPawns.length +
+            '/' +
+            GameState.MAX_PAWNS_PER_PLAYER
+          }}</span>
+          <PawnComponent sizeClass="size-5" colorClass="bg-player1" orientationClass="rotate-0" />
+          <span class="small-title">{{
+            GameState.MAX_PAWNS_PER_PLAYER -
+            gameState.player2sLostPawns.length +
+            '/' +
+            GameState.MAX_PAWNS_PER_PLAYER
+          }}</span>
+          <PawnComponent sizeClass="size-5" colorClass="bg-player2" orientationClass="rotate-0" />
+        </p>
+      </div>
       <div class="p-6 rounded-xl bg-dark_light">
         <div
           class="grid grid-cols-8 grid-rows-8 border border-dark"
@@ -144,8 +164,7 @@ const gameData = computed<gameData>(() => {
                 :pawn="gameState.board[rowIndex][colIndex]"
                 :player="player"
                 :class="{
-                  'outline outline-warning opacity-60':
-                    targetPawn === gameState.board[rowIndex][colIndex],
+                  'opacity-60': targetPawn === gameState.board[rowIndex][colIndex],
                   'cursor-pointer':
                     isPlayerTurn && gameState.board[rowIndex][colIndex]?.owner === player
                 }"
