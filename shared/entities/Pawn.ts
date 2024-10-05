@@ -8,8 +8,8 @@ export interface PawnDto {
 }
 export class Pawn {
   constructor(
-    public readonly id: string,
-    public readonly owner: Player,
+    public id: string,
+    public owner: Player,
     public remainingMove: 0 | 1 | 2,
     public orientation: Orientation
   ) {}

@@ -9,7 +9,7 @@ export default {
 
       error: '#ef4444',
       success: '#10b981',
-      info: '#d17c3f',
+      info: '#669bbc',
 
       moving: '#b9b6a9',
       killing: '#ef4444',
