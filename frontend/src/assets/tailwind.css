@@ -61,3 +61,7 @@ strong {
 .small-button {
   @apply w-64;
 }
+
+.button:hover, .small-button:hover, .button:active, .small-button:active, a:active, a:hover {
+  @apply opacity-40;
+}

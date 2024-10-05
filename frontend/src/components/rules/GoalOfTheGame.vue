@@ -32,10 +32,10 @@ import BoardGameDrawing from './BoardGameDrawing.vue'
           <ArrowSvg fillClass="fill-error" class="size-8 rotate-90" />
         </template>
         <template v-slot:2-1>
-          <ArrowSvg fillClass="fill-succes" class="size-8" />
+          <ArrowSvg fillClass="fill-success" class="size-8" />
         </template>
         <template v-slot:1-2>
-          <ArrowSvg fillClass="fill-succes" class="size-8 rotate-270" />
+          <ArrowSvg fillClass="fill-success" class="size-8 rotate-270" />
         </template>
       </BoardGameDrawing>
     </div>
