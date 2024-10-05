@@ -65,7 +65,7 @@ const remainingMoveOrientation = computed(() => {
     :orientationClass="pawnOrientation"
   >
     <p
-      class="text-light font-primary_bold z-10 absolute top-0 left-0 px-1 md:px-3 md:py-2"
+      class="text-light font-primary_bold absolute top-0 left-0 px-1 md:px-3 md:py-2"
       :class="remainingMoveOrientation"
     >
       {{ pawn.remainingMove }}

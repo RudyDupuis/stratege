@@ -108,7 +108,7 @@ props.gameData.socket.on('playerCount', (count: number) => {
       <div v-show="isDefined(gameData.targetPawn)" class="mb-10">
         <p class="small-title">Action à réaliser</p>
         <button @click="changeActions" class="button small-button mb-10">
-          {{ actions === 'move_kill' ? 'Se deplacer' : 'Pousser/Tirer' }}
+          {{ actions === 'move_kill' ? 'Se déplacer' : 'Pousser/Tirer' }}
         </button>
 
         <p class="small-title mb-3">Orienter</p>

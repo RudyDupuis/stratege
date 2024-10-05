@@ -8,6 +8,7 @@ export default {
       dark_light: '#caaf79',
 
       error: '#ef4444',
+      succes: '#10b981',
 
       moving: '#b9b6a9',
       killing: '#ef4444',

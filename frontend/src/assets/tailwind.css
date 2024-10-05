@@ -35,6 +35,10 @@ main {
   @apply flex flex-col items-center justify-center min-h-screen mx-10;
 }
 
+strong {
+  @apply font-primary_bold font-normal;
+}
+
 /*** Text ***/
 .very-large-title {
   @apply font-secondary_bold text-6xl text-center;
