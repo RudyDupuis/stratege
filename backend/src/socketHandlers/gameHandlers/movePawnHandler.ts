@@ -1,7 +1,7 @@
-import { GameState } from '@shared/entities/GameState'
-import { PawnDto } from '@shared/entities/Pawn'
-import { PawnPositionDto } from '@shared/entities/PawnPosition'
-import { Player } from '@shared/Enum'
+import { GameState } from '../../../shared/entities/GameState'
+import { PawnDto } from '../../../shared/entities/Pawn'
+import { PawnPositionDto } from '../../../shared/entities/PawnPosition'
+import { Player } from '../../../shared/Enum'
 import { Server, Socket } from 'socket.io'
 import { Callback } from '../socketHandlers'
 import {
@@ -9,9 +9,9 @@ import {
   checkIfPawnExistAndIfIsPawnOwner,
   checkPawnPositionOnGameBoard,
   checkPawnPositionsAvailable
-} from '@/helpers/gameChecks'
-import { calculatePawnRemainingMoves } from '@/helpers/gameMethods'
-import { pawnDtoToEntity, pawnPositionDtoToEntity } from '@shared/helpers/Mapper'
+} from '../../helpers/gameChecks'
+import { calculatePawnRemainingMoves } from '../../helpers/gameMethods'
+import { pawnDtoToEntity, pawnPositionDtoToEntity } from '../../../shared/helpers/Mapper'
 
 export default function movePawnHandler(
   socket: Socket,

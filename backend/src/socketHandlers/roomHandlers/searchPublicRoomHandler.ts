@@ -1,7 +1,7 @@
 import { Server, Socket } from 'socket.io'
 import { Callback } from '../socketHandlers'
-import { emitPlayerCount } from '@/helpers/roomMethods'
-import { isUndefined } from '@shared/helpers/TypeGuard'
+import { emitPlayerCount } from '../../helpers/roomMethods'
+import { isUndefined } from '../../../shared/helpers/TypeGuard'
 
 export default function searchPublicRoomHandler(
   socket: Socket,

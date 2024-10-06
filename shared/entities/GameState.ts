@@ -101,6 +101,7 @@ export class GameState {
       return pawn
     }
 
+    console.error('Le pion est introuvable (méthode findPawn) ' + JSON.stringify(pawnToFind))
     throw new Error('Le pion est introuvable')
   }
 
@@ -111,6 +112,9 @@ export class GameState {
       return pawn
     }
 
+    console.error(
+      'Le pion est introuvable (méthode findPawnByPosition) ' + JSON.stringify(pawnPosition)
+    )
     throw new Error('Le pion est introuvable')
   }
 
@@ -123,6 +127,7 @@ export class GameState {
       }
     }
 
+    console.error('Le pion est introuvable (méthode calculatePawnPosition) ' + JSON.stringify(pawn))
     throw new Error('Le pion est introuvable')
   }
 

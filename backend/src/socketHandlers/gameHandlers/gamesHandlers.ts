@@ -1,4 +1,4 @@
-import { GameState } from '@shared/entities/GameState'
+import { GameState } from '../../../shared/entities/GameState'
 import { Server, Socket } from 'socket.io'
 import passTurnHandler from './passTurnHandler'
 import movePawnHandler from './movePawnHandler'
@@ -6,7 +6,7 @@ import killPawnHandler from './killPawnHandler'
 import pushPawnHandler from './pushPawnHandler'
 import pullPawnHandler from './pullPawnHandler'
 import rotatePawnHandler from './rotatePawnHandler'
-import { isDefined } from '@shared/helpers/TypeGuard'
+import { isDefined } from '../../../shared/helpers/TypeGuard'
 
 const games: Record<string, GameState> = {}
 

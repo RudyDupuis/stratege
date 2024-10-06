@@ -1,0 +1,26 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: ./backend/Dockerfile
+    restart: unless-stopped
+    ports:
+      - '4500:3000'
+    networks:
+      - stratege-network
+
+  frontend:
+    build:
+      context: .
+      dockerfile: ./frontend/Dockerfile
+    restart: unless-stopped
+    ports:
+      - '5500:4000'
+    depends_on:
+      - backend
+    networks:
+      - stratege-network
+
+networks:
+  stratege-network:
+    driver: bridge

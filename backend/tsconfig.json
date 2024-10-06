@@ -1,12 +1,12 @@
 {
   "compilerOptions": {
     "esModuleInterop": true,
-    "paths": {
-      "@/*": ["./src/*"],
-      "@shared/*": ["../shared/*"]
-    },
-    "outDir": "./dist"
+    "module": "CommonJS",
+    "outDir": "./dist",
+    "rootDir": ".",
+    "strict": true,
+    "baseUrl": "./"
   },
-  "include": ["src/**/*.ts"],
+  "include": ["src/**/*.ts", "shared/**/*.ts"],
   "exclude": ["node_modules"]
 }

@@ -1,5 +1,5 @@
-import { Pawn } from '@shared/entities/Pawn'
-import { PawnPosition } from '@shared/entities/PawnPosition'
+import { Pawn } from '../../shared/entities/Pawn'
+import { PawnPosition } from '../../shared/entities/PawnPosition'
 
 export function calculatePawnRemainingMoves(
   currentPawnPosition: PawnPosition,

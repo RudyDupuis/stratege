@@ -1,7 +1,7 @@
-import { GameState } from '@shared/entities/GameState'
-import { PawnDto } from '@shared/entities/Pawn'
-import { PawnPosition, PawnPositionDto } from '@shared/entities/PawnPosition'
-import { Player } from '@shared/Enum'
+import { GameState } from '../../../shared/entities/GameState'
+import { PawnDto } from '../../../shared/entities/Pawn'
+import { PawnPosition, PawnPositionDto } from '../../../shared/entities/PawnPosition'
+import { Player } from '../../../shared/Enum'
 import { Server, Socket } from 'socket.io'
 import { Callback } from '../socketHandlers'
 import {
@@ -9,9 +9,10 @@ import {
   checkIfPawnExistAndIfIsPawnOwner,
   checkPawnPositionOnGameBoard,
   checkPawnPositionsAvailable
-} from '@/helpers/gameChecks'
-import { calculatePawnRemainingMoves } from '@/helpers/gameMethods'
-import { pawnDtoToEntity, pawnPositionDtoToEntity } from '@shared/helpers/Mapper'
+} from '../../helpers/gameChecks'
+import { calculatePawnRemainingMoves } from '../../helpers/gameMethods'
+import { pawnDtoToEntity, pawnPositionDtoToEntity } from '../../../shared/helpers/Mapper'
+import { isUndefined } from '../../../shared/helpers/TypeGuard'
 
 export default function pushPawnHandler(
   socket: Socket,
@@ -59,13 +60,23 @@ export default function pushPawnHandler(
       const minRow = Math.min(currentPawnPosition.row, desiredPushedPawnPosition.row)
       const maxRow = Math.max(currentPawnPosition.row, desiredPushedPawnPosition.row)
 
-      let pawnToPushPosition: PawnPosition
+      let pawnToPushPosition: PawnPosition | undefined = undefined
 
       if (maxCol - minCol > 0) {
         pawnToPushPosition = new PawnPosition(minRow, minCol + 1)
       }
       if (maxRow - minRow > 0) {
         pawnToPushPosition = new PawnPosition(minRow + 1, minCol)
+      }
+
+      if (isUndefined(pawnToPushPosition)) {
+        console.error(
+          'Le pion ne peut pas aller dans cette direction' +
+            JSON.stringify(pawn) +
+            ' ' +
+            JSON.stringify(pawnToPushPosition)
+        )
+        throw new Error('Le pion ne peut pas aller dans cette direction')
       }
 
       const pawnToPush = game.findPawnByPosition(pawnToPushPosition)

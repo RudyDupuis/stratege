@@ -1,13 +1,13 @@
-import { GameState } from '@shared/entities/GameState'
-import { PawnDto } from '@shared/entities/Pawn'
-import { Orientation, Player } from '@shared/Enum'
+import { GameState } from '../../../shared/entities/GameState'
+import { PawnDto } from '../../../shared/entities/Pawn'
+import { Orientation, Player } from '../../../shared/Enum'
 import { Server, Socket } from 'socket.io'
 import { Callback } from '../socketHandlers'
 import {
   checkIfGameExistAndIfIsPlayerTurn,
   checkIfPawnExistAndIfIsPawnOwner
-} from '@/helpers/gameChecks'
-import { pawnDtoToEntity } from '@shared/helpers/Mapper'
+} from '../../helpers/gameChecks'
+import { pawnDtoToEntity } from '../../../shared/helpers/Mapper'
 
 export default function rotatePawnHandler(
   socket: Socket,
