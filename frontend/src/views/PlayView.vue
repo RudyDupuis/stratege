@@ -2,7 +2,7 @@
 import { io } from 'socket.io-client'
 import RoomTypeSelector from '@/components/playview/RoomTypeSelector.vue'
 import { isDefined } from '@shared/helpers/TypeGuard'
-import { ref, watch } from 'vue'
+import { ref, watch, watchEffect } from 'vue'
 import { useRoute } from 'vue-router'
 import PlayingRoom from '@/components/playview/PlayingRoom.vue'
 
@@ -14,13 +14,18 @@ const route = useRoute()
 const roomId = ref<string | undefined>(route.query.roomId as string | undefined)
 
 const roomType = ref<'private' | 'public' | undefined>(undefined)
+watchEffect(() => {
+  console.log('roomType', roomType.value)
+})
 
 function getRoomIdAndChangeURL(id: string) {
   roomId.value = id
+  console.log('roomId', roomId.value)
   window.history.pushState({}, '', `${FRONT_URL}jouer?roomId=${id}`)
 }
 
 watch(roomType, () => {
+  console.log('le watch')
   if (roomType.value === 'private') {
     socket.emit('createPrivateRoom', (id: string) => {
       getRoomIdAndChangeURL(id)
