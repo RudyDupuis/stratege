@@ -7,9 +7,9 @@ import { useRoute } from 'vue-router'
 import PlayingRoom from '@/components/playview/PlayingRoom.vue'
 
 const FRONT_URL = import.meta.env.VITE_FRONT_URL
-const BACK_URL = import.meta.env.VITE_BACK_URL
+const SOCKET_URL = import.meta.env.VITE_SOCKET_URL
 
-const socket = io(BACK_URL)
+const socket = io(SOCKET_URL)
 const route = useRoute()
 const roomId = ref<string | undefined>(route.query.roomId as string | undefined)
 
