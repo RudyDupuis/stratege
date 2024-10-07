@@ -6,6 +6,7 @@ export type Callback = (value: unknown) => void
 
 export default function socketHandlers(io: Server) {
   io.on('connection', (socket) => {
+    console.log('a user connected: ' + socket.id)
     roomHandlers(socket, io)
     gameHandlers(socket, io)
   })

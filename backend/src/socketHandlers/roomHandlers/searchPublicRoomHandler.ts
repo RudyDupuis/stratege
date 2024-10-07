@@ -12,6 +12,8 @@ export default function searchPublicRoomHandler(
   socket.on('searchPublicRoom', (callback: Callback) => {
     let roomId: string | undefined = undefined
 
+    console.log('on est là')
+
     for (const [id, players] of Object.entries(availablePublicRooms)) {
       if (players.size === 1) {
         roomId = id

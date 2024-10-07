@@ -14,9 +14,6 @@ const route = useRoute()
 const roomId = ref<string | undefined>(route.query.roomId as string | undefined)
 
 const roomType = ref<'private' | 'public' | undefined>(undefined)
-watchEffect(() => {
-  console.log('roomType', roomType.value)
-})
 
 function getRoomIdAndChangeURL(id: string) {
   roomId.value = id
@@ -25,7 +22,6 @@ function getRoomIdAndChangeURL(id: string) {
 }
 
 watch(roomType, () => {
-  console.log('le watch')
   if (roomType.value === 'private') {
     socket.emit('createPrivateRoom', (id: string) => {
       getRoomIdAndChangeURL(id)
