@@ -2,14 +2,14 @@
 import { io } from 'socket.io-client'
 import RoomTypeSelector from '@/components/playview/RoomTypeSelector.vue'
 import { isDefined } from '@shared/helpers/TypeGuard'
-import { ref, watch, watchEffect } from 'vue'
+import { ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import PlayingRoom from '@/components/playview/PlayingRoom.vue'
 
 const FRONT_URL = import.meta.env.VITE_FRONT_URL
 const BACK_URL = import.meta.env.VITE_BACK_URL
 
-const socket = io(BACK_URL)
+const socket = io(`${BACK_URL}socket.io`)
 const route = useRoute()
 const roomId = ref<string | undefined>(route.query.roomId as string | undefined)
 
@@ -17,7 +17,6 @@ const roomType = ref<'private' | 'public' | undefined>(undefined)
 
 function getRoomIdAndChangeURL(id: string) {
   roomId.value = id
-  console.log('roomId', roomId.value)
   window.history.pushState({}, '', `${FRONT_URL}jouer?roomId=${id}`)
 }
 
