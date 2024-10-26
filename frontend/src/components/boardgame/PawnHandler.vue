@@ -2,8 +2,9 @@
 import Pawn from '@shared/pawn/entities/Pawn'
 import { Player } from '@shared/gameState/entities/PlayerEnum'
 import { Orientation } from '@shared/pawn/entities/OrientationEnum'
-import { computed } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import PawnComponent from './subcomponents/PawnComponent.vue'
+import { isDefined } from '@shared/utils/TypeGuard'
 
 const props = defineProps<{
   pawn: Pawn
@@ -57,13 +58,41 @@ const remainingMoveOrientation = computed(() => {
       return 'rotate-90'
   }
 })
+
+const translateX = ref('0px')
+const translateY = ref('0px')
+const pawnRef = ref<InstanceType<typeof PawnComponent> | undefined>(undefined)
+const caseSize = ref(0)
+const transition = ref(false)
+
+onMounted(() => {
+  if (isDefined(pawnRef.value)) {
+    caseSize.value = pawnRef.value.size
+  }
+
+  if (isDefined(props.pawn.lastPosition)) {
+    translateX.value =
+      (props.pawn.lastPosition.col - props.pawn.position.col) * caseSize.value + 'px'
+    translateY.value =
+      (props.pawn.lastPosition.row - props.pawn.position.row) * caseSize.value + 'px'
+
+    setTimeout(() => {
+      transition.value = true
+      translateX.value = '0px'
+      translateY.value = '0px'
+    }, 1)
+  }
+})
 </script>
 
 <template>
   <PawnComponent
+    ref="pawnRef"
     :sizeClass="'size-11/12'"
     :colorClass="pawnColor"
     :orientationClass="pawnOrientation"
+    :class="{ 'transition-transform duration-500 ease-in-out': transition }"
+    :style="{ transform: `translate(${translateX}, ${translateY})` }"
   >
     <p
       class="text-light font-primary_bold absolute top-0 left-0 px-1 md:px-3 md:py-2"

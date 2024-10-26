@@ -9,7 +9,7 @@ import {
   checkIfIsPawnOwner,
   checkPawnPositionsAvailable
 } from '../../utils/gameChecks'
-import { calculatePawnRemainingMoves, findPawnByPosition } from '../../utils/gameMethods'
+import { calculatePawnRemainingMoves } from '../../utils/gameMethods'
 import pawnDtoToEntity from '../../../shared/pawn/mappers/pawnMapper'
 import pawnPositionDtoToEntity from '../../../shared/pawnPosition/mappers/pawnPositionMapper'
 import { isUndefined } from '../../../shared/utils/TypeGuard'
@@ -52,7 +52,7 @@ export default function killPawnHandler(
         return callback({ error: error })
       }
 
-      const pawnToKill = findPawnByPosition(gameState.boardPawns, desiredPawnPositionForKill)
+      const pawnToKill = gameState.findPawnByPosition(desiredPawnPositionForKill)
 
       if (isUndefined(pawnToKill)) {
         return callback({ error: "Le pion à prendre n'existe pas" })

@@ -1,6 +1,5 @@
 import { Orientation } from '../../../pawn/entities/OrientationEnum'
 import PawnPosition from '../../../pawnPosition/entities/PawnPosition'
-import { isUndefined } from '../../../utils/TypeGuard'
 import GameState from '../../entities/GameState'
 import { Player } from '../../entities/PlayerEnum'
 import {
@@ -31,15 +30,7 @@ export default function determineAvailablePositionsForMovingOrKillingByMovingOne
 
     if (GameState.isInBoardGameBounds(gameState.board, newRow, newCol)) {
       if (GameState.isCellOccupied(gameState.board, newRow, newCol)) {
-        const otherPawn = gameState.boardPawns.find(
-          (pawn) => pawn.position.row === newRow && pawn.position.col === newCol && pawn.isAlive
-        )
-
-        if (isUndefined(otherPawn)) {
-          throw new Error(
-            'Une erreur est survenue lors du calcul des positions disponibles. (Pion introuvable sur une cellule occupée)'
-          )
-        }
+        const otherPawn = gameState.findPawnByPosition(newPosition)
 
         if (otherPawn.owner !== player) {
           switch (direction) {

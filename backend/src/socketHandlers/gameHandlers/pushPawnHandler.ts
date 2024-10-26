@@ -10,7 +10,7 @@ import {
   checkIfIsPawnOwner,
   checkPawnPositionsAvailable
 } from '../../utils/gameChecks'
-import { calculatePawnRemainingMoves, findPawnByPosition } from '../../utils/gameMethods'
+import { calculatePawnRemainingMoves } from '../../utils/gameMethods'
 import { isUndefined } from '../../../shared/utils/TypeGuard'
 import pawnDtoToEntity from '../../../shared/pawn/mappers/pawnMapper'
 import pawnPositionDtoToEntity from '../../../shared/pawnPosition/mappers/pawnPositionMapper'
@@ -77,7 +77,7 @@ export default function pushPawnHandler(
         throw new Error('Le pion ne peut pas aller dans cette direction')
       }
 
-      const pawnToPush = findPawnByPosition(gameState.boardPawns, pawnToPushPosition)
+      const pawnToPush = gameState.findPawnByPosition(pawnToPushPosition)
 
       if (isUndefined(pawnToPush)) {
         return callback({ error: "Le pion à pousser n'existe pas" })

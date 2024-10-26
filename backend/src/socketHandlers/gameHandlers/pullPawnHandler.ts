@@ -10,7 +10,7 @@ import {
   checkIfIsPawnOwner,
   checkPawnPositionsAvailable
 } from '../../utils/gameChecks'
-import { calculatePawnRemainingMoves, findPawnByPosition } from '../../utils/gameMethods'
+import { calculatePawnRemainingMoves } from '../../utils/gameMethods'
 import pawnDtoToEntity from '../../../shared/pawn/mappers/pawnMapper'
 import pawnPositionDtoToEntity from '../../../shared/pawnPosition/mappers/pawnPositionMapper'
 import { isUndefined } from '../../../shared/utils/TypeGuard'
@@ -59,7 +59,7 @@ export default function pullPawnHandler(
         pawn.position.col + pawn.position.col - desiredPawnPositionAfterPulling.col
       )
 
-      const pawnToPull = findPawnByPosition(gameState.boardPawns, pawnToPullPosition)
+      const pawnToPull = gameState.findPawnByPosition(pawnToPullPosition)
 
       if (isUndefined(pawnToPull)) {
         return callback({ error: "Le pion à tirer n'existe pas" })

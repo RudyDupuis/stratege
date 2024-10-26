@@ -17,8 +17,6 @@ export function createOrRetrieveGame(roomId: string, io: Server) {
   }
 
   const newGame = new GameState(1, initialBoardPawns())
-  //Todo reste si c'est dans le constructeur this.board = buildBoard(this.boardPawns)
-  newGame.updateBoard()
 
   games[roomId] = newGame
   io.to(roomId).emit('gameState', newGame)

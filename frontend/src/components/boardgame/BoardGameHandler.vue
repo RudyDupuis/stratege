@@ -144,14 +144,20 @@ const gameData = computed<gameData>(() => {
               </template>
               <PawnHandler
                 v-if="isNotNull(gameState.board[rowIndex][colIndex])"
-                :pawn="gameState.board[rowIndex][colIndex] as Pawn"
+                :pawn="gameState.findPawnByPosition(new PawnPosition(rowIndex, colIndex))"
                 :player="player"
                 :class="{
-                  'opacity-60': targetPawn === gameState.board[rowIndex][colIndex],
+                  'opacity-60':
+                    targetPawn ===
+                    gameState.findPawnByPosition(new PawnPosition(rowIndex, colIndex)),
                   'cursor-pointer':
-                    isPlayerTurn && gameState.board[rowIndex][colIndex]?.owner === player
+                    isPlayerTurn &&
+                    gameState.findPawnByPosition(new PawnPosition(rowIndex, colIndex))?.owner ===
+                      player
                 }"
-                @click="selectPawn(gameState.board[rowIndex][colIndex] as Pawn)"
+                @click="
+                  selectPawn(gameState.findPawnByPosition(new PawnPosition(rowIndex, colIndex)))
+                "
               />
             </div>
           </div>

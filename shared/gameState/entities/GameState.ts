@@ -6,6 +6,8 @@ import buildBoard from '../utils/buildBoard'
 import determineWinner from '../utils/determineWinner'
 import determinePlayersLostPawns from '../utils/determinePlayersLostPawns'
 import { determineAvailablePositionsForActions } from '../utils/determineAvailablePositionsForActions/determineAvailablePositionsForActions'
+import PawnPosition from '../../pawnPosition/entities/PawnPosition'
+import findPawnByPosition from '../utils/findPawnByPosition'
 
 export default class GameState implements GameStateDto {
   public static readonly MAX_PAWN_MOVEMENT = 2
@@ -25,10 +27,8 @@ export default class GameState implements GameStateDto {
       )
     }
 
+    this.updateBoard()
     this.checkIfThereIsAWinner()
-
-    //Todo piste à enlever pour gérer les anims dans le front
-    this.board = buildBoard(this.boardPawns)
   }
 
   public updateBoard() {
@@ -57,6 +57,10 @@ export default class GameState implements GameStateDto {
 
   public determinePlayersLostPawns() {
     return determinePlayersLostPawns(this.boardPawns)
+  }
+
+  public findPawnByPosition(pawnPosition: PawnPosition) {
+    return findPawnByPosition(this.boardPawns, pawnPosition)
   }
 
   public resetRemainingMovesPawns() {
