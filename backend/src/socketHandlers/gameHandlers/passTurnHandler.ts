@@ -10,17 +10,17 @@ export default function passTurnHandler(
   io: Server
 ) {
   socket.on('passTurn', (roomId: string, player: Player, callback: Callback) => {
-    const game = games[roomId]
+    const gameState = games[roomId]
 
     try {
-      checkIfGameExistAndIfIsPlayerTurn(game, player)
+      checkIfGameExistAndIfIsPlayerTurn(gameState, player)
     } catch (error) {
       return callback({ error: error })
     }
 
-    game.turn += 1
-    game.resetRemainingMoves()
+    gameState.turn += 1
+    gameState.resetRemainingMovesPawns()
 
-    io.to(roomId).emit('gameState', game)
+    io.to(roomId).emit('gameState', gameState)
   })
 }

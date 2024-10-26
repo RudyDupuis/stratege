@@ -4,11 +4,9 @@ import { Player } from '../../../shared/gameState/entities/PlayerEnum'
 import { Orientation } from '../../../shared/pawn/entities/OrientationEnum'
 import { Server, Socket } from 'socket.io'
 import { Callback } from '../socketHandlers'
-import {
-  checkIfGameExistAndIfIsPlayerTurn,
-  checkIfPawnExistAndIfIsPawnOwner
-} from '../../utils/gameChecks'
+import { checkIfGameExistAndIfIsPlayerTurn, checkIfIsPawnOwner } from '../../utils/gameChecks'
 import pawnDtoToEntity from '../../../shared/pawn/mappers/pawnMapper'
+import { Action } from '../../../shared/pawn/entities/ActionEnum'
 
 export default function rotatePawnHandler(
   socket: Socket,
@@ -24,21 +22,22 @@ export default function rotatePawnHandler(
       orientation: Orientation,
       callback: Callback
     ) => {
-      const game = games[roomId]
+      const gameState = games[roomId]
       const pawn = pawnDtoToEntity(pawnDto)
 
       try {
-        checkIfGameExistAndIfIsPlayerTurn(game, player)
-        checkIfPawnExistAndIfIsPawnOwner(game, pawn, player)
+        checkIfGameExistAndIfIsPlayerTurn(gameState, player)
+        checkIfIsPawnOwner(gameState, pawn, player)
       } catch (error) {
         return callback({ error: error })
       }
 
-      const instancedPawn = game.findPawn(pawn)
+      pawn.orientation = orientation
+      pawn.lastAction = Action.Rotate
 
-      instancedPawn.orientation = orientation
+      gameState.updatePawn(pawn)
 
-      io.to(roomId).emit('gameState', game)
+      io.to(roomId).emit('gameState', gameState)
     }
   )
 }

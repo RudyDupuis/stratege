@@ -7,7 +7,7 @@ import pushPawnHandler from './pushPawnHandler'
 import pullPawnHandler from './pullPawnHandler'
 import rotatePawnHandler from './rotatePawnHandler'
 import { isDefined } from '../../../shared/utils/TypeGuard'
-import initialBoard from '../../../shared/gameState/utils/initialBoard'
+import initialBoardPawns from '../../../shared/gameState/utils/initialBoardPawns'
 
 const games: Record<string, GameState> = {}
 
@@ -16,7 +16,10 @@ export function createOrRetrieveGame(roomId: string, io: Server) {
     return io.to(roomId).emit('gameState', games[roomId])
   }
 
-  const newGame = new GameState(1, initialBoard(), [], [], undefined)
+  const newGame = new GameState(1, initialBoardPawns())
+  //Todo reste si c'est dans le constructeur this.board = buildBoard(this.boardPawns)
+  newGame.updateBoard()
+
   games[roomId] = newGame
   io.to(roomId).emit('gameState', newGame)
 }

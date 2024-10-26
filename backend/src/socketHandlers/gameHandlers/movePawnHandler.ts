@@ -6,13 +6,14 @@ import { Server, Socket } from 'socket.io'
 import { Callback } from '../socketHandlers'
 import {
   checkIfGameExistAndIfIsPlayerTurn,
-  checkIfPawnExistAndIfIsPawnOwner,
-  checkPawnPositionOnGameBoard,
+  checkIfIsPawnOwner,
   checkPawnPositionsAvailable
 } from '../../utils/gameChecks'
 import { calculatePawnRemainingMoves } from '../../utils/gameMethods'
 import pawnDtoToEntity from '../../../shared/pawn/mappers/pawnMapper'
 import pawnPositionDtoToEntity from '../../../shared/pawnPosition/mappers/pawnPositionMapper'
+import { Action } from '../../../shared/pawn/entities/ActionEnum'
+import PawnPosition from '../../../shared/pawnPosition/entities/PawnPosition'
 
 export default function movePawnHandler(
   socket: Socket,
@@ -28,25 +29,21 @@ export default function movePawnHandler(
       desiredPawnPositionDto: PawnPositionDto,
       callback: Callback
     ) => {
-      const game = games[roomId]
+      const gameState = games[roomId]
       const pawn = pawnDtoToEntity(pawnDto)
       const desiredPawnPosition = pawnPositionDtoToEntity(desiredPawnPositionDto)
 
       try {
-        checkIfGameExistAndIfIsPlayerTurn(game, player)
-        checkIfPawnExistAndIfIsPawnOwner(game, pawn, player)
-        checkPawnPositionOnGameBoard(game, pawn)
+        checkIfGameExistAndIfIsPlayerTurn(gameState, player)
+        checkIfIsPawnOwner(gameState, pawn, player)
       } catch (error) {
         return callback({ error: error })
       }
 
-      const instancedPawn = game.findPawn(pawn)
-      const currentPawnPosition = game.calculatePawnPosition(pawn)
-      const positionsAvailableForMoving =
-        game.calculatePositionsAvailableForMovingKillingPushingOrPulling(
-          pawn,
-          player
-        ).returnedPositionsAvailableForMoving
+      const positionsAvailableForMoving = gameState.determineAvailablePositionsForActions(
+        pawn,
+        player
+      ).returnedPositionsAvailableForMoving
 
       try {
         checkPawnPositionsAvailable(positionsAvailableForMoving, desiredPawnPosition)
@@ -54,12 +51,16 @@ export default function movePawnHandler(
         return callback({ error: error })
       }
 
-      calculatePawnRemainingMoves(currentPawnPosition, desiredPawnPosition, instancedPawn)
+      calculatePawnRemainingMoves(pawn, desiredPawnPosition)
 
-      game.board[currentPawnPosition.row][currentPawnPosition.col] = null
-      game.board[desiredPawnPosition.row][desiredPawnPosition.col] = instancedPawn
+      pawn.lastPosition = new PawnPosition(pawn.position.row, pawn.position.col)
+      pawn.position = desiredPawnPosition
+      pawn.lastAction = Action.Move
 
-      io.to(roomId).emit('gameState', game)
+      gameState.updatePawn(pawn)
+      gameState.updateBoard()
+
+      io.to(roomId).emit('gameState', gameState)
     }
   )
 }

@@ -6,13 +6,15 @@ import { Server, Socket } from 'socket.io'
 import { Callback } from '../socketHandlers'
 import {
   checkIfGameExistAndIfIsPlayerTurn,
-  checkIfPawnExistAndIfIsPawnOwner,
-  checkPawnPositionOnGameBoard,
+  checkIfIsPawnOwner,
   checkPawnPositionsAvailable
 } from '../../utils/gameChecks'
-import { calculatePawnRemainingMoves } from '../../utils/gameMethods'
+import { calculatePawnRemainingMoves, findPawnByPosition } from '../../utils/gameMethods'
 import pawnDtoToEntity from '../../../shared/pawn/mappers/pawnMapper'
 import pawnPositionDtoToEntity from '../../../shared/pawnPosition/mappers/pawnPositionMapper'
+import { isUndefined } from '../../../shared/utils/TypeGuard'
+import { Action, ReceivedAction } from '../../../shared/pawn/entities/ActionEnum'
+import PawnPosition from '../../../shared/pawnPosition/entities/PawnPosition'
 
 export default function killPawnHandler(
   socket: Socket,
@@ -28,54 +30,53 @@ export default function killPawnHandler(
       desiredPawnPositionForKillDto: PawnPositionDto,
       callback: Callback
     ) => {
-      const game = games[roomId]
+      const gameState = games[roomId]
       const pawn = pawnDtoToEntity(pawnDto)
       const desiredPawnPositionForKill = pawnPositionDtoToEntity(desiredPawnPositionForKillDto)
 
       try {
-        checkIfGameExistAndIfIsPlayerTurn(game, player)
-        checkIfPawnExistAndIfIsPawnOwner(game, pawn, player)
-        checkPawnPositionOnGameBoard(game, pawn)
+        checkIfGameExistAndIfIsPlayerTurn(gameState, player)
+        checkIfIsPawnOwner(gameState, pawn, player)
       } catch (error) {
         return callback({ error: error })
       }
 
-      const instancedPawn = game.findPawn(pawn)
-
-      const currentPawnPosition = game.calculatePawnPosition(pawn)
-      const positionsAvailableForKilling =
-        game.calculatePositionsAvailableForMovingKillingPushingOrPulling(
-          pawn,
-          player
-        ).returnedPositionsAvailableForKilling
+      const positionsAvailableForKilling = gameState.determineAvailablePositionsForActions(
+        pawn,
+        player
+      ).returnedPositionsAvailableForKilling
 
       try {
         checkPawnPositionsAvailable(positionsAvailableForKilling, desiredPawnPositionForKill)
-        game.findPawnByPosition(desiredPawnPositionForKill)
       } catch (error) {
         return callback({ error: error })
       }
 
-      const pawnToKill = game.findPawnByPosition(desiredPawnPositionForKill)
+      const pawnToKill = findPawnByPosition(gameState.boardPawns, desiredPawnPositionForKill)
 
+      if (isUndefined(pawnToKill)) {
+        return callback({ error: "Le pion à prendre n'existe pas" })
+      }
       if (pawnToKill.owner === player) {
         return callback({ error: 'Le pion à prendre appartient au même joueur' })
       }
 
-      calculatePawnRemainingMoves(currentPawnPosition, desiredPawnPositionForKill, instancedPawn)
+      calculatePawnRemainingMoves(pawn, desiredPawnPositionForKill)
 
-      if (player === Player.Player1) {
-        game.player2sLostPawns.push(pawnToKill)
-      }
-      if (player === Player.Player2) {
-        game.player1sLostPawns.push(pawnToKill)
-      }
+      pawnToKill.isAlive = false
+      pawnToKill.lastAction = ReceivedAction.IsKilled
 
-      game.board[currentPawnPosition.row][currentPawnPosition.col] = null
-      game.board[desiredPawnPositionForKill.row][desiredPawnPositionForKill.col] = instancedPawn
+      pawn.lastPosition = new PawnPosition(pawn.position.row, pawn.position.col)
+      pawn.position = desiredPawnPositionForKill
+      pawn.lastAction = Action.Kill
 
-      game.determineWinner()
-      io.to(roomId).emit('gameState', game)
+      gameState.updatePawn(pawnToKill)
+      gameState.updatePawn(pawn)
+
+      gameState.checkIfThereIsAWinner()
+      gameState.updateBoard()
+
+      io.to(roomId).emit('gameState', gameState)
     }
   )
 }

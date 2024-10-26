@@ -7,14 +7,14 @@ import { Server, Socket } from 'socket.io'
 import { Callback } from '../socketHandlers'
 import {
   checkIfGameExistAndIfIsPlayerTurn,
-  checkIfPawnExistAndIfIsPawnOwner,
-  checkPawnPositionOnGameBoard,
+  checkIfIsPawnOwner,
   checkPawnPositionsAvailable
 } from '../../utils/gameChecks'
-import { calculatePawnRemainingMoves } from '../../utils/gameMethods'
+import { calculatePawnRemainingMoves, findPawnByPosition } from '../../utils/gameMethods'
 import { isUndefined } from '../../../shared/utils/TypeGuard'
 import pawnDtoToEntity from '../../../shared/pawn/mappers/pawnMapper'
 import pawnPositionDtoToEntity from '../../../shared/pawnPosition/mappers/pawnPositionMapper'
+import { Action, ReceivedAction } from '../../../shared/pawn/entities/ActionEnum'
 
 export default function pushPawnHandler(
   socket: Socket,
@@ -30,25 +30,21 @@ export default function pushPawnHandler(
       desiredPushedPawnPositionDto: PawnPositionDto,
       callback: Callback
     ) => {
-      const game = games[roomId]
+      const gameState = games[roomId]
       const pawn = pawnDtoToEntity(pawnDto)
       const desiredPushedPawnPosition = pawnPositionDtoToEntity(desiredPushedPawnPositionDto)
 
       try {
-        checkIfGameExistAndIfIsPlayerTurn(game, player)
-        checkIfPawnExistAndIfIsPawnOwner(game, pawn, player)
-        checkPawnPositionOnGameBoard(game, pawn)
+        checkIfGameExistAndIfIsPlayerTurn(gameState, player)
+        checkIfIsPawnOwner(gameState, pawn, player)
       } catch (error) {
         return callback({ error: error })
       }
 
-      const instancedPawn = game.findPawn(pawn)
-      const currentPawnPosition = game.calculatePawnPosition(pawn)
-      const positionsAvailableForPushing =
-        game.calculatePositionsAvailableForMovingKillingPushingOrPulling(
-          pawn,
-          player
-        ).returnedPositionsAvailableForPushing
+      const positionsAvailableForPushing = gameState.determineAvailablePositionsForActions(
+        pawn,
+        player
+      ).returnedPositionsAvailableForPushing
 
       try {
         checkPawnPositionsAvailable(positionsAvailableForPushing, desiredPushedPawnPosition)
@@ -57,10 +53,10 @@ export default function pushPawnHandler(
       }
 
       //Is used to calculate the position of the pion to push
-      const minCol = Math.min(currentPawnPosition.col, desiredPushedPawnPosition.col)
-      const maxCol = Math.max(currentPawnPosition.col, desiredPushedPawnPosition.col)
-      const minRow = Math.min(currentPawnPosition.row, desiredPushedPawnPosition.row)
-      const maxRow = Math.max(currentPawnPosition.row, desiredPushedPawnPosition.row)
+      const minCol = Math.min(pawn.position.col, desiredPushedPawnPosition.col)
+      const maxCol = Math.max(pawn.position.col, desiredPushedPawnPosition.col)
+      const minRow = Math.min(pawn.position.row, desiredPushedPawnPosition.row)
+      const maxRow = Math.max(pawn.position.row, desiredPushedPawnPosition.row)
 
       let pawnToPushPosition: PawnPosition | undefined = undefined
 
@@ -81,15 +77,28 @@ export default function pushPawnHandler(
         throw new Error('Le pion ne peut pas aller dans cette direction')
       }
 
-      const pawnToPush = game.findPawnByPosition(pawnToPushPosition)
+      const pawnToPush = findPawnByPosition(gameState.boardPawns, pawnToPushPosition)
 
-      calculatePawnRemainingMoves(currentPawnPosition, pawnToPushPosition, instancedPawn)
+      if (isUndefined(pawnToPush)) {
+        return callback({ error: "Le pion à pousser n'existe pas" })
+      }
 
-      game.board[currentPawnPosition.row][currentPawnPosition.col] = null
-      game.board[pawnToPushPosition.row][pawnToPushPosition.col] = instancedPawn
-      game.board[desiredPushedPawnPosition.row][desiredPushedPawnPosition.col] = pawnToPush
+      calculatePawnRemainingMoves(pawn, pawnToPushPosition)
 
-      io.to(roomId).emit('gameState', game)
+      pawnToPush.lastPosition = new PawnPosition(pawnToPush.position.row, pawnToPush.position.col)
+      pawnToPush.position = desiredPushedPawnPosition
+      pawnToPush.lastAction = ReceivedAction.IsPushed
+
+      pawn.lastPosition = new PawnPosition(pawn.position.row, pawn.position.col)
+      pawn.position = pawnToPush.lastPosition
+      pawn.lastAction = Action.Push
+
+      gameState.updatePawn(pawnToPush)
+      gameState.updatePawn(pawn)
+
+      gameState.updateBoard()
+
+      io.to(roomId).emit('gameState', gameState)
     }
   )
 }

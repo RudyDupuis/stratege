@@ -11,6 +11,7 @@ import GameControls from './subcomponents/GameControls.vue'
 import GameAction from './subcomponents/GameAction.vue'
 import PawnHandler from './PawnHandler.vue'
 import GameInformations from './subcomponents/GameInformations.vue'
+import { Action } from '@shared/pawn/entities/ActionEnum'
 
 const props = defineProps<{
   roomId: string
@@ -58,10 +59,7 @@ function selectPawn(pawn: Pawn) {
     returnedPositionsAvailableForKilling,
     returnedPositionsAvailableForPushing,
     returnedPositionsAvailableForPulling
-  } = props.gameState.calculatePositionsAvailableForMovingKillingPushingOrPulling(
-    pawn,
-    props.player
-  )
+  } = props.gameState.determineAvailablePositionsForActions(pawn, props.player)
   positionsAvailableForMoving.value = returnedPositionsAvailableForMoving
   positionsAvailableForKilling.value = returnedPositionsAvailableForKilling
   positionsAvailableForPushing.value = returnedPositionsAvailableForPushing
@@ -93,8 +91,8 @@ const gameData = computed<gameData>(() => {
     <section class="flex flex-col justify-center items-center py-10 xl:py-0">
       <GameInformations
         :turn="gameState.turn"
-        :player1s-lost-pawns-number="gameState.player1sLostPawns.length"
-        :player2s-lost-pawns-number="gameState.player2sLostPawns.length"
+        :player1s-lost-pawns-number="gameState.determinePlayersLostPawns().player1sLostPawns.length"
+        :player2s-lost-pawns-number="gameState.determinePlayersLostPawns().player2sLostPawns.length"
       />
       <div class="p-6 rounded-xl bg-dark_light">
         <div
@@ -111,7 +109,7 @@ const gameData = computed<gameData>(() => {
               <template v-if="actions === 'move_kill'">
                 <GameAction
                   :game-data="gameData"
-                  action="move"
+                  :action="Action.Move"
                   :positions-available-for-action="positionsAvailableForMoving"
                   :row-index="rowIndex"
                   :col-index="colIndex"
@@ -119,7 +117,7 @@ const gameData = computed<gameData>(() => {
                 />
                 <GameAction
                   :game-data="gameData"
-                  action="kill"
+                  :action="Action.Kill"
                   :positions-available-for-action="positionsAvailableForKilling"
                   :row-index="rowIndex"
                   :col-index="colIndex"
@@ -129,7 +127,7 @@ const gameData = computed<gameData>(() => {
               <template v-if="actions === 'push_pull'">
                 <GameAction
                   :game-data="gameData"
-                  action="push"
+                  :action="Action.Push"
                   :positions-available-for-action="positionsAvailableForPushing"
                   :row-index="rowIndex"
                   :col-index="colIndex"
@@ -137,7 +135,7 @@ const gameData = computed<gameData>(() => {
                 />
                 <GameAction
                   :game-data="gameData"
-                  action="pull"
+                  :action="Action.Pull"
                   :positions-available-for-action="positionsAvailableForPulling"
                   :row-index="rowIndex"
                   :col-index="colIndex"

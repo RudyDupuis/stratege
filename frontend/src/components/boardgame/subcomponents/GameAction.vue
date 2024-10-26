@@ -5,10 +5,11 @@ import { computed, ref } from 'vue'
 import type { gameData } from '../BoardGameHandler.vue'
 import { handleSocketResponse, type SocketResponse } from '@/helpers/socketHelpers'
 import ErrorDisplayer from '@/components/shared/ErrorDisplayer.vue'
+import type { Action } from '@shared/pawn/entities/ActionEnum'
 
 const props = defineProps<{
   gameData: gameData
-  action: 'move' | 'kill' | 'push' | 'pull'
+  action: Action
   positionsAvailableForAction: PawnPosition[]
   rowIndex: number
   colIndex: number

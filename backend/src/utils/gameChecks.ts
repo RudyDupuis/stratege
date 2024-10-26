@@ -18,19 +18,13 @@ export function checkIfGameExistAndIfIsPlayerTurn(game: GameState, player: Playe
   }
 }
 
-export function checkIfPawnExistAndIfIsPawnOwner(game: GameState, pawn: Pawn, player: Player) {
-  game.findPawn(pawn)
-
+export function checkIfIsPawnOwner(game: GameState, pawn: Pawn, player: Player) {
   if (pawn.owner !== player) {
     console.error(
       "Le pion n'appartient pas à ce joueur" + JSON.stringify(pawn) + ' ' + JSON.stringify(game)
     )
     throw new Error("Le pion n'appartient pas à ce joueur")
   }
-}
-
-export function checkPawnPositionOnGameBoard(game: GameState, pawn: Pawn) {
-  game.calculatePawnPosition(pawn)
 }
 
 export function checkPawnPositionsAvailable(

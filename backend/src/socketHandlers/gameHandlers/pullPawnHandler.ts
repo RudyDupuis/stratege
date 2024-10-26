@@ -7,13 +7,14 @@ import { Server, Socket } from 'socket.io'
 import { Callback } from '../socketHandlers'
 import {
   checkIfGameExistAndIfIsPlayerTurn,
-  checkIfPawnExistAndIfIsPawnOwner,
-  checkPawnPositionOnGameBoard,
+  checkIfIsPawnOwner,
   checkPawnPositionsAvailable
 } from '../../utils/gameChecks'
-import { calculatePawnRemainingMoves } from '../../utils/gameMethods'
+import { calculatePawnRemainingMoves, findPawnByPosition } from '../../utils/gameMethods'
 import pawnDtoToEntity from '../../../shared/pawn/mappers/pawnMapper'
 import pawnPositionDtoToEntity from '../../../shared/pawnPosition/mappers/pawnPositionMapper'
+import { isUndefined } from '../../../shared/utils/TypeGuard'
+import { Action, ReceivedAction } from '../../../shared/pawn/entities/ActionEnum'
 
 export default function pullPawnHandler(
   socket: Socket,
@@ -29,27 +30,23 @@ export default function pullPawnHandler(
       desiredPawnPositionAfterPullingDto: PawnPositionDto,
       callback: Callback
     ) => {
-      const game = games[roomId]
+      const gameState = games[roomId]
       const pawn = pawnDtoToEntity(pawnDto)
       const desiredPawnPositionAfterPulling = pawnPositionDtoToEntity(
         desiredPawnPositionAfterPullingDto
       )
 
       try {
-        checkIfGameExistAndIfIsPlayerTurn(game, player)
-        checkIfPawnExistAndIfIsPawnOwner(game, pawn, player)
-        checkPawnPositionOnGameBoard(game, pawn)
+        checkIfGameExistAndIfIsPlayerTurn(gameState, player)
+        checkIfIsPawnOwner(gameState, pawn, player)
       } catch (error) {
         return callback({ error: error })
       }
 
-      const instancedPawn = game.findPawn(pawn)
-      const currentPawnPosition = game.calculatePawnPosition(pawn)
-      const positionsAvailableForPulling =
-        game.calculatePositionsAvailableForMovingKillingPushingOrPulling(
-          pawn,
-          player
-        ).returnedPositionsAvailableForPulling
+      const positionsAvailableForPulling = gameState.determineAvailablePositionsForActions(
+        pawn,
+        player
+      ).returnedPositionsAvailableForPulling
 
       try {
         checkPawnPositionsAvailable(positionsAvailableForPulling, desiredPawnPositionAfterPulling)
@@ -58,24 +55,32 @@ export default function pullPawnHandler(
       }
 
       const pawnToPullPosition = new PawnPosition(
-        currentPawnPosition.row + currentPawnPosition.row - desiredPawnPositionAfterPulling.row,
-        currentPawnPosition.col + currentPawnPosition.col - desiredPawnPositionAfterPulling.col
+        pawn.position.row + pawn.position.row - desiredPawnPositionAfterPulling.row,
+        pawn.position.col + pawn.position.col - desiredPawnPositionAfterPulling.col
       )
 
-      const pawnToPull = game.findPawnByPosition(pawnToPullPosition)
+      const pawnToPull = findPawnByPosition(gameState.boardPawns, pawnToPullPosition)
 
-      calculatePawnRemainingMoves(
-        currentPawnPosition,
-        desiredPawnPositionAfterPulling,
-        instancedPawn
-      )
+      if (isUndefined(pawnToPull)) {
+        return callback({ error: "Le pion à tirer n'existe pas" })
+      }
 
-      game.board[desiredPawnPositionAfterPulling.row][desiredPawnPositionAfterPulling.col] =
-        instancedPawn
-      game.board[currentPawnPosition.row][currentPawnPosition.col] = pawnToPull
-      game.board[pawnToPullPosition.row][pawnToPullPosition.col] = null
+      calculatePawnRemainingMoves(pawn, desiredPawnPositionAfterPulling)
 
-      io.to(roomId).emit('gameState', game)
+      pawn.lastPosition = new PawnPosition(pawn.position.row, pawn.position.col)
+      pawn.position = desiredPawnPositionAfterPulling
+      pawn.lastAction = Action.Pull
+
+      pawnToPull.lastPosition = new PawnPosition(pawnToPull.position.row, pawnToPull.position.col)
+      pawnToPull.position = pawn.lastPosition
+      pawnToPull.lastAction = ReceivedAction.IsPulled
+
+      gameState.updatePawn(pawn)
+      gameState.updatePawn(pawnToPull)
+
+      gameState.updateBoard()
+
+      io.to(roomId).emit('gameState', gameState)
     }
   )
 }
