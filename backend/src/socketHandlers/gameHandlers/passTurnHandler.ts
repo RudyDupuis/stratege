@@ -1,8 +1,8 @@
-import { Player } from '../../../shared/Enum'
+import { Player } from '../../../shared/gameState/entities/PlayerEnum'
 import { Server, Socket } from 'socket.io'
 import { Callback } from '../socketHandlers'
-import { GameState } from '../../../shared/entities/GameState'
-import { checkIfGameExistAndIfIsPlayerTurn } from '../../helpers/gameChecks'
+import GameState from '../../../shared/gameState/entities/GameState'
+import { checkIfGameExistAndIfIsPlayerTurn } from '../../utils/gameChecks'
 
 export default function passTurnHandler(
   socket: Socket,

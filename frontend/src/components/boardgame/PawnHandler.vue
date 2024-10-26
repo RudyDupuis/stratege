@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { Pawn } from '@shared/entities/Pawn'
-import { Orientation, Player } from '@shared/Enum'
+import Pawn from '@shared/pawn/entities/Pawn'
+import { Player } from '@shared/gameState/entities/PlayerEnum'
+import { Orientation } from '@shared/pawn/entities/OrientationEnum'
 import { computed } from 'vue'
 import PawnComponent from './subcomponents/PawnComponent.vue'
 

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import PawnComponent from '@/components/boardgame/subcomponents/PawnComponent.vue'
-import { GameState } from '@shared/entities/GameState'
+import GameState from '@shared/gameState/entities/GameState'
 import BoardGameDrawing from '../BoardGameDrawing.vue'
 import CrossSvg from '@/components/svgs/CrossSvg.vue'
 </script>

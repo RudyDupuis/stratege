@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { handleSocketResponse, type SocketResponse } from '@/helpers/socketHelpers'
-import { Orientation, Player } from '@shared/Enum'
-import { isDefined, isUndefined } from '@shared/helpers/TypeGuard'
+import { Orientation } from '@shared/pawn/entities/OrientationEnum'
+import { Player } from '@shared/gameState/entities/PlayerEnum'
+import { isDefined, isUndefined } from '@shared/utils/TypeGuard'
 import { computed, ref } from 'vue'
 import PawnComponent from './PawnComponent.vue'
 import ErrorDisplayer from '@/components/shared/ErrorDisplayer.vue'

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { isNotNull } from '@shared/helpers/TypeGuard'
+import { isNotNull } from '@shared/utils/TypeGuard'
 import { onMounted, ref } from 'vue'
 
 declare global {

@@ -1,8 +1,8 @@
-import { GameState } from '../../shared/entities/GameState'
-import { Pawn } from '../../shared/entities/Pawn'
-import { PawnPosition } from '../../shared/entities/PawnPosition'
-import { isUndefined } from '../../shared/helpers/TypeGuard'
-import { Player } from '../../shared/Enum'
+import GameState from '../../shared/gameState/entities/GameState'
+import Pawn from '../../shared/pawn/entities/Pawn'
+import PawnPosition from '../../shared/pawnPosition/entities/PawnPosition'
+import { isUndefined } from '../../shared/utils/TypeGuard'
+import { Player } from '../../shared/gameState/entities/PlayerEnum'
 
 export function checkIfGameExistAndIfIsPlayerTurn(game: GameState, player: Player) {
   if (isUndefined(game)) {

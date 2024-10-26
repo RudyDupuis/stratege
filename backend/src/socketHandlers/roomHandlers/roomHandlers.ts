@@ -3,7 +3,7 @@ import createPrivateRoomHandler from './createPrivateRoomHandler'
 import searchPublicRoomHandler from './searchPublicRoomHandler'
 import joinRoomHanlder from './joinRoomHandler'
 import leaveRoomHandler from './leaveRoomHandler'
-import { Player } from '../../../shared/Enum'
+import { Player } from '../../../shared/gameState/entities/PlayerEnum'
 import leaveSearchRoomHandler from './leaveSearchRoomHandler'
 
 const rooms: Record<string, Set<string>> = {}

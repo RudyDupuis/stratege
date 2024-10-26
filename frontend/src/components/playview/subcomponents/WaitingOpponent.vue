@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import ErrorDisplayer from '@/components/shared/ErrorDisplayer.vue'
-import { isDefined, isUndefined } from '@shared/helpers/TypeGuard'
+import { isDefined, isUndefined } from '@shared/utils/TypeGuard'
 import { ref } from 'vue'
 
 const props = defineProps<{

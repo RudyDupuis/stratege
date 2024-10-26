@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { PawnPosition } from '@shared/entities/PawnPosition'
-import { isDefined, isUndefined } from '@shared/helpers/TypeGuard'
+import PawnPosition from '@shared/pawnPosition/entities/PawnPosition'
+import { isDefined, isUndefined } from '@shared/utils/TypeGuard'
 import { computed, ref } from 'vue'
 import type { gameData } from '../BoardGameHandler.vue'
 import { handleSocketResponse, type SocketResponse } from '@/helpers/socketHelpers'

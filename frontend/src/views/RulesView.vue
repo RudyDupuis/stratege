@@ -6,7 +6,7 @@ import PushRules from '@/components/rules/actions/PushRules.vue'
 import RotateRules from '@/components/rules/actions/RotateRules.vue'
 import GoalOfTheGame from '@/components/rules/GoalOfTheGame.vue'
 import TheMaterial from '@/components/rules/TheMaterial.vue'
-import { GameState } from '@shared/entities/GameState'
+import GameState from '@shared/gameState/entities/GameState'
 </script>
 
 <template>

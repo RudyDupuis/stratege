@@ -1,5 +1,5 @@
-import { emitPlayerCount } from '../../helpers/roomMethods'
-import { Player } from '../../../shared/Enum'
+import { emitPlayerCount } from '../../utils/roomMethods'
+import { Player } from '../../../shared/gameState/entities/PlayerEnum'
 import { Server, Socket } from 'socket.io'
 
 export default function leaveRoomHandler(

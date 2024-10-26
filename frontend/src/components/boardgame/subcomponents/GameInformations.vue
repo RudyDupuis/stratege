@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { GameState } from '@shared/entities/GameState'
+import GameState from '@shared/gameState/entities/GameState'
 import PawnComponent from './PawnComponent.vue'
 
 defineProps<{

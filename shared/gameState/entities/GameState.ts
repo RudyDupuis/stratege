@@ -1,16 +1,10 @@
-import { Orientation, Player } from '../Enum'
-import { Pawn, type PawnDto } from './Pawn'
-import { PawnPosition } from './PawnPosition'
-import { isDefined, isNotNull } from '../helpers/TypeGuard'
+import { Orientation } from '../../pawn/entities/OrientationEnum'
+import Pawn from '../../pawn/entities/Pawn'
+import PawnPosition from '../../pawnPosition/entities/PawnPosition'
+import { isDefined, isNotNull } from '../../utils/TypeGuard'
+import { Player } from './PlayerEnum'
 
-export interface GameStateDto {
-  turn: number
-  board: (PawnDto | null)[][]
-  player1sLostPawns: PawnDto[]
-  player2sLostPawns: PawnDto[]
-  winner: Player | undefined
-}
-export class GameState {
+export default class GameState {
   constructor(
     public turn: number,
     public board: (Pawn | null)[][],
@@ -21,55 +15,6 @@ export class GameState {
 
   public static readonly MAX_PAWN_MOVEMENT = 2
   public static readonly MAX_PAWNS_PER_PLAYER = 8
-
-  public static initialBoard() {
-    return [
-      [
-        null,
-        null,
-        new Pawn('p2-1', Player.Player2, GameState.MAX_PAWN_MOVEMENT, Orientation.SE),
-        new Pawn('p2-2', Player.Player2, GameState.MAX_PAWN_MOVEMENT, Orientation.SE),
-        new Pawn('p2-3', Player.Player2, GameState.MAX_PAWN_MOVEMENT, Orientation.SE),
-        new Pawn('p2-4', Player.Player2, GameState.MAX_PAWN_MOVEMENT, Orientation.SE),
-        null,
-        null
-      ],
-      [
-        null,
-        null,
-        new Pawn('p2-5', Player.Player2, GameState.MAX_PAWN_MOVEMENT, Orientation.SE),
-        new Pawn('p2-6', Player.Player2, GameState.MAX_PAWN_MOVEMENT, Orientation.SE),
-        new Pawn('p2-7', Player.Player2, GameState.MAX_PAWN_MOVEMENT, Orientation.SE),
-        new Pawn('p2-8', Player.Player2, GameState.MAX_PAWN_MOVEMENT, Orientation.SE),
-        null,
-        null
-      ],
-      [null, null, null, null, null, null, null, null],
-      [null, null, null, null, null, null, null, null],
-      [null, null, null, null, null, null, null, null],
-      [null, null, null, null, null, null, null, null],
-      [
-        null,
-        null,
-        new Pawn('p1-1', Player.Player1, GameState.MAX_PAWN_MOVEMENT, Orientation.NW),
-        new Pawn('p1-2', Player.Player1, GameState.MAX_PAWN_MOVEMENT, Orientation.NW),
-        new Pawn('p1-3', Player.Player1, GameState.MAX_PAWN_MOVEMENT, Orientation.NW),
-        new Pawn('p1-4', Player.Player1, GameState.MAX_PAWN_MOVEMENT, Orientation.NW),
-        null,
-        null
-      ],
-      [
-        null,
-        null,
-        new Pawn('p1-5', Player.Player1, GameState.MAX_PAWN_MOVEMENT, Orientation.NW),
-        new Pawn('p1-6', Player.Player1, GameState.MAX_PAWN_MOVEMENT, Orientation.NW),
-        new Pawn('p1-7', Player.Player1, GameState.MAX_PAWN_MOVEMENT, Orientation.NW),
-        new Pawn('p1-8', Player.Player1, GameState.MAX_PAWN_MOVEMENT, Orientation.NW),
-        null,
-        null
-      ]
-    ]
-  }
 
   public determinePlayerBasedOnTurn() {
     return this.turn % 2 === 0 ? Player.Player2 : Player.Player1

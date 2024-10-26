@@ -1,6 +1,6 @@
 import { Server, Socket } from 'socket.io'
 import { Callback } from '../socketHandlers'
-import { emitPlayerCount } from '../../helpers/roomMethods'
+import { emitPlayerCount } from '../../utils/roomMethods'
 
 export default function createPrivateRoomHandler(
   socket: Socket,
