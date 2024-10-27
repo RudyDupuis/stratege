@@ -10,7 +10,7 @@
     >
       <p class="underline"><a href="https://discord.gg/rKAgbnVEs5">Discord</a></p>
       <div>
-        <p class="text-sm">Version beta 0.1.0</p>
+        <p class="text-sm">Version beta 0.2.0</p>
         <p class="text-sm">Copyright © {{ new Date().getFullYear() }} Rudy Dupuis</p>
       </div>
     </footer>

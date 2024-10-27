@@ -69,6 +69,13 @@ export default class GameState implements GameStateDto {
     })
   }
 
+  public resetLastActionAndPositionPawns() {
+    this.boardPawns.forEach((pawn) => {
+      pawn.lastAction = undefined
+      pawn.lastPosition = undefined
+    })
+  }
+
   public determineAvailablePositionsForActions(pawn: Pawn, player: Player) {
     return determineAvailablePositionsForActions(this, pawn, player)
   }

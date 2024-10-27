@@ -144,6 +144,7 @@ const gameData = computed<gameData>(() => {
               </template>
               <PawnHandler
                 v-if="isNotNull(gameState.board[rowIndex][colIndex])"
+                :key="gameState.findPawnByPosition(new PawnPosition(rowIndex, colIndex)).id"
                 :pawn="gameState.findPawnByPosition(new PawnPosition(rowIndex, colIndex))"
                 :player="player"
                 :class="{

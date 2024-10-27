@@ -5,6 +5,7 @@ import { Orientation } from '@shared/pawn/entities/OrientationEnum'
 import { computed, onMounted, ref } from 'vue'
 import PawnComponent from './subcomponents/PawnComponent.vue'
 import { isDefined } from '@shared/utils/TypeGuard'
+import { Action } from '@shared/pawn/entities/ActionEnum'
 
 const props = defineProps<{
   pawn: Pawn
@@ -80,7 +81,11 @@ onMounted(() => {
       transition.value = true
       translateX.value = '0px'
       translateY.value = '0px'
-    }, 1)
+
+      setTimeout(() => {
+        transition.value = false
+      }, 600)
+    }, 10)
   }
 })
 </script>
@@ -91,7 +96,12 @@ onMounted(() => {
     :sizeClass="'size-11/12'"
     :colorClass="pawnColor"
     :orientationClass="pawnOrientation"
-    :class="{ 'transition-transform duration-500 ease-in-out': transition }"
+    :class="{
+      'transition-transform duration-500 ease-in-out': transition,
+      'outline outline-pulling': pawn.lastAction === Action.Pull && transition,
+      'outline outline-pushing': pawn.lastAction === Action.Push && transition,
+      'outline outline-killing': pawn.lastAction === Action.Kill && transition
+    }"
     :style="{ transform: `translate(${translateX}, ${translateY})` }"
   >
     <p

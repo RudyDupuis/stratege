@@ -64,6 +64,8 @@ export default function killPawnHandler(
       calculatePawnRemainingMoves(pawn, desiredPawnPositionForKill)
 
       pawnToKill.isAlive = false
+      pawnToKill.lastPosition = new PawnPosition(pawnToKill.position.row, pawnToKill.position.col)
+      pawnToKill.position = new PawnPosition(-1, -1)
       pawnToKill.lastAction = ReceivedAction.IsKilled
 
       pawn.lastPosition = new PawnPosition(pawn.position.row, pawn.position.col)

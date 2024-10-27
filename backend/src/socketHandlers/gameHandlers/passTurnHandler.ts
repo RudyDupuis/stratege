@@ -20,6 +20,7 @@ export default function passTurnHandler(
 
     gameState.turn += 1
     gameState.resetRemainingMovesPawns()
+    gameState.resetLastActionAndPositionPawns()
 
     io.to(roomId).emit('gameState', gameState)
   })
