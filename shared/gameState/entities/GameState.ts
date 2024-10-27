@@ -27,7 +27,7 @@ export default class GameState implements GameStateDto {
       )
     }
 
-    this.updateBoard()
+    this.board = buildBoard(this.boardPawns)
     this.checkIfThereIsAWinner()
   }
 
