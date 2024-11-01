@@ -91,12 +91,13 @@ function handleMouseUp() {
 
 onMounted(() => {
   window.addEventListener('mouseup', handleMouseUp)
-  window.addEventListener('touchend', handleMouseUp)
+  //Todo: I can't get the touchend event to work in PawnControls so i comment out this line to make it work with a click instead of a drag
+  // window.addEventListener('touchend', handleMouseUp)
 })
 
 onBeforeUnmount(() => {
   window.removeEventListener('mouseup', handleMouseUp)
-  window.removeEventListener('touchend', handleMouseUp)
+  // window.removeEventListener('touchend', handleMouseUp)
 })
 </script>
 
@@ -183,7 +184,7 @@ onBeforeUnmount(() => {
                     isPlayerTurn && pawn.owner === player && pawn.remainingMove > 0
                 }"
                 @mousedown="selectPawn(pawn)"
-                @touchstart="selectPawn(pawn)"
+                @touchstart.prevent="selectPawn(pawn)"
               />
             </div>
           </div>
