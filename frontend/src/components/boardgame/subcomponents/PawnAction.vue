@@ -3,9 +3,10 @@ import PawnPosition from '@shared/pawnPosition/entities/PawnPosition'
 import { isDefined, isUndefined } from '@shared/utils/TypeGuard'
 import { computed, ref } from 'vue'
 import type { gameData } from '../BoardGameHandler.vue'
-import { handleSocketResponse, type SocketResponse } from '@/helpers/socketHelpers'
+import { handleSocketResponse, type SocketResponse } from '@/utils/socketHelpers'
 import ErrorDisplayer from '@/components/shared/ErrorDisplayer.vue'
-import type { Action } from '@shared/pawn/entities/ActionEnum'
+import { Action } from '@shared/pawn/entities/ActionEnum'
+import useBoardGameOrientation from '@/composables/boardgame/useBoardGameOrientation'
 
 const props = defineProps<{
   gameData: gameData
@@ -36,13 +37,13 @@ function pawnAction(desiredPawnPosition: PawnPosition) {
 
 const cellColor = computed(() => {
   switch (props.action) {
-    case 'move':
+    case Action.Move:
       return 'bg-moving'
-    case 'kill':
+    case Action.Kill:
       return 'bg-killing'
-    case 'push':
+    case Action.Push:
       return 'bg-pushing'
-    case 'pull':
+    case Action.Pull:
       return 'bg-pulling'
   }
 })
@@ -58,5 +59,9 @@ const cellColor = computed(() => {
     :class="`${cellColor} size-full ${action === 'kill' ? 'absolute inset-0 z-10 opacity-40' : ''} cursor-pointer`"
     @click="pawnAction(new PawnPosition(rowIndex, colIndex))"
   ></div>
-  <ErrorDisplayer v-if="isDefined(errorMessage)" v-model="errorMessage" />
+  <ErrorDisplayer
+    v-if="isDefined(errorMessage)"
+    v-model="errorMessage"
+    :class="useBoardGameOrientation(gameData.player)"
+  />
 </template>

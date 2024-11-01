@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { handleSocketResponse, type SocketResponse } from '@/helpers/socketHelpers'
+import { handleSocketResponse, type SocketResponse } from '@/utils/socketHelpers'
 import { Orientation } from '@shared/pawn/entities/OrientationEnum'
 import { Player } from '@shared/gameState/entities/PlayerEnum'
 import { isDefined, isUndefined } from '@shared/utils/TypeGuard'

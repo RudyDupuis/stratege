@@ -8,7 +8,7 @@ import type Pawn from '@shared/pawn/entities/Pawn'
 import { Player } from '@shared/gameState/entities/PlayerEnum'
 import ErrorDisplayer from '../shared/ErrorDisplayer.vue'
 import GameControls from './subcomponents/GameControls.vue'
-import GameAction from './subcomponents/GameAction.vue'
+import PawnAction from './subcomponents/PawnAction.vue'
 import PawnHandler from './PawnHandler.vue'
 import GameInformations from './subcomponents/GameInformations.vue'
 import { Action } from '@shared/pawn/entities/ActionEnum'
@@ -102,12 +102,12 @@ const gameData = computed<gameData>(() => {
         >
           <div v-for="(row, rowIndex) in gameState.board" :key="rowIndex" class="contents">
             <div
-              v-for="(_, colIndex) in row"
+              v-for="(pawn, colIndex) in row"
               :key="colIndex"
               class="flex justify-center items-center border border-dark relative"
             >
               <template v-if="actions === 'move_kill'">
-                <GameAction
+                <PawnAction
                   :game-data="gameData"
                   :action="Action.Move"
                   :positions-available-for-action="positionsAvailableForMoving"
@@ -115,7 +115,7 @@ const gameData = computed<gameData>(() => {
                   :col-index="colIndex"
                   :reset-target="resetTarget"
                 />
-                <GameAction
+                <PawnAction
                   :game-data="gameData"
                   :action="Action.Kill"
                   :positions-available-for-action="positionsAvailableForKilling"
@@ -125,7 +125,7 @@ const gameData = computed<gameData>(() => {
                 />
               </template>
               <template v-if="actions === 'push_pull'">
-                <GameAction
+                <PawnAction
                   :game-data="gameData"
                   :action="Action.Push"
                   :positions-available-for-action="positionsAvailableForPushing"
@@ -133,7 +133,7 @@ const gameData = computed<gameData>(() => {
                   :col-index="colIndex"
                   :reset-target="resetTarget"
                 />
-                <GameAction
+                <PawnAction
                   :game-data="gameData"
                   :action="Action.Pull"
                   :positions-available-for-action="positionsAvailableForPulling"
@@ -143,22 +143,15 @@ const gameData = computed<gameData>(() => {
                 />
               </template>
               <PawnHandler
-                v-if="isNotNull(gameState.board[rowIndex][colIndex])"
-                :key="gameState.findPawnByPosition(new PawnPosition(rowIndex, colIndex)).id"
-                :pawn="gameState.findPawnByPosition(new PawnPosition(rowIndex, colIndex))"
+                v-if="isNotNull(pawn)"
+                :key="pawn.id"
+                :pawn="pawn"
                 :player="player"
                 :class="{
-                  'opacity-60':
-                    targetPawn ===
-                    gameState.findPawnByPosition(new PawnPosition(rowIndex, colIndex)),
-                  'cursor-pointer':
-                    isPlayerTurn &&
-                    gameState.findPawnByPosition(new PawnPosition(rowIndex, colIndex))?.owner ===
-                      player
+                  'opacity-60': targetPawn === pawn,
+                  'cursor-pointer': isPlayerTurn && pawn.owner === player
                 }"
-                @click="
-                  selectPawn(gameState.findPawnByPosition(new PawnPosition(rowIndex, colIndex)))
-                "
+                @click="selectPawn(pawn)"
               />
             </div>
           </div>

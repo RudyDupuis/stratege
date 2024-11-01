@@ -78,15 +78,15 @@ export default function determineAvailablePositionsForMovingOrKillingByMovingOne
       } else {
         if (!positionsAvailableForMoving.some((pos) => pos.row === newRow && pos.col === newCol)) {
           positionsAvailableForMoving.push(newPosition)
-          determineAvailablePositionsForMovingOrKillingByMovingOneCellAtATime(
-            gameState,
-            newPosition,
-            remainingMove - 1,
-            player,
-            positionsAvailableForMoving,
-            positionsAvailableForKilling
-          )
         }
+        determineAvailablePositionsForMovingOrKillingByMovingOneCellAtATime(
+          gameState,
+          newPosition,
+          remainingMove - 1,
+          player,
+          positionsAvailableForMoving,
+          positionsAvailableForKilling
+        )
       }
     }
   }
