@@ -28,7 +28,7 @@
 }
 
 body {
-  @apply bg-light;
+  @apply bg-light overflow-x-hidden;
 }
 
 main {

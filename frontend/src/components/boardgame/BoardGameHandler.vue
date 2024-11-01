@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { Socket } from 'socket.io-client'
 import GameState from '@shared/gameState/entities/GameState'
-import { isDefined, isNotNull } from '@shared/utils/TypeGuard'
+import { isDefined, isNotNull, isUndefined } from '@shared/utils/TypeGuard'
 import PawnPosition from '@shared/pawnPosition/entities/PawnPosition'
 import type Pawn from '@shared/pawn/entities/Pawn'
 import { Player } from '@shared/gameState/entities/PlayerEnum'
@@ -12,6 +12,7 @@ import PawnAction from './subcomponents/PawnAction.vue'
 import PawnHandler from './PawnHandler.vue'
 import GameInformations from './subcomponents/GameInformations.vue'
 import { Action } from '@shared/pawn/entities/ActionEnum'
+import PawnControls from './subcomponents/PawnControls.vue'
 
 const props = defineProps<{
   roomId: string
@@ -23,12 +24,14 @@ const props = defineProps<{
 const errorMessage = ref<string | undefined>(undefined)
 
 const targetPawn = ref<Pawn | undefined>(undefined)
+const openPawnControls = ref<boolean>(false)
+
 const positionsAvailableForMoving = ref<PawnPosition[]>([])
 const positionsAvailableForKilling = ref<PawnPosition[]>([])
 const positionsAvailableForPushing = ref<PawnPosition[]>([])
 const positionsAvailableForPulling = ref<PawnPosition[]>([])
 
-const actions = ref<'move_kill' | 'push_pull'>('move_kill')
+const action = ref<Action | undefined>(undefined)
 
 const isPlayerTurn = computed(() => {
   return props.gameState.determinePlayerBasedOnTurn() === props.player
@@ -36,7 +39,7 @@ const isPlayerTurn = computed(() => {
 
 function resetTarget() {
   targetPawn.value = undefined
-  actions.value = 'move_kill'
+  action.value = undefined
   positionsAvailableForMoving.value = []
   positionsAvailableForKilling.value = []
   positionsAvailableForPushing.value = []
@@ -48,12 +51,9 @@ function selectPawn(pawn: Pawn) {
     return
   }
 
-  if (targetPawn.value === pawn) {
-    resetTarget()
-    return
-  }
-
   targetPawn.value = pawn
+  openPawnControls.value = true
+
   const {
     returnedPositionsAvailableForMoving,
     returnedPositionsAvailableForKilling,
@@ -84,6 +84,20 @@ const gameData = computed<gameData>(() => {
     isPlayerTurn: isPlayerTurn.value
   }
 })
+
+function handleMouseUp() {
+  openPawnControls.value = false
+}
+
+onMounted(() => {
+  window.addEventListener('mouseup', handleMouseUp)
+  window.addEventListener('touchend', handleMouseUp)
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('mouseup', handleMouseUp)
+  window.removeEventListener('touchend', handleMouseUp)
+})
 </script>
 
 <template>
@@ -106,42 +120,57 @@ const gameData = computed<gameData>(() => {
               :key="colIndex"
               class="flex justify-center items-center border border-dark relative"
             >
-              <template v-if="actions === 'move_kill'">
-                <PawnAction
-                  :game-data="gameData"
-                  :action="Action.Move"
-                  :positions-available-for-action="positionsAvailableForMoving"
-                  :row-index="rowIndex"
-                  :col-index="colIndex"
-                  :reset-target="resetTarget"
-                />
-                <PawnAction
-                  :game-data="gameData"
-                  :action="Action.Kill"
-                  :positions-available-for-action="positionsAvailableForKilling"
-                  :row-index="rowIndex"
-                  :col-index="colIndex"
-                  :reset-target="resetTarget"
-                />
-              </template>
-              <template v-if="actions === 'push_pull'">
-                <PawnAction
-                  :game-data="gameData"
-                  :action="Action.Push"
-                  :positions-available-for-action="positionsAvailableForPushing"
-                  :row-index="rowIndex"
-                  :col-index="colIndex"
-                  :reset-target="resetTarget"
-                />
-                <PawnAction
-                  :game-data="gameData"
-                  :action="Action.Pull"
-                  :positions-available-for-action="positionsAvailableForPulling"
-                  :row-index="rowIndex"
-                  :col-index="colIndex"
-                  :reset-target="resetTarget"
-                />
-              </template>
+              <PawnAction
+                v-if="action === Action.Move"
+                :game-data="gameData"
+                :action="Action.Move"
+                :positions-available-for-action="positionsAvailableForMoving"
+                :row-index="rowIndex"
+                :col-index="colIndex"
+                :reset-target="resetTarget"
+              />
+              <PawnAction
+                v-if="action === Action.Kill"
+                :game-data="gameData"
+                :action="Action.Kill"
+                :positions-available-for-action="positionsAvailableForKilling"
+                :row-index="rowIndex"
+                :col-index="colIndex"
+                :reset-target="resetTarget"
+              />
+              <PawnAction
+                v-if="action === Action.Push"
+                :game-data="gameData"
+                :action="Action.Push"
+                :positions-available-for-action="positionsAvailableForPushing"
+                :row-index="rowIndex"
+                :col-index="colIndex"
+                :reset-target="resetTarget"
+              />
+              <PawnAction
+                v-if="action === Action.Pull"
+                :game-data="gameData"
+                :action="Action.Pull"
+                :positions-available-for-action="positionsAvailableForPulling"
+                :row-index="rowIndex"
+                :col-index="colIndex"
+                :reset-target="resetTarget"
+              />
+              <PawnControls
+                v-if="
+                  targetPawn?.position.row === rowIndex &&
+                  targetPawn?.position.col === colIndex &&
+                  openPawnControls &&
+                  isUndefined(gameState.winner)
+                "
+                :can-move="positionsAvailableForMoving.length > 0"
+                :can-kill="positionsAvailableForKilling.length > 0"
+                :can-push="positionsAvailableForPushing.length > 0"
+                :can-pull="positionsAvailableForPulling.length > 0"
+                v-model="action"
+                :game-data="gameData"
+                :reset-target="resetTarget"
+              />
               <PawnHandler
                 v-if="isNotNull(pawn)"
                 :key="pawn.id"
@@ -149,16 +178,19 @@ const gameData = computed<gameData>(() => {
                 :player="player"
                 :class="{
                   'opacity-60': targetPawn === pawn,
-                  'cursor-pointer': isPlayerTurn && pawn.owner === player
+                  'cursor-pointer': isPlayerTurn && pawn.owner === player,
+                  'outline outline-3 outline-light':
+                    isPlayerTurn && pawn.owner === player && pawn.remainingMove > 0
                 }"
-                @click="selectPawn(pawn)"
+                @mousedown="selectPawn(pawn)"
+                @touchstart="selectPawn(pawn)"
               />
             </div>
           </div>
         </div>
       </div>
     </section>
-    <GameControls v-model="actions" :game-data="gameData" :reset-target="resetTarget" />
+    <GameControls :game-data="gameData" :reset-target="resetTarget" />
   </section>
   <ErrorDisplayer v-if="isDefined(errorMessage)" v-model="errorMessage" />
 </template>
