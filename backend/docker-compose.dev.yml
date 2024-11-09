@@ -1,0 +1,36 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: DevUser
+      POSTGRES_PASSWORD: DevPassword
+      POSTGRES_DB: DevDB
+    volumes:
+      - pgdb:/var/lib/postgresql/data
+    networks:
+      - backend-network
+
+  backend:
+    build:
+      context: ../
+      dockerfile: ./backend/Dockerfile.dev
+    restart: unless-stopped
+    ports:
+      - '3000:3000'
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+    environment:
+      DB_USER: DevUser
+      DB_PASSWORD: DevPassword
+      DB_NAME: DevDB
+      DB_HOST: db
+    networks:
+      - backend-network
+
+networks:
+  backend-network:
+
+volumes:
+  pgdb:

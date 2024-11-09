@@ -4,6 +4,7 @@ logs
 *.log
 .vscode/*
 *dist
+.env
 
 #Frontend
 !frontend/.vscode/extensions.json

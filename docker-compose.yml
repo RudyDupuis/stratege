@@ -1,4 +1,15 @@
 services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    volumes:
+      - pgdb:/var/lib/postgresql/data
+    networks:
+      - backend-network
+
   backend:
     build:
       context: .
@@ -6,8 +17,15 @@ services:
     restart: unless-stopped
     ports:
       - '4500:3000'
+    depends_on:
+      - db
+    environment:
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+      DB_HOST: db
     networks:
-      - stratege-network
+      - backend-network
 
   frontend:
     build:
@@ -18,9 +36,9 @@ services:
       - '5500:4000'
     depends_on:
       - backend
-    networks:
-      - stratege-network
 
 networks:
-  stratege-network:
-    driver: bridge
+  backend-network:
+
+volumes:
+  pgdb:

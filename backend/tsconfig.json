@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "target": "ES2023",
     "esModuleInterop": true,
     "module": "CommonJS",
     "outDir": "./dist",
@@ -7,6 +8,11 @@
     "strict": true,
     "baseUrl": "./"
   },
-  "include": ["src/**/*.ts", "shared/**/*.ts"],
-  "exclude": ["node_modules"]
+  "include": [
+    "src/**/*.ts",
+    "shared/**/*.ts",
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }
