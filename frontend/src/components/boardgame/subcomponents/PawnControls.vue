@@ -20,10 +20,10 @@ const props = defineProps<{
   canKill: boolean
   canPush: boolean
   canPull: boolean
-  resetTarget: () => void
 }>()
 
 const action = defineModel<Action | undefined>()
+const emit = defineEmits(['rotatePawn', 'unselectPawn'])
 
 const errorMessage = ref<string | undefined>(undefined)
 
@@ -71,7 +71,8 @@ function rotatePawn(orientation: Orientation) {
       handleSocketResponse(errorMessage, response)
     }
   )
-  props.resetTarget()
+
+  emit('rotatePawn')
 }
 </script>
 
@@ -82,8 +83,7 @@ function rotatePawn(orientation: Orientation) {
   >
     <div
       class="bg-light size-10 sm:size-16 flex items-center justify-center rounded-full cursor-pointer hover:opacity-50"
-      @mouseup="rotatePawn(Orientation.NW)"
-      @touchend="rotatePawn(Orientation.NW)"
+      @click="rotatePawn(Orientation.NW)"
     >
       <PawnComponent
         sizeClass="size-5 sm:size-8"
@@ -96,10 +96,7 @@ function rotatePawn(orientation: Orientation) {
       :class="{
         'opacity-30': !canMove
       }"
-      @mouseup="action = Action.Move"
-      @touchend="action = Action.Move"
-      @mouseenter="action = Action.Move"
-      @mouseleave="action = undefined"
+      @click="action = Action.Move"
     >
       <MovePawnSvg
         :pawnfillClass="gameData.player === Player.Player1 ? 'fill-player1' : 'fill-player2'"
@@ -108,8 +105,7 @@ function rotatePawn(orientation: Orientation) {
     </div>
     <div
       class="bg-light size-10 sm:size-16 flex items-center justify-center rounded-full cursor-pointer hover:opacity-50"
-      @mouseup="rotatePawn(Orientation.NE)"
-      @touchend="rotatePawn(Orientation.NE)"
+      @click="rotatePawn(Orientation.NE)"
     >
       <PawnComponent
         sizeClass="size-5 sm:size-8"
@@ -122,26 +118,20 @@ function rotatePawn(orientation: Orientation) {
       :class="{
         'opacity-30': !canPush
       }"
-      @mouseup="action = Action.Push"
-      @touchend="action = Action.Push"
-      @mouseenter="action = Action.Push"
-      @mouseleave="action = undefined"
+      @click="action = Action.Push"
     >
       <PushPawnSvg
         :pawnfillClass="gameData.player === Player.Player1 ? 'fill-player1' : 'fill-player2'"
         class="size-8 sm:size-10"
       />
     </div>
-    <div class="size-full" @mouseup="resetTarget()" @touchend="resetTarget()"></div>
+    <div class="size-full cursor-pointer" @click="emit('unselectPawn')"></div>
     <div
       class="bg-light size-10 sm:size-16 flex items-center justify-center rounded-full cursor-pointer hover:opacity-50"
       :class="{
         'opacity-30': !canPull
       }"
-      @mouseup="action = Action.Pull"
-      @touchend="action = Action.Pull"
-      @mouseenter="action = Action.Pull"
-      @mouseleave="action = undefined"
+      @click="action = Action.Pull"
     >
       <PullPawnSvg
         :pawnfillClass="gameData.player === Player.Player1 ? 'fill-player1' : 'fill-player2'"
@@ -150,8 +140,7 @@ function rotatePawn(orientation: Orientation) {
     </div>
     <div
       class="bg-light size-10 sm:size-16 flex items-center justify-center rounded-full cursor-pointer hover:opacity-50"
-      @mouseup="rotatePawn(Orientation.SW)"
-      @touchend="rotatePawn(Orientation.SW)"
+      @click="rotatePawn(Orientation.SW)"
     >
       <PawnComponent
         sizeClass="size-5 sm:size-8"
@@ -164,10 +153,7 @@ function rotatePawn(orientation: Orientation) {
       :class="{
         'opacity-30': !canKill
       }"
-      @mouseup="action = Action.Kill"
-      @touchend="action = Action.Kill"
-      @mouseenter="action = Action.Kill"
-      @mouseleave="action = undefined"
+      @click="action = Action.Kill"
     >
       <KillPawnSvg
         :pawnfillClass="gameData.player === Player.Player1 ? 'fill-player1' : 'fill-player2'"
@@ -176,8 +162,7 @@ function rotatePawn(orientation: Orientation) {
     </div>
     <div
       class="bg-light size-10 sm:size-16 flex items-center justify-center rounded-full cursor-pointer hover:opacity-50"
-      @mouseup="rotatePawn(Orientation.SE)"
-      @touchend="rotatePawn(Orientation.SE)"
+      @click="rotatePawn(Orientation.SE)"
     >
       <PawnComponent
         sizeClass="size-5 sm:size-8"

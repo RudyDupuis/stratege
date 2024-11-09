@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { Socket } from 'socket.io-client'
 import GameState from '@shared/gameState/entities/GameState'
 import { isDefined, isNotNull, isUndefined } from '@shared/utils/TypeGuard'
@@ -32,6 +32,11 @@ const positionsAvailableForPushing = ref<PawnPosition[]>([])
 const positionsAvailableForPulling = ref<PawnPosition[]>([])
 
 const action = ref<Action | undefined>(undefined)
+watch(action, () => {
+  if (isDefined(action.value)) {
+    openPawnControls.value = false
+  }
+})
 
 const isPlayerTurn = computed(() => {
   return props.gameState.determinePlayerBasedOnTurn() === props.player
@@ -84,21 +89,6 @@ const gameData = computed<gameData>(() => {
     isPlayerTurn: isPlayerTurn.value
   }
 })
-
-function handleMouseUp() {
-  openPawnControls.value = false
-}
-
-onMounted(() => {
-  window.addEventListener('mouseup', handleMouseUp)
-  //Todo: I can't get the touchend event to work in PawnControls so i comment out this line to make it work with a click instead of a drag
-  // window.addEventListener('touchend', handleMouseUp)
-})
-
-onBeforeUnmount(() => {
-  window.removeEventListener('mouseup', handleMouseUp)
-  // window.removeEventListener('touchend', handleMouseUp)
-})
 </script>
 
 <template>
@@ -128,7 +118,7 @@ onBeforeUnmount(() => {
                 :positions-available-for-action="positionsAvailableForMoving"
                 :row-index="rowIndex"
                 :col-index="colIndex"
-                :reset-target="resetTarget"
+                @do-action="resetTarget()"
               />
               <PawnAction
                 v-if="action === Action.Kill"
@@ -137,7 +127,7 @@ onBeforeUnmount(() => {
                 :positions-available-for-action="positionsAvailableForKilling"
                 :row-index="rowIndex"
                 :col-index="colIndex"
-                :reset-target="resetTarget"
+                @do-action="resetTarget()"
               />
               <PawnAction
                 v-if="action === Action.Push"
@@ -146,7 +136,7 @@ onBeforeUnmount(() => {
                 :positions-available-for-action="positionsAvailableForPushing"
                 :row-index="rowIndex"
                 :col-index="colIndex"
-                :reset-target="resetTarget"
+                @do-action="resetTarget()"
               />
               <PawnAction
                 v-if="action === Action.Pull"
@@ -155,7 +145,7 @@ onBeforeUnmount(() => {
                 :positions-available-for-action="positionsAvailableForPulling"
                 :row-index="rowIndex"
                 :col-index="colIndex"
-                :reset-target="resetTarget"
+                @do-action="resetTarget()"
               />
               <PawnControls
                 v-if="
@@ -170,7 +160,8 @@ onBeforeUnmount(() => {
                 :can-pull="positionsAvailableForPulling.length > 0"
                 v-model="action"
                 :game-data="gameData"
-                :reset-target="resetTarget"
+                @rotate-pawn="resetTarget()"
+                @unselect-pawn="resetTarget()"
               />
               <PawnHandler
                 v-if="isNotNull(pawn)"
@@ -191,7 +182,7 @@ onBeforeUnmount(() => {
         </div>
       </div>
     </section>
-    <GameControls :game-data="gameData" :reset-target="resetTarget" />
+    <GameControls :game-data="gameData" @pass-turn="resetTarget()" />
   </section>
   <ErrorDisplayer v-if="isDefined(errorMessage)" v-model="errorMessage" />
 </template>

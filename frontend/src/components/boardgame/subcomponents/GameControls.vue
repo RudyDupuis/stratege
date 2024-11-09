@@ -7,8 +7,9 @@ import type { gameData } from '../BoardGameHandler.vue'
 
 const props = defineProps<{
   gameData: gameData
-  resetTarget: () => void
 }>()
+
+const emit = defineEmits(['passTurn'])
 
 const errorMessage = ref<string | undefined>(undefined)
 const opponentIsNotConnectedErrorMessage = ref<string | undefined>(undefined)
@@ -26,7 +27,8 @@ function passTurn() {
       handleSocketResponse(errorMessage, response)
     }
   )
-  props.resetTarget()
+
+  emit('passTurn')
 }
 
 props.gameData.socket.on('playerCount', (count: number) => {
@@ -51,7 +53,7 @@ props.gameData.socket.on('playerCount', (count: number) => {
       v-show="gameData.isPlayerTurn"
       class="flex flex-col justify-center items-center size-full"
     >
-      <p class="mb-10">Cliquez et glissez sur l'un de vos pions</p>
+      <p class="mb-10">Cliquez sur l'un de vos pions</p>
       <button @click="passTurn" class="button mb-10">Passer son tour</button>
     </section>
   </section>

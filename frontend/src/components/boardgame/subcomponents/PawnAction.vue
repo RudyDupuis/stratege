@@ -14,8 +14,9 @@ const props = defineProps<{
   positionsAvailableForAction: PawnPosition[]
   rowIndex: number
   colIndex: number
-  resetTarget: () => void
 }>()
+
+const emit = defineEmits(['doAction'])
 
 const errorMessage = ref<string | undefined>(undefined)
 function pawnAction(desiredPawnPosition: PawnPosition) {
@@ -32,7 +33,8 @@ function pawnAction(desiredPawnPosition: PawnPosition) {
       handleSocketResponse(errorMessage, response)
     }
   )
-  props.resetTarget()
+
+  emit('doAction')
 }
 
 const cellColor = computed(() => {
