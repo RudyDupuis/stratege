@@ -17,7 +17,7 @@ router.get('/callback', passport.authenticate('google'), (req, res) => {
     throw new Error('Utilisateur introuvable')
   }
 
-  const token = jwt.sign({ id: user.id, googleId: user.googleId }, env.JWT_SECRET, {
+  const token = jwt.sign({ id: user.id }, env.JWT_SECRET, {
     expiresIn: '7d'
   })
   res.redirect(env.FRONT_URL + '?token=' + token)

@@ -18,11 +18,18 @@ export function authenticateToken(req: Request, res: Response, next: NextFunctio
 
   const token = authHeader.split(' ')[1]
 
-  jwt.verify(token, env.JWT_SECRET, (err, user) => {
-    if (err) {
-      return res.sendStatus(403).json({ message: "Vous n'avez pas les droits" })
+  jwt.verify(token, env.JWT_SECRET, (err, decodedToken) => {
+    if (
+      err ||
+      isUndefined(decodedToken) ||
+      typeof decodedToken === 'string' ||
+      !('id' in decodedToken)
+    ) {
+      res.status(403).json({ message: 'Token non valide' })
+      return
     }
-    req.user = user
+
+    req.userId = decodedToken.id
     next()
   })
 }

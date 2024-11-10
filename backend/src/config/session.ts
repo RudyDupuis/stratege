@@ -7,5 +7,7 @@ if (isUndefined(env.SESSION_SECRET)) {
 }
 
 export default session({
-  secret: env.SESSION_SECRET
+  secret: env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false
 })

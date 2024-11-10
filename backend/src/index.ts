@@ -11,6 +11,7 @@ import session from './config/session'
 import userRoutes from './routes/userRoutes'
 
 const app = express()
+app.use(express.json())
 app.use(cors({ origin: env.FRONT_URL }))
 const server = http.createServer(app)
 const io = new Server(server, {

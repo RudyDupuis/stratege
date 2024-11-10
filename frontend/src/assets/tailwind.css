@@ -55,7 +55,7 @@ strong {
 
 /*** Buttons ***/
 .button {
-  @apply text-center text-lg font-primary_bold border-4 border-dark rounded-lg md:w-96 w-full py-2;
+  @apply text-center text-lg font-primary_bold border-4 border-dark rounded-lg md:w-96 w-full py-2 disabled:opacity-40;
 }
 
 .small-button {
@@ -69,4 +69,9 @@ strong {
 a:active,
 a:hover {
   @apply opacity-40;
+}
+
+/*** Inputs ***/
+.input {
+  @apply text-lg font-primary_regular border-4 border-dark_light bg-light rounded-lg md:w-96 w-full py-1 px-4 hover:border-dark focus:outline-none;
 }

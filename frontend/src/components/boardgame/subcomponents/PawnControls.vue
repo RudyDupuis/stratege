@@ -9,10 +9,10 @@ import { Orientation } from '@shared/pawn/entities/OrientationEnum'
 import { handleSocketResponse, type SocketResponse } from '@/utils/socketHelpers'
 import ErrorDisplayer from '@/components/shared/ErrorDisplayer.vue'
 import { Action } from '@shared/pawn/entities/ActionEnum'
-import MovePawnSvg from '@/components/svgs/MovePawnSvg.vue'
-import PushPawnSvg from '@/components/svgs/PushPawnSvg.vue'
-import PullPawnSvg from '@/components/svgs/PullPawnSvg.vue'
-import KillPawnSvg from '@/components/svgs/KillPawnSvg.vue'
+import MovePawnSvg from '@/components/svgs/pawn/MovePawnSvg.vue'
+import PushPawnSvg from '@/components/svgs/pawn/PushPawnSvg.vue'
+import PullPawnSvg from '@/components/svgs/pawn/PullPawnSvg.vue'
+import KillPawnSvg from '@/components/svgs/pawn/KillPawnSvg.vue'
 
 const props = defineProps<{
   gameData: gameData
