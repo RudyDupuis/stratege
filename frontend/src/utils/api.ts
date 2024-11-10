@@ -46,3 +46,15 @@ export async function patchMe(user: User) {
 
   return userDtoToEntity(newMeDto)
 }
+
+export async function getTop100() {
+  const rawUsers = await fetch(backendUrl + 'user/top-100')
+
+  if (rawUsers.status !== 200) {
+    throw new Error(rawUsers.statusText)
+  }
+
+  const usersDto = (await rawUsers.json()) as UserDto[]
+
+  return usersDto.map((userDto) => userDtoToEntity(userDto))
+}

@@ -3,6 +3,7 @@ import HomeView from '@/views/HomeView.vue'
 import PlayView from '@/views/PlayView.vue'
 import RulesView from '@/views/RulesView.vue'
 import MyProfileView from '@/views/MyProfileView.vue'
+import RankingView from '@/views/RankingView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -26,6 +27,11 @@ const router = createRouter({
       path: '/mon-profil',
       name: 'my-profile',
       component: MyProfileView
+    },
+    {
+      path: '/classement',
+      name: 'ranking',
+      component: RankingView
     }
   ]
 })

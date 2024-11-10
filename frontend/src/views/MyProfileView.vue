@@ -23,7 +23,7 @@ const isEditing = ref(false)
         <template v-if="!isEditing">
           <section
             v-if="!isEditing"
-            class="flex flex-col items-center bg-dark_light p-10 rounded-xl mb-10"
+            class="flex flex-col items-center bg-dark_light p-10 rounded-xl shadow-lg mb-10"
           >
             <component
               :is="

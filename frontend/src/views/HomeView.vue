@@ -4,7 +4,8 @@
   <main>
     <h1 class="very-large-title mb-16">Stratège</h1>
     <RouterLink :to="{ name: 'play' }" class="button mb-5">Jouer !</RouterLink>
-    <RouterLink :to="{ name: 'rules' }" class="button">Lire les règles</RouterLink>
+    <RouterLink :to="{ name: 'rules' }" class="button mb-5">Lire les règles</RouterLink>
+    <RouterLink :to="{ name: 'ranking' }" class="button">Voir le classement</RouterLink>
     <footer
       class="flex justify-between items-center fixed bottom-0 left-0 w-full py-5 px-10 bg-dark_light"
     >

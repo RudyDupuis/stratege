@@ -45,7 +45,9 @@ function updateUser() {
 <template>
   <section>
     <h2 class="medium-title mb-5">Edition du profil</h2>
-    <section class="flex flex-col items-center bg-dark_light p-5 sm:p-10 rounded-xl mb-10">
+    <section
+      class="flex flex-col items-center bg-dark_light p-5 sm:p-10 rounded-xl shadow-lg mb-10"
+    >
       <component :is="currentProfilePicture" class="w-40 h-40 mb-5" />
 
       <div class="flex justify-center gap-2">

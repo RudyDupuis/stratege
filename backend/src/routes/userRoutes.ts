@@ -47,4 +47,15 @@ router.patch('/me', authenticateToken, async (req: Request, res: Response) => {
   }
 })
 
+router.get('/top-100', async (req: Request, res: Response) => {
+  try {
+    const users = await UserModel.findAll({ order: [['elo_score', 'DESC']], limit: 100 })
+    const usersDto = users.map((user) => userToDto(userModelToEntity(user)))
+    res.status(200).json(usersDto)
+  } catch (error) {
+    console.error(error)
+    res.status(500).json({ message: 'Une erreur est survenue' })
+  }
+})
+
 export default router
