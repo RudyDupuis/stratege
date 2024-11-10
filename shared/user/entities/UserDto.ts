@@ -1,5 +1,5 @@
 export default interface UserDto {
-  id: number
+  id: string
   pseudo: string
   elo_score: number
 }

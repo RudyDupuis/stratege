@@ -1,5 +1,5 @@
 import User from '../entities/User'
-import UserDto from '../entities/UserDto'
+import type UserDto from '../entities/UserDto'
 
 export function userDtoToEntity(userDto: UserDto) {
   return new User(userDto.id, userDto.pseudo, userDto.elo_score)

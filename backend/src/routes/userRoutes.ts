@@ -9,7 +9,7 @@ const router = express.Router()
 
 router.get('/me', authenticateToken, async (req: Request, res: Response) => {
   try {
-    const userId = (req.user as UserModel).id
+    const userId = req.user?.id
     const user = await UserModel.findByPk(userId)
 
     if (isNull(user)) {

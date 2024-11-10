@@ -1,7 +1,0 @@
-{
-  "name": "Stratège  Back Dev Container",
-  "dockerComposeFile": ["../docker-compose.dev.yml"],
-  "workspaceFolder": "/app",
-  "service": "backend",
-  "remoteUser": "root"
-}

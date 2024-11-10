@@ -2,7 +2,6 @@ import express from 'express'
 import env from '../../config/env'
 import jwt from 'jsonwebtoken'
 import passport from 'passport'
-import UserModel from '../../models/user/UserModel'
 import { isUndefined } from '../../../shared/utils/TypeGuard'
 
 const router = express.Router()
@@ -13,7 +12,11 @@ router.get('/callback', passport.authenticate('google'), (req, res) => {
     throw new Error('Missing environment variables for JWT initialization')
   }
 
-  const user = req.user as UserModel
+  const user = req.user
+  if (isUndefined(user)) {
+    throw new Error('Utilisateur introuvable')
+  }
+
   const token = jwt.sign({ id: user.id, googleId: user.googleId }, env.JWT_SECRET, {
     expiresIn: '7d'
   })
