@@ -32,7 +32,6 @@ getTop100()
     <Loading v-if="isLoading" class="w-10 h-10" />
     <template v-else>
       <section class="bg-dark_light p-5 rounded-xl shadow-lg">
-        <p>{{ currentUser?.pseudo }}</p>
         <table class="table-auto border-collapse">
           <thead>
             <tr class="bg-gray-100">
