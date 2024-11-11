@@ -2,13 +2,8 @@
 import { useUserStore } from '@/composables/user/useUserStore'
 import { isUndefined } from '@shared/utils/TypeGuard'
 import { storeToRefs } from 'pinia'
-import { computed, ref } from 'vue'
-import ProfilePicture1Svg from '../svgs/profilePicture/ProfilePicture1Svg.vue'
-import ProfilePicture2Svg from '../svgs/profilePicture/ProfilePicture2Svg.vue'
-import ProfilePicture3Svg from '../svgs/profilePicture/ProfilePicture3Svg.vue'
-import ProfilePicture4Svg from '../svgs/profilePicture/ProfilePicture4Svg.vue'
-import ProfilePicture5Svg from '../svgs/profilePicture/ProfilePicture5Svg.vue'
-import ProfilePicture6Svg from '../svgs/profilePicture/ProfilePicture6Svg.vue'
+import { computed, ref, useTemplateRef } from 'vue'
+import AvatarFinder from './AvatarFinder.vue'
 
 const emit = defineEmits<{
   (e: 'close'): void
@@ -17,18 +12,13 @@ const emit = defineEmits<{
 const userStore = useUserStore()
 const { user } = storeToRefs(userStore)
 
+const avatarFinderComp = useTemplateRef<InstanceType<typeof AvatarFinder>>('avatarFinderComp')
+const avatarIndices = computed(() =>
+  Array.from({ length: avatarFinderComp.value?.avatars.length || 0 }, (_, i) => i + 1)
+)
+
 const newPseudo = ref<string>(user.value?.pseudo || '')
 const newProfilePicture = ref<number>(user.value?.pictureId || 1)
-
-const profilePictures = [
-  ProfilePicture1Svg,
-  ProfilePicture2Svg,
-  ProfilePicture3Svg,
-  ProfilePicture4Svg,
-  ProfilePicture5Svg,
-  ProfilePicture6Svg
-]
-const currentProfilePicture = computed(() => profilePictures[newProfilePicture.value - 1])
 
 function updateUser() {
   if (isUndefined(user.value)) {
@@ -48,18 +38,18 @@ function updateUser() {
     <section
       class="flex flex-col items-center bg-dark_light p-5 sm:p-10 rounded-xl shadow-lg mb-10"
     >
-      <component :is="currentProfilePicture" class="w-40 h-40 mb-5" />
+      <AvatarFinder ref="avatarFinderComp" :avatarId="newProfilePicture" class="w-40 h-40 mb-5" />
 
       <div class="flex justify-center gap-2">
         <button
-          v-for="pictureId in profilePictures.length"
+          v-for="pictureId in avatarIndices"
           :key="pictureId"
           @click="newProfilePicture = pictureId"
         >
-          <component
-            :is="profilePictures[pictureId - 1]"
-            :class="newProfilePicture === pictureId ? 'opacity-100' : 'opacity-50'"
+          <AvatarFinder
+            :avatarId="pictureId"
             class="w-10 h-10"
+            :class="newProfilePicture === pictureId ? 'opacity-100' : 'opacity-50'"
           />
         </button>
       </div>

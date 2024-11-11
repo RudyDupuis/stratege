@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import ErrorDisplayer from '@/components/shared/ErrorDisplayer.vue'
 import Loading from '@/components/shared/Loading.vue'
+import AvatarFinder from '@/components/user/AvatarFinder.vue'
 import { useUserStore } from '@/composables/user/useUserStore'
 import { getTop100 } from '@/utils/api'
 import User from '@shared/user/entities/User'
 import { isDefined } from '@shared/utils/TypeGuard'
 import { storeToRefs } from 'pinia'
-import { defineAsyncComponent, ref } from 'vue'
+import { ref } from 'vue'
 
 const users = ref<User[]>([])
 const currentUser = storeToRefs(useUserStore()).user
@@ -42,30 +43,22 @@ getTop100()
             </tr>
           </thead>
           <tbody>
-            <tr
-              v-for="(user, index) in users"
-              :key="user.id"
-              class="border-b"
-              :class="{ 'bg-light': user.id === currentUser?.id }"
-            >
-              <td class="py-2 px-4">{{ index + 1 }}</td>
-              <td class="py-2 px-4 hidden sm:table-cell">
-                <div class="bg-dark_light p-2 rounded-full">
-                  <component
-                    :is="
-                      defineAsyncComponent(
-                        () =>
-                          import(
-                            `@/components/svgs/profilePicture/ProfilePicture${user?.pictureId}Svg.vue`
-                          )
-                      )
-                    "
-                    class="w-8 h-8"
-                  />
-                </div>
+            <tr v-for="(user, index) in users" :key="user.id" class="border-b">
+              <td class="py-2 px-4" :class="{ 'font-primary_bold': user.id === currentUser?.id }">
+                {{ index + 1 }}
               </td>
-              <td class="py-2 px-4 max-w-36 sm:max-w-full truncate">{{ user.pseudo }}</td>
-              <td class="py-2 px-4">{{ user.elo_score }}</td>
+              <td class="py-2 px-4 hidden sm:table-cell">
+                <AvatarFinder :avatarId="user.pictureId" class="w-8 h-8" />
+              </td>
+              <td
+                class="py-2 px-4 max-w-36 sm:max-w-full truncate"
+                :class="{ 'font-primary_bold': user.id === currentUser?.id }"
+              >
+                {{ user.pseudo }}
+              </td>
+              <td class="py-2 px-4" :class="{ 'font-primary_bold': user.id === currentUser?.id }">
+                {{ user.elo_score }}
+              </td>
             </tr>
           </tbody>
         </table>

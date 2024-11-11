@@ -5,8 +5,8 @@ import { isDefined } from '@shared/utils/TypeGuard'
 import { ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import PlayingRoom from '@/components/playview/PlayingRoom.vue'
+import router from '@/router'
 
-const FRONT_URL = import.meta.env.VITE_FRONT_URL
 const SOCKET_URL = import.meta.env.VITE_SOCKET_URL
 
 const socket = io(SOCKET_URL)
@@ -17,7 +17,7 @@ const roomType = ref<'private' | 'public' | undefined>(undefined)
 
 function getRoomIdAndChangeURL(id: string) {
   roomId.value = id
-  window.history.pushState({}, '', `${FRONT_URL}jouer?roomId=${id}`)
+  router.push({ path: '/jouer', query: { roomId: id } })
 }
 
 watch(roomType, () => {
