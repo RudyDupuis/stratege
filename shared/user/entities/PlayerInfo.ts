@@ -1,5 +1,5 @@
 import { PlayerRole } from '../../gameState/entities/PlayerRoleEnum'
-import PlayerInfoDto from './PlayerInfoDto'
+import type PlayerInfoDto from './PlayerInfoDto'
 
 export default class PlayerInfo implements PlayerInfoDto {
   constructor(

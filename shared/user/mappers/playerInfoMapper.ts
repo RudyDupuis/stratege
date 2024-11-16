@@ -1,5 +1,5 @@
 import PlayerInfo from '../entities/PlayerInfo'
-import PlayerInfoDto from '../entities/PlayerInfoDto'
+import type PlayerInfoDto from '../entities/PlayerInfoDto'
 
 export function playerInfoDtoToEntity(playerInfoDto: PlayerInfoDto) {
   return new PlayerInfo(

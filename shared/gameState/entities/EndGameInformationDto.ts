@@ -1,5 +1,5 @@
 import { PlayerRole } from './PlayerRoleEnum'
-import UserDto from '../../user/entities/UserDto'
+import type UserDto from '../../user/entities/UserDto'
 
 export default interface EndGameInformationDto {
   winner: {

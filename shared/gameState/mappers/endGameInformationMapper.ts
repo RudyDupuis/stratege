@@ -1,7 +1,7 @@
 import { isDefined } from '../../utils/TypeGuard'
 import { userDtoToEntity, userToDto } from '../../user/mappers/userMapper'
 import EndGameInformation from '../entities/EndGameInformation'
-import EndGameInformationDto from '../entities/EndGameInformationDto'
+import type EndGameInformationDto from '../entities/EndGameInformationDto'
 
 export function endGameInformationDtoToEntity(endGameInformationDto: EndGameInformationDto) {
   return new EndGameInformation(

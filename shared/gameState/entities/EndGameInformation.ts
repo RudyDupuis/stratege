@@ -1,5 +1,5 @@
-import User from '../../user/entities/User'
-import EndGameInformationDto from './EndGameInformationDto'
+import type User from '../../user/entities/User'
+import type EndGameInformationDto from './EndGameInformationDto'
 import { PlayerRole } from './PlayerRoleEnum'
 
 export default class EndGameInformation implements EndGameInformationDto {
