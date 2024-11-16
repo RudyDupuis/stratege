@@ -13,14 +13,14 @@ import PawnHandler from './PawnHandler.vue'
 import GameInformations from './subcomponents/GameInformations.vue'
 import { Action } from '@shared/pawn/entities/ActionEnum'
 import PawnControls from './subcomponents/PawnControls.vue'
-import type PlayerInfoDto from '@shared/user/entities/PlayerDto'
+import type PlayerInfo from '@shared/user/entities/PlayerInfo'
 
 const props = defineProps<{
   roomId: string
   socket: Socket
   player: PlayerRole
   gameState: GameState
-  playersInfo: PlayerInfoDto[]
+  playersInfo: PlayerInfo[]
 }>()
 
 const errorMessage = ref<string | undefined>(undefined)

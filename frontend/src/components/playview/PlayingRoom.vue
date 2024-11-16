@@ -10,7 +10,9 @@ import ErrorDisplayer from '../shared/ErrorDisplayer.vue'
 import WaitingOpponent from './subcomponents/WaitingOpponent.vue'
 import BoardGameHandler from '../boardgame/BoardGameHandler.vue'
 import type User from '@shared/user/entities/User'
-import type PlayerInfoDto from '@shared/user/entities/PlayerDto'
+import type PlayerInfo from '@shared/user/entities/PlayerInfo'
+import type PlayerInfoDto from '@shared/user/entities/PlayerInfoDto'
+import { playerInfoDtoToEntity } from '@shared/user/mappers/playerInfoMapper'
 
 const props = defineProps<{
   socket: Socket
@@ -22,14 +24,14 @@ const props = defineProps<{
 const errorMessage = ref<string | undefined>(undefined)
 const playerRole = ref<PlayerRole | undefined>(undefined)
 const gameState = ref<GameState | undefined>(undefined)
-const playersInfo = ref<PlayerInfoDto[]>([])
+const playersInfo = ref<PlayerInfo[]>([])
 
 props.socket.on('gameState', (state: GameStateDto) => {
   gameState.value = gameStateDtoToEntity(state)
 })
 
-props.socket.on('playersInfo', (fetchedPlayersInfo: PlayerInfoDto[]) => {
-  playersInfo.value = fetchedPlayersInfo
+props.socket.on('playersInfo', (playersInfoDto: PlayerInfoDto[]) => {
+  playersInfo.value = playersInfoDto.map((playerInfoDto) => playerInfoDtoToEntity(playerInfoDto))
 })
 
 watch(

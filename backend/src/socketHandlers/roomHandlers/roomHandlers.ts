@@ -3,14 +3,14 @@ import createPrivateRoomHandler from './createPrivateRoomHandler'
 import searchPublicRoomHandler from './searchPublicRoomHandler'
 import joinRoomHanlder from './joinRoomHandler'
 import leaveRoomHandler from './leaveRoomHandler'
-import PlayerInfoDto from '../../../shared/user/entities/PlayerDto'
+import PlayerInfo from '../../../shared/user/entities/PlayerInfo'
 
 export interface Room {
   type: 'private' | 'public'
-  playersInfo: PlayerInfoDto[]
+  playersInfo: PlayerInfo[]
 }
 
-const rooms: Record<string, Room> = {}
+export const rooms: Record<string, Room> = {}
 
 export function roomHandlers(socket: Socket, io: Server) {
   createPrivateRoomHandler(socket, rooms, io)

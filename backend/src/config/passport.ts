@@ -24,7 +24,7 @@ passport.use(
             googleId: profile.id,
             pseudo: profile.displayName,
             avatarId: 1,
-            eloScore: 1000
+            eloScore: 1500
           })
         }
 

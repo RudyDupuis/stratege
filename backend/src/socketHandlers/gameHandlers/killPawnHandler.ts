@@ -15,6 +15,7 @@ import pawnPositionDtoToEntity from '../../../shared/pawnPosition/mappers/pawnPo
 import { isUndefined } from '../../../shared/utils/TypeGuard'
 import { Action, ReceivedAction } from '../../../shared/pawn/entities/ActionEnum'
 import PawnPosition from '../../../shared/pawnPosition/entities/PawnPosition'
+import winnerHandler from './winnerHandler'
 
 export default function killPawnHandler(
   socket: Socket,
@@ -75,10 +76,10 @@ export default function killPawnHandler(
       gameState.updatePawn(pawnToKill)
       gameState.updatePawn(pawn)
 
-      gameState.checkIfThereIsAWinner()
       gameState.updateBoard()
 
       io.to(roomId).emit('gameState', gameState)
+      winnerHandler(gameState, roomId, io, callback)
     }
   )
 }
