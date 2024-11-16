@@ -4,8 +4,8 @@ import User from '../../../shared/user/entities/User'
 
 class UserModel extends Model<Optional<User, 'id'> & { googleId: number }> {
   declare pseudo: string
-  declare pictureId: number
-  declare elo_score: number
+  declare avatarId: number
+  declare eloScore: number
   declare readonly googleId: string
   declare readonly id: string
   declare readonly createdAt: Date
@@ -28,11 +28,11 @@ UserModel.init(
       type: DataTypes.STRING,
       allowNull: false
     },
-    pictureId: {
+    avatarId: {
       type: DataTypes.INTEGER,
       allowNull: false
     },
-    elo_score: {
+    eloScore: {
       type: DataTypes.INTEGER,
       allowNull: false
     }

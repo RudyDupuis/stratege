@@ -34,7 +34,7 @@ export async function patchMe(user: User) {
     headers: createHeaders(),
     body: JSON.stringify({
       pseudo: oldMeDto.pseudo,
-      pictureId: oldMeDto.pictureId
+      avatarId: oldMeDto.avatarId
     })
   })
 

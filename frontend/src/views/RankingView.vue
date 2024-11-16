@@ -48,7 +48,7 @@ getTop100()
                 {{ index + 1 }}
               </td>
               <td class="py-2 px-4 hidden sm:table-cell">
-                <AvatarFinder :avatarId="user.pictureId" class="w-8 h-8" />
+                <AvatarFinder :avatarId="user.avatarId" class="w-8 h-8" />
               </td>
               <td
                 class="py-2 px-4 max-w-36 sm:max-w-full truncate"
@@ -57,7 +57,7 @@ getTop100()
                 {{ user.pseudo }}
               </td>
               <td class="py-2 px-4" :class="{ 'font-primary_bold': user.id === currentUser?.id }">
-                {{ user.elo_score }}
+                {{ user.eloScore }}
               </td>
             </tr>
           </tbody>

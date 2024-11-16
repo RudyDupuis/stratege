@@ -26,9 +26,9 @@ const isEditing = ref(false)
             v-if="!isEditing"
             class="flex flex-col items-center bg-dark_light p-10 rounded-xl shadow-lg mb-10"
           >
-            <AvatarFinder :avatarId="user.pictureId" class="w-40 h-40 mb-3" />
+            <AvatarFinder :avatarId="user.avatarId" class="w-40 h-40 mb-3" />
             <h2 class="medium-title mb-5">{{ user.pseudo }}</h2>
-            <p class="font-primary_bold">Score ELO : {{ user.elo_score }}</p>
+            <p class="font-primary_bold">Score ELO : {{ user.eloScore }}</p>
           </section>
 
           <button class="button mb-2" @click="isEditing = true">Modifier mon profil</button>

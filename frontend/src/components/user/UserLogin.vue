@@ -42,7 +42,7 @@ onMounted(() => {
         class="absolute top-5 right-5 flex items-center space-x-2 bg-dark_light px-3 py-2 rounded-xl cursor-pointer hover:opacity-80"
         :to="{ name: 'my-profile' }"
       >
-        <AvatarFinder :avatarId="user.pictureId" class="w-6 h-6" />
+        <AvatarFinder :avatarId="user.avatarId" class="w-6 h-6" />
         <p class="font-primary_bold">{{ user.pseudo }}</p>
       </RouterLink>
     </template>

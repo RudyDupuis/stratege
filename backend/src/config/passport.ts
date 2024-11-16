@@ -23,8 +23,8 @@ passport.use(
           user = await UserModel.create({
             googleId: profile.id,
             pseudo: profile.displayName,
-            pictureId: 1,
-            elo_score: 1000
+            avatarId: 1,
+            eloScore: 1000
           })
         }
 

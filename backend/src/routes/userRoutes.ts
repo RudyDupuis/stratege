@@ -33,7 +33,7 @@ router.patch('/me', authenticateToken, async (req: Request, res: Response) => {
     }
 
     user.pseudo = req.body.pseudo
-    user.pictureId = req.body.pictureId
+    user.avatarId = req.body.avatarId
 
     if (user.pseudo.length < 3 || user.pseudo.length > 20) {
       return res.status(400).json({ message: 'Le pseudo doit contenir entre 3 et 20 caractères.' })
@@ -49,7 +49,7 @@ router.patch('/me', authenticateToken, async (req: Request, res: Response) => {
 
 router.get('/top-100', async (req: Request, res: Response) => {
   try {
-    const users = await UserModel.findAll({ order: [['elo_score', 'DESC']], limit: 100 })
+    const users = await UserModel.findAll({ order: [['eloScore', 'DESC']], limit: 100 })
     const usersDto = users.map((user) => userToDto(userModelToEntity(user)))
     res.status(200).json(usersDto)
   } catch (error) {

@@ -18,7 +18,7 @@ const avatarIndices = computed(() =>
 )
 
 const newPseudo = ref<string>(user.value?.pseudo || '')
-const newProfilePicture = ref<number>(user.value?.pictureId || 1)
+const newProfileAvatar = ref<number>(user.value?.avatarId || 1)
 
 function updateUser() {
   if (isUndefined(user.value)) {
@@ -26,7 +26,7 @@ function updateUser() {
   }
 
   user.value.pseudo = newPseudo.value
-  user.value.pictureId = newProfilePicture.value
+  user.value.avatarId = newProfileAvatar.value
   userStore.updateUser(user.value)
   emit('close')
 }
@@ -38,18 +38,18 @@ function updateUser() {
     <section
       class="flex flex-col items-center bg-dark_light p-5 sm:p-10 rounded-xl shadow-lg mb-10"
     >
-      <AvatarFinder ref="avatarFinderComp" :avatarId="newProfilePicture" class="w-40 h-40 mb-5" />
+      <AvatarFinder ref="avatarFinderComp" :avatarId="newProfileAvatar" class="w-40 h-40 mb-5" />
 
       <div class="flex justify-center gap-2">
         <button
-          v-for="pictureId in avatarIndices"
-          :key="pictureId"
-          @click="newProfilePicture = pictureId"
+          v-for="avatarId in avatarIndices"
+          :key="avatarId"
+          @click="newProfileAvatar = avatarId"
         >
           <AvatarFinder
-            :avatarId="pictureId"
+            :avatarId="avatarId"
             class="w-10 h-10"
-            :class="newProfilePicture === pictureId ? 'opacity-100' : 'opacity-50'"
+            :class="newProfileAvatar === avatarId ? 'opacity-100' : 'opacity-50'"
           />
         </button>
       </div>
