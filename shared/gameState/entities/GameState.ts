@@ -1,6 +1,6 @@
 import Pawn from '../../pawn/entities/Pawn'
 import { isNotNull } from '../../utils/TypeGuard'
-import { Player } from './PlayerEnum'
+import { PlayerRole } from './PlayerRoleEnum'
 import type GameStateDto from './GameStateDto'
 import buildBoard from '../utils/buildBoard'
 import determineWinner from '../utils/determineWinner'
@@ -16,7 +16,7 @@ export default class GameState implements GameStateDto {
   public static readonly BOARD_HEIGHT = 8
 
   public board: Array<Array<Pawn | null>>
-  public winner: Player | undefined
+  public winner: PlayerRole | undefined
   constructor(
     public turn: number,
     public boardPawns: Pawn[]
@@ -52,7 +52,7 @@ export default class GameState implements GameStateDto {
   }
 
   public determinePlayerBasedOnTurn() {
-    return this.turn % 2 === 0 ? Player.Player2 : Player.Player1
+    return this.turn % 2 === 0 ? PlayerRole.Player2 : PlayerRole.Player1
   }
 
   public determinePlayersLostPawns() {
@@ -76,7 +76,7 @@ export default class GameState implements GameStateDto {
     })
   }
 
-  public determineAvailablePositionsForActions(pawn: Pawn, player: Player) {
+  public determineAvailablePositionsForActions(pawn: Pawn, player: PlayerRole) {
     return determineAvailablePositionsForActions(this, pawn, player)
   }
 

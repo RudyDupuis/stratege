@@ -1,7 +1,7 @@
 import GameState from '../../../shared/gameState/entities/GameState'
 import PawnDto from '../../../shared/pawn/entities/PawnDto'
 import PawnPositionDto from '../../../shared/pawnPosition/entities/PawnPositionDto'
-import { Player } from '../../../shared/gameState/entities/PlayerEnum'
+import { PlayerRole } from '../../../shared/gameState/entities/PlayerRoleEnum'
 import { Server, Socket } from 'socket.io'
 import { Callback } from '../socketHandlers'
 import {
@@ -25,7 +25,7 @@ export default function killPawnHandler(
     'killPawn',
     (
       roomId: string,
-      player: Player,
+      player: PlayerRole,
       pawnDto: PawnDto,
       desiredPawnPositionForKillDto: PawnPositionDto,
       callback: Callback

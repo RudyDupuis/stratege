@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import Pawn from '@shared/pawn/entities/Pawn'
-import { Player } from '@shared/gameState/entities/PlayerEnum'
+import { PlayerRole } from '@shared/gameState/entities/PlayerRoleEnum'
 import { Orientation } from '@shared/pawn/entities/OrientationEnum'
 import { computed, onMounted, ref } from 'vue'
 import PawnComponent from './subcomponents/PawnComponent.vue'
@@ -9,14 +9,14 @@ import { Action } from '@shared/pawn/entities/ActionEnum'
 
 const props = defineProps<{
   pawn: Pawn
-  player: Player
+  player: PlayerRole
 }>()
 
 const pawnColor = computed(() => {
   switch (props.pawn.owner) {
-    case Player.Player1:
+    case PlayerRole.Player1:
       return 'bg-player1'
-    case Player.Player2:
+    case PlayerRole.Player2:
       return 'bg-player2'
   }
 })
@@ -35,7 +35,7 @@ const pawnOrientation = computed(() => {
 })
 const remainingMoveOrientation = computed(() => {
   //Orientation according to the direction of the board game (reversed for player 2)
-  if (props.player === Player.Player2) {
+  if (props.player === PlayerRole.Player2) {
     switch (props.pawn.orientation) {
       case Orientation.NW:
         return 'rotate-180'

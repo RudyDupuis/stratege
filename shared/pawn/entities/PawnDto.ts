@@ -1,11 +1,11 @@
 import { Action, ReceivedAction } from './ActionEnum'
-import { Player } from '../../gameState/entities/PlayerEnum'
+import { PlayerRole } from '../../gameState/entities/PlayerRoleEnum'
 import type PawnPositionDto from '../../pawnPosition/entities/PawnPositionDto'
 import { Orientation } from './OrientationEnum'
 
 export default interface PawnDto {
   id: string
-  owner: Player
+  owner: PlayerRole
   isAlive: boolean
   remainingMove: 0 | 1 | 2
   orientation: Orientation

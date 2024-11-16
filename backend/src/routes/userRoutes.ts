@@ -58,4 +58,20 @@ router.get('/top-100', async (req: Request, res: Response) => {
   }
 })
 
+router.get('/:id', async (req: Request, res: Response) => {
+  try {
+    const userId = req.params.id
+    const user = await UserModel.findByPk(userId)
+
+    if (isNull(user)) {
+      return res.status(404).json({ message: 'Utilisateur introuvable' })
+    }
+
+    res.status(200).json(userToDto(userModelToEntity(user)))
+  } catch (error) {
+    console.error(error)
+    res.status(500).json({ message: 'Une erreur est survenue' })
+  }
+})
+
 export default router

@@ -1,8 +1,8 @@
 import { Server, Socket } from 'socket.io'
 import { Callback } from '../socketHandlers'
-import { emitPlayerCount } from '../../utils/roomMethods'
+import { emitPlayersInfo } from '../../utils/roomMethods'
 import { Room } from './roomHandlers'
-import { Player } from '../../../shared/gameState/entities/PlayerEnum'
+import { PlayerRole } from '../../../shared/gameState/entities/PlayerRoleEnum'
 
 export default function createPrivateRoomHandler(
   socket: Socket,
@@ -13,16 +13,16 @@ export default function createPrivateRoomHandler(
     const roomId = socket.id
     rooms[roomId] = {
       type: 'private',
-      players: [
+      playersInfo: [
         {
           socketId: socket.id,
-          role: Player.Player1,
+          role: PlayerRole.Player1,
           isConnected: false
         }
       ]
     }
 
     callback(roomId)
-    emitPlayerCount(io, rooms, roomId)
+    emitPlayersInfo(io, rooms, roomId)
   })
 }

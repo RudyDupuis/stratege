@@ -2,9 +2,9 @@ import GameState from '../../shared/gameState/entities/GameState'
 import Pawn from '../../shared/pawn/entities/Pawn'
 import PawnPosition from '../../shared/pawnPosition/entities/PawnPosition'
 import { isUndefined } from '../../shared/utils/TypeGuard'
-import { Player } from '../../shared/gameState/entities/PlayerEnum'
+import { PlayerRole } from '../../shared/gameState/entities/PlayerRoleEnum'
 
-export function checkIfGameExistAndIfIsPlayerTurn(game: GameState, player: Player) {
+export function checkIfGameExistAndIfIsPlayerTurn(game: GameState, player: PlayerRole) {
   if (isUndefined(game)) {
     console.error("L'état de la partie est introuvable" + JSON.stringify(game))
     throw new Error("L'état de la partie est introuvable")
@@ -18,7 +18,7 @@ export function checkIfGameExistAndIfIsPlayerTurn(game: GameState, player: Playe
   }
 }
 
-export function checkIfIsPawnOwner(game: GameState, pawn: Pawn, player: Player) {
+export function checkIfIsPawnOwner(game: GameState, pawn: Pawn, player: PlayerRole) {
   if (pawn.owner !== player) {
     console.error(
       "Le pion n'appartient pas à ce joueur" + JSON.stringify(pawn) + ' ' + JSON.stringify(game)

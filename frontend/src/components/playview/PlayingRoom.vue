@@ -2,7 +2,7 @@
 import { isDefined } from '@shared/utils/TypeGuard'
 import { Socket } from 'socket.io-client'
 import { onUnmounted, ref, watch } from 'vue'
-import { Player } from '@shared/gameState/entities/PlayerEnum'
+import { PlayerRole } from '@shared/gameState/entities/PlayerRoleEnum'
 import GameState from '@shared/gameState/entities/GameState'
 import type GameStateDto from '@shared/gameState/entities/GameStateDto'
 import gameStateDtoToEntity from '@shared/gameState/mappers/gameStateMapper'
@@ -10,6 +10,7 @@ import ErrorDisplayer from '../shared/ErrorDisplayer.vue'
 import WaitingOpponent from './subcomponents/WaitingOpponent.vue'
 import BoardGameHandler from '../boardgame/BoardGameHandler.vue'
 import type User from '@shared/user/entities/User'
+import type PlayerInfoDto from '@shared/user/entities/PlayerDto'
 
 const props = defineProps<{
   socket: Socket
@@ -19,11 +20,16 @@ const props = defineProps<{
 }>()
 
 const errorMessage = ref<string | undefined>(undefined)
-const playerRole = ref<Player | undefined>(undefined)
+const playerRole = ref<PlayerRole | undefined>(undefined)
 const gameState = ref<GameState | undefined>(undefined)
+const playersInfo = ref<PlayerInfoDto[]>([])
 
 props.socket.on('gameState', (state: GameStateDto) => {
   gameState.value = gameStateDtoToEntity(state)
+})
+
+props.socket.on('playersInfo', (fetchedPlayersInfo: PlayerInfoDto[]) => {
+  playersInfo.value = fetchedPlayersInfo
 })
 
 watch(
@@ -53,6 +59,7 @@ onUnmounted(() => {
     :socket="props.socket"
     :player="playerRole"
     :game-state="gameState"
+    :players-info="playersInfo"
   />
   <WaitingOpponent v-else :room-type="props.roomType" :room-id="props.roomId" />
   <ErrorDisplayer v-if="isDefined(errorMessage)" v-model="errorMessage" />

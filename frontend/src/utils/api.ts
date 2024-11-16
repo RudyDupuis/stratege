@@ -58,3 +58,15 @@ export async function getTop100() {
 
   return usersDto.map((userDto) => userDtoToEntity(userDto))
 }
+
+export async function getUserById(id: string) {
+  const rawUser = await fetch(backendUrl + 'user/' + id)
+
+  if (rawUser.status !== 200) {
+    throw new Error(rawUser.statusText)
+  }
+
+  const userDto = (await rawUser.json()) as UserDto
+
+  return userDtoToEntity(userDto)
+}

@@ -1,8 +1,8 @@
 import type PawnDto from '../../pawn/entities/PawnDto'
-import { Player } from './PlayerEnum'
+import { PlayerRole } from './PlayerRoleEnum'
 
 export default interface GameStateDto {
   turn: number
   boardPawns: PawnDto[]
-  winner?: Player
+  winner?: PlayerRole
 }

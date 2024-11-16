@@ -1,7 +1,7 @@
 import Pawn from '../../../pawn/entities/Pawn'
 import PawnPosition from '../../../pawnPosition/entities/PawnPosition'
 import GameState from '../../entities/GameState'
-import { Player } from '../../entities/PlayerEnum'
+import { PlayerRole } from '../../entities/PlayerRoleEnum'
 import determineAvailablePositionsForMovingOrKillingByMovingOneCellAtATime from './determineAvailablePositionsForMovingOrKillingByMovingOneCellAtATime'
 import determineAvailablePositionsForPushingOrPulling from './determineAvailablePositionsForPushingOrPulling'
 
@@ -19,7 +19,7 @@ export const PAWN_POSITION_DIRECTIONS = [
 export function determineAvailablePositionsForActions(
   gameState: GameState,
   pawn: Pawn,
-  player: Player
+  player: PlayerRole
 ) {
   const positionsAvailableForMoving: PawnPosition[] = []
   const positionsAvailableForKilling: PawnPosition[] = []
