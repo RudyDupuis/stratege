@@ -1,35 +1,21 @@
-import { emitPlayerCount } from '../../utils/roomMethods'
-import { Player } from '../../../shared/gameState/entities/PlayerEnum'
+import { emitPlayersInfo } from '../../utils/roomMethods'
 import { Server, Socket } from 'socket.io'
+import { Room } from './roomHandlers'
 
-export default function leaveRoomHandler(
-  socket: Socket,
-  availablePublicRooms: Record<string, Set<string>>,
-  rooms: Record<string, Set<string>>,
-  playerRoles: Record<string, Record<string, Player>>,
-  io: Server
-) {
+export default function leaveRoomHandler(socket: Socket, rooms: Record<string, Room>, io: Server) {
   socket.on('disconnect', () => {
     for (const roomId in rooms) {
-      if (rooms[roomId].has(socket.id)) {
-        rooms[roomId].delete(socket.id)
+      const playerIndex = rooms[roomId].playersInfo.findIndex(
+        (player) => player.socketId === socket.id
+      )
 
-        emitPlayerCount(io, rooms, roomId)
-
-        if (playerRoles[roomId]) {
-          delete playerRoles[roomId][socket.id]
-        }
-
-        if (rooms[roomId].size === 0) {
-          delete rooms[roomId]
-          delete playerRoles[roomId]
-        }
+      if (playerIndex !== -1) {
+        rooms[roomId].playersInfo[playerIndex].isConnected = false
+        emitPlayersInfo(io, rooms, roomId)
       }
-    }
 
-    for (const roomId in availablePublicRooms) {
-      if (availablePublicRooms[roomId].has(socket.id)) {
-        delete availablePublicRooms[roomId]
+      if (!rooms[roomId].playersInfo.find((player) => player.isConnected === true)) {
+        delete rooms[roomId]
       }
     }
   })

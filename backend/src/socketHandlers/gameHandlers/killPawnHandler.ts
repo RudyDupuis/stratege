@@ -1,7 +1,7 @@
 import GameState from '../../../shared/gameState/entities/GameState'
 import PawnDto from '../../../shared/pawn/entities/PawnDto'
 import PawnPositionDto from '../../../shared/pawnPosition/entities/PawnPositionDto'
-import { Player } from '../../../shared/gameState/entities/PlayerEnum'
+import { PlayerRole } from '../../../shared/gameState/entities/PlayerRoleEnum'
 import { Server, Socket } from 'socket.io'
 import { Callback } from '../socketHandlers'
 import {
@@ -15,6 +15,7 @@ import pawnPositionDtoToEntity from '../../../shared/pawnPosition/mappers/pawnPo
 import { isUndefined } from '../../../shared/utils/TypeGuard'
 import { Action, ReceivedAction } from '../../../shared/pawn/entities/ActionEnum'
 import PawnPosition from '../../../shared/pawnPosition/entities/PawnPosition'
+import winnerHandler from './winnerHandler'
 
 export default function killPawnHandler(
   socket: Socket,
@@ -25,7 +26,7 @@ export default function killPawnHandler(
     'killPawn',
     (
       roomId: string,
-      player: Player,
+      player: PlayerRole,
       pawnDto: PawnDto,
       desiredPawnPositionForKillDto: PawnPositionDto,
       callback: Callback
@@ -75,10 +76,10 @@ export default function killPawnHandler(
       gameState.updatePawn(pawnToKill)
       gameState.updatePawn(pawn)
 
-      gameState.checkIfThereIsAWinner()
       gameState.updateBoard()
 
       io.to(roomId).emit('gameState', gameState)
+      winnerHandler(gameState, roomId, io, callback)
     }
   )
 }

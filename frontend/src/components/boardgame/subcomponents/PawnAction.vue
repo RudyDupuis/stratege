@@ -26,7 +26,7 @@ function pawnAction(desiredPawnPosition: PawnPosition) {
   props.gameData.socket.emit(
     `${props.action}Pawn`,
     props.gameData.roomId,
-    props.gameData.player,
+    props.gameData.playerRole,
     props.gameData.targetPawn,
     desiredPawnPosition,
     (response: SocketResponse) => {
@@ -64,6 +64,6 @@ const cellColor = computed(() => {
   <ErrorDisplayer
     v-if="isDefined(errorMessage)"
     v-model="errorMessage"
-    :class="useBoardGameOrientation(gameData.player)"
+    :class="useBoardGameOrientation(gameData.playerRole)"
   />
 </template>

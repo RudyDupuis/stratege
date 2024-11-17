@@ -1,8 +1,6 @@
 <script setup lang="ts">
-import GameInformations from '../boardgame/subcomponents/GameInformations.vue'
+import GameInformations from '../boardgame/subcomponents/BoardInformations.vue'
 import PawnComponent from '../boardgame/subcomponents/PawnComponent.vue'
-import ArrowSvg from '../svgs/ArrowSvg.vue'
-import ShieldSvg from '../svgs/ShieldSvg.vue'
 import BoardGameDrawing from './BoardGameDrawing.vue'
 </script>
 
@@ -22,20 +20,20 @@ import BoardGameDrawing from './BoardGameDrawing.vue'
       <BoardGameDrawing sizeClass="size-48" :rows="3" :cols="3">
         <template v-slot:1-1>
           <PawnComponent sizeClass="size-11/12" colorClass="bg-light" orientationClass="rotate-0">
-            <ShieldSvg fillClass="fill-light" class="size-8 px-2" />
+            <i class="fa-solid fa-shield-halved px-2 text-light" />
           </PawnComponent>
         </template>
         <template v-slot:0-1>
-          <ArrowSvg fillClass="fill-error" class="size-8 rotate-180" />
+          <i class="fa-solid fa-arrow-down text-error text-3xl" />
         </template>
         <template v-slot:1-0>
-          <ArrowSvg fillClass="fill-error" class="size-8 rotate-90" />
+          <i class="fa-solid fa-arrow-right text-error text-3xl" />
         </template>
         <template v-slot:2-1>
-          <ArrowSvg fillClass="fill-success" class="size-8" />
+          <i class="fa-solid fa-arrow-up text-success text-3xl" />
         </template>
         <template v-slot:1-2>
-          <ArrowSvg fillClass="fill-success" class="size-8 rotate-270" />
+          <i class="fa-solid fa-arrow-left text-success text-3xl" />
         </template>
       </BoardGameDrawing>
     </div>

@@ -1,13 +1,18 @@
 <script setup lang="ts">
 import { io } from 'socket.io-client'
 import RoomTypeSelector from '@/components/playview/RoomTypeSelector.vue'
-import { isDefined } from '@shared/utils/TypeGuard'
+import { isDefined, isUndefined } from '@shared/utils/TypeGuard'
 import { ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import PlayingRoom from '@/components/playview/PlayingRoom.vue'
+import router from '@/router'
+import { useUserStore } from '@/composables/user/useUserStore'
+import ErrorDisplayer from '@/components/shared/ErrorDisplayer.vue'
+import { storeToRefs } from 'pinia'
 
-const FRONT_URL = import.meta.env.VITE_FRONT_URL
 const SOCKET_URL = import.meta.env.VITE_SOCKET_URL
+const errorMessage = ref<string | undefined>(undefined)
+const user = storeToRefs(useUserStore()).user
 
 const socket = io(SOCKET_URL)
 const route = useRoute()
@@ -17,7 +22,7 @@ const roomType = ref<'private' | 'public' | undefined>(undefined)
 
 function getRoomIdAndChangeURL(id: string) {
   roomId.value = id
-  window.history.pushState({}, '', `${FRONT_URL}jouer?roomId=${id}`)
+  router.push({ path: '/jouer', query: { roomId: id } })
 }
 
 watch(roomType, () => {
@@ -27,7 +32,11 @@ watch(roomType, () => {
     })
   }
   if (roomType.value === 'public') {
-    socket.emit('searchPublicRoom', (id: string) => {
+    if (isUndefined(user.value)) {
+      errorMessage.value = 'Vous devez vous connecter pour jouer en partie classée'
+      return
+    }
+    socket.emit('searchPublicRoom', user.value.id, (id: string) => {
       getRoomIdAndChangeURL(id)
     })
   }
@@ -36,7 +45,14 @@ watch(roomType, () => {
 
 <template>
   <main>
-    <PlayingRoom v-if="isDefined(roomId)" :socket="socket" :roomId="roomId" :room-type="roomType" />
+    <PlayingRoom
+      v-if="isDefined(roomId)"
+      :socket="socket"
+      :roomId="roomId"
+      :room-type="roomType"
+      :userId="user?.id"
+    />
     <RoomTypeSelector v-else v-model="roomType" />
   </main>
+  <ErrorDisplayer v-if="isDefined(errorMessage)" v-model="errorMessage" />
 </template>

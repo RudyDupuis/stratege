@@ -1,4 +1,4 @@
-import { Player } from '../../../shared/gameState/entities/PlayerEnum'
+import { PlayerRole } from '../../../shared/gameState/entities/PlayerRoleEnum'
 import { Server, Socket } from 'socket.io'
 import { Callback } from '../socketHandlers'
 import GameState from '../../../shared/gameState/entities/GameState'
@@ -9,7 +9,7 @@ export default function passTurnHandler(
   games: Record<string, GameState>,
   io: Server
 ) {
-  socket.on('passTurn', (roomId: string, player: Player, callback: Callback) => {
+  socket.on('passTurn', (roomId: string, player: PlayerRole, callback: Callback) => {
     const gameState = games[roomId]
 
     try {

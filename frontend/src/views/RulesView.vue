@@ -52,6 +52,9 @@ import GameState from '@shared/gameState/entities/GameState'
         </div>
       </div>
     </section>
-    <RouterLink :to="{ name: 'play' }" class="button mb-20">Jouer !</RouterLink>
+    <RouterLink :to="{ name: 'play' }" class="button mb-20">
+      <i class="fa-solid fa-gamepad mr-2" />
+      Jouer !
+    </RouterLink>
   </main>
 </template>

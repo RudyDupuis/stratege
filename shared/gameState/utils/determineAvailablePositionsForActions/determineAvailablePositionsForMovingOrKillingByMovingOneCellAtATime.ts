@@ -1,7 +1,7 @@
 import { Orientation } from '../../../pawn/entities/OrientationEnum'
 import PawnPosition from '../../../pawnPosition/entities/PawnPosition'
 import GameState from '../../entities/GameState'
-import { Player } from '../../entities/PlayerEnum'
+import { PlayerRole } from '../../entities/PlayerRoleEnum'
 import {
   PAWN_POSITION_BOTTOM,
   PAWN_POSITION_DIRECTIONS,
@@ -15,7 +15,7 @@ export default function determineAvailablePositionsForMovingOrKillingByMovingOne
   gameState: GameState,
   currentPosition: PawnPosition,
   remainingMove: number,
-  player: Player,
+  player: PlayerRole,
   positionsAvailableForMoving: PawnPosition[],
   positionsAvailableForKilling: PawnPosition[]
 ) {

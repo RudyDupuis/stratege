@@ -1,5 +1,5 @@
-import { Player } from '@shared/gameState/entities/PlayerEnum'
+import { PlayerRole } from '@shared/gameState/entities/PlayerRoleEnum'
 
-export default function useBoardGameOrientation(player: Player) {
-  return player === Player.Player1 ? 'rotate-0' : 'rotate-180'
+export default function useBoardGameOrientation(player: PlayerRole) {
+  return player === PlayerRole.Player1 ? 'rotate-0' : 'rotate-180'
 }

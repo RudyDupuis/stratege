@@ -35,6 +35,7 @@ const copyToClipboard = async (text: string) => {
       <div class="w-3 h-3 bg-dark rounded-full animate-bounce-delay-04"></div>
     </div>
     <button v-if="roomType === 'private'" @click="copyToClipboard(shareableLink)" class="button">
+      <i class="fa-solid fa-copy mr-2" />
       {{ isUndefined(copyStatus) ? 'Copier le lien à donner à son ami' : copyStatus }}
     </button>
   </div>

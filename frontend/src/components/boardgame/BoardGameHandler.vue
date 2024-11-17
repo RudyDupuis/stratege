@@ -5,20 +5,22 @@ import GameState from '@shared/gameState/entities/GameState'
 import { isDefined, isNotNull, isUndefined } from '@shared/utils/TypeGuard'
 import PawnPosition from '@shared/pawnPosition/entities/PawnPosition'
 import type Pawn from '@shared/pawn/entities/Pawn'
-import { Player } from '@shared/gameState/entities/PlayerEnum'
+import { PlayerRole } from '@shared/gameState/entities/PlayerRoleEnum'
 import ErrorDisplayer from '../shared/ErrorDisplayer.vue'
-import GameControls from './subcomponents/GameControls.vue'
 import PawnAction from './subcomponents/PawnAction.vue'
 import PawnHandler from './PawnHandler.vue'
-import GameInformations from './subcomponents/GameInformations.vue'
 import { Action } from '@shared/pawn/entities/ActionEnum'
 import PawnControls from './subcomponents/PawnControls.vue'
+import type PlayerInfo from '@shared/user/entities/PlayerInfo'
+import BoardInformations from './subcomponents/BoardInformations.vue'
+import GameInformations from './subcomponents/GameInformations.vue'
 
 const props = defineProps<{
   roomId: string
   socket: Socket
-  player: Player
+  player: PlayerRole
   gameState: GameState
+  playersInfo: PlayerInfo[]
 }>()
 
 const errorMessage = ref<string | undefined>(undefined)
@@ -72,7 +74,7 @@ function selectPawn(pawn: Pawn) {
 }
 export interface gameData {
   roomId: string
-  player: Player
+  playerRole: PlayerRole
   gameState: GameState
   socket: Socket
   targetPawn: Pawn | undefined
@@ -82,7 +84,7 @@ export interface gameData {
 const gameData = computed<gameData>(() => {
   return {
     roomId: props.roomId,
-    player: props.player,
+    playerRole: props.player,
     gameState: props.gameState,
     socket: props.socket,
     targetPawn: targetPawn.value,
@@ -92,9 +94,9 @@ const gameData = computed<gameData>(() => {
 </script>
 
 <template>
-  <section class="flex flex-col xl:flex-row justify-center w-full items-center">
+  <section class="flex flex-col xl:flex-row justify-center w-full items-center mt-16 md:mt-0">
     <section class="flex flex-col justify-center items-center py-10 xl:py-0">
-      <GameInformations
+      <BoardInformations
         :turn="gameState.turn"
         :player1s-lost-pawns-number="gameState.determinePlayersLostPawns().player1sLostPawns.length"
         :player2s-lost-pawns-number="gameState.determinePlayersLostPawns().player2sLostPawns.length"
@@ -103,7 +105,7 @@ const gameData = computed<gameData>(() => {
         <div
           class="grid grid-cols-8 grid-rows-8 border border-dark"
           :style="{ width: 'min(80vw, 80vh)', height: 'min(80vw, 80vh)' }"
-          :class="{ 'rotate-180': player === Player.Player2 }"
+          :class="{ 'rotate-180': player === PlayerRole.Player2 }"
         >
           <div v-for="(row, rowIndex) in gameState.board" :key="rowIndex" class="contents">
             <div
@@ -182,7 +184,11 @@ const gameData = computed<gameData>(() => {
         </div>
       </div>
     </section>
-    <GameControls :game-data="gameData" @pass-turn="resetTarget()" />
+    <GameInformations
+      :game-data="gameData"
+      :players-info="playersInfo"
+      @pass-turn="resetTarget()"
+    />
   </section>
   <ErrorDisplayer v-if="isDefined(errorMessage)" v-model="errorMessage" />
 </template>

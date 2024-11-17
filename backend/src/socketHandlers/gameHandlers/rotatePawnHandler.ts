@@ -1,6 +1,6 @@
 import GameState from '../../../shared/gameState/entities/GameState'
 import PawnDto from '../../../shared/pawn/entities/PawnDto'
-import { Player } from '../../../shared/gameState/entities/PlayerEnum'
+import { PlayerRole } from '../../../shared/gameState/entities/PlayerRoleEnum'
 import { Orientation } from '../../../shared/pawn/entities/OrientationEnum'
 import { Server, Socket } from 'socket.io'
 import { Callback } from '../socketHandlers'
@@ -17,7 +17,7 @@ export default function rotatePawnHandler(
     'rotatePawn',
     (
       roomId: string,
-      player: Player,
+      player: PlayerRole,
       pawnDto: PawnDto,
       orientation: Orientation,
       callback: Callback

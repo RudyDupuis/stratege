@@ -2,7 +2,6 @@
 import PawnComponent from '@/components/boardgame/subcomponents/PawnComponent.vue'
 import GameState from '@shared/gameState/entities/GameState'
 import BoardGameDrawing from '../BoardGameDrawing.vue'
-import CrossSvg from '@/components/svgs/CrossSvg.vue'
 </script>
 
 <template>
@@ -76,7 +75,7 @@ import CrossSvg from '@/components/svgs/CrossSvg.vue'
         <template v-slot:0-4>
           <div class="size-full bg-pushing absolute inset-0"></div>
           <div class="absolute inset-0 size-full flex justify-center items-center">
-            <CrossSvg fillClass="fill-error" class="size-8" />
+            <i class="fa-solid fa-xmark text-3xl text-error" />
           </div>
         </template>
       </BoardGameDrawing>
