@@ -31,8 +31,14 @@ const isEditing = ref(false)
             <p class="font-primary_bold">Score ELO : {{ user.eloScore }}</p>
           </section>
 
-          <button class="button mb-2" @click="isEditing = true">Modifier mon profil</button>
-          <button class="button mb-10" @click="userStore.logout">Se déconnecter</button>
+          <button class="button mb-2" @click="isEditing = true">
+            <i class="fa-solid fa-pen-to-square mr-2" />
+            Modifier mon profil
+          </button>
+          <button class="button mb-10" @click="userStore.logout">
+            <i class="fa-solid fa-power-off mr-2" />
+            Se déconnecter
+          </button>
         </template>
 
         <ProfileUpdate v-else @close="isEditing = false" />

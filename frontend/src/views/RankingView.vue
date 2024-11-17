@@ -32,7 +32,7 @@ getTop100()
     <h2 class="medium-title mb-10">Les 100 meilleurs joueurs</h2>
     <Loading v-if="isLoading" class="w-10 h-10" />
     <template v-else>
-      <section class="bg-dark_light p-5 rounded-xl shadow-lg">
+      <section class="bg-dark_light p-5 rounded-xl shadow-lg mb-10">
         <table class="table-auto border-collapse">
           <thead>
             <tr class="bg-gray-100">
@@ -63,6 +63,10 @@ getTop100()
           </tbody>
         </table>
       </section>
+      <RouterLink :to="{ name: 'play' }" class="button mb-5">
+        <i class="fa-solid fa-gamepad mr-2" />
+        Jouer !
+      </RouterLink>
     </template>
   </main>
   <ErrorDisplayer v-if="isDefined(errorMessage)" v-model="errorMessage" />

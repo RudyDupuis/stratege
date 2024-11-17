@@ -8,7 +8,9 @@ const message = ref<string | undefined>(import.meta.env.VITE_INFO_MESSAGE)
 </script>
 
 <template>
-  <RouterLink :to="{ name: 'home' }" class="small-title absolute top-5 left-5">Stratège</RouterLink>
+  <RouterLink :to="{ name: 'home' }" class="small-title fixed z-50 top-5 left-5">
+    Stratège
+  </RouterLink>
   <UserLogin />
   <RouterView />
   <CookieRequester />

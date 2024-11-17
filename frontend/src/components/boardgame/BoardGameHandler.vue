@@ -7,13 +7,13 @@ import PawnPosition from '@shared/pawnPosition/entities/PawnPosition'
 import type Pawn from '@shared/pawn/entities/Pawn'
 import { PlayerRole } from '@shared/gameState/entities/PlayerRoleEnum'
 import ErrorDisplayer from '../shared/ErrorDisplayer.vue'
-import GameControls from './subcomponents/GameControls.vue'
 import PawnAction from './subcomponents/PawnAction.vue'
 import PawnHandler from './PawnHandler.vue'
-import GameInformations from './subcomponents/GameInformations.vue'
 import { Action } from '@shared/pawn/entities/ActionEnum'
 import PawnControls from './subcomponents/PawnControls.vue'
 import type PlayerInfo from '@shared/user/entities/PlayerInfo'
+import BoardInformations from './subcomponents/BoardInformations.vue'
+import GameInformations from './subcomponents/GameInformations.vue'
 
 const props = defineProps<{
   roomId: string
@@ -96,7 +96,7 @@ const gameData = computed<gameData>(() => {
 <template>
   <section class="flex flex-col xl:flex-row justify-center w-full items-center mt-16 md:mt-0">
     <section class="flex flex-col justify-center items-center py-10 xl:py-0">
-      <GameInformations
+      <BoardInformations
         :turn="gameState.turn"
         :player1s-lost-pawns-number="gameState.determinePlayersLostPawns().player1sLostPawns.length"
         :player2s-lost-pawns-number="gameState.determinePlayersLostPawns().player2sLostPawns.length"
@@ -184,7 +184,11 @@ const gameData = computed<gameData>(() => {
         </div>
       </div>
     </section>
-    <GameControls :game-data="gameData" :players-info="playersInfo" @pass-turn="resetTarget()" />
+    <GameInformations
+      :game-data="gameData"
+      :players-info="playersInfo"
+      @pass-turn="resetTarget()"
+    />
   </section>
   <ErrorDisplayer v-if="isDefined(errorMessage)" v-model="errorMessage" />
 </template>

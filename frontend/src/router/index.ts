@@ -4,6 +4,7 @@ import PlayView from '@/views/PlayView.vue'
 import RulesView from '@/views/RulesView.vue'
 import MyProfileView from '@/views/MyProfileView.vue'
 import RankingView from '@/views/RankingView.vue'
+import PrivacyPolicyView from '@/views/PrivacyPolicyView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -32,6 +33,11 @@ const router = createRouter({
       path: '/classement',
       name: 'ranking',
       component: RankingView
+    },
+    {
+      path: '/politique-de-confidentialite',
+      name: 'privacy-policy',
+      component: PrivacyPolicyView
     }
   ]
 })
