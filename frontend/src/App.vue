@@ -8,10 +8,10 @@ const message = ref<string | undefined>(import.meta.env.VITE_INFO_MESSAGE)
 </script>
 
 <template>
-  <RouterLink :to="{ name: 'home' }" class="small-title fixed z-50 top-5 left-5">
-    Stratège
-  </RouterLink>
-  <UserLogin />
+  <header class="z-50 p-5 fixed top-0 left-0 flex items-center justify-between w-full bg-light">
+    <RouterLink :to="{ name: 'home' }" class="small-title"> Stratège </RouterLink>
+    <UserLogin />
+  </header>
   <RouterView />
   <CookieRequester />
   <InfoDisplayer v-model="message" />

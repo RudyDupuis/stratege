@@ -32,18 +32,14 @@ onMounted(() => {
 
 <template>
   <template v-if="!isInGame">
-    <Loading v-if="isLoading" class="fixed z-50 top-5 right-5 w-5 h-5" />
+    <Loading v-if="isLoading" class="w-5 h-5" />
     <template v-else>
-      <a
-        v-if="isUndefined(user)"
-        :href="backendUrl + 'auth/google'"
-        class="fixed z-50 top-5 right-5"
-      >
+      <a v-if="isUndefined(user)" :href="backendUrl + 'auth/google'">
         <span class="mr-2">Connexion</span><i class="fa-brands fa-google" />
       </a>
       <RouterLink
         v-else
-        class="fixed z-50 top-5 right-5 flex items-center space-x-2 bg-dark_light px-3 py-2 rounded-xl cursor-pointer hover:opacity-80"
+        class="flex items-center space-x-2 bg-dark_light px-3 py-2 rounded-xl cursor-pointer hover:opacity-80"
         :to="{ name: 'my-profile' }"
       >
         <AvatarFinder :avatarId="user.avatarId" class="w-6 h-6" />
