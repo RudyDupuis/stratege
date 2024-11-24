@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import GameInformations from '../boardgame/subcomponents/BoardInformations.vue'
-import PawnComponent from '../boardgame/subcomponents/PawnComponent.vue'
+import BoardInformations from '../boardgame/BoardInformations.vue'
+import PawnDisplay from '../boardgame/pawns/display/PawnDisplay.vue'
 import BoardGameDrawing from './BoardGameDrawing.vue'
 </script>
 
@@ -19,9 +19,9 @@ import BoardGameDrawing from './BoardGameDrawing.vue'
     <div class="flex justify-center mb-5">
       <BoardGameDrawing sizeClass="size-48" :rows="3" :cols="3">
         <template v-slot:1-1>
-          <PawnComponent sizeClass="size-11/12" colorClass="bg-light" orientationClass="rotate-0">
+          <PawnDisplay sizeClass="size-11/12" colorClass="bg-light" orientationClass="rotate-0">
             <i class="fa-solid fa-shield-halved px-2 text-light" />
-          </PawnComponent>
+          </PawnDisplay>
         </template>
         <template v-slot:0-1>
           <i class="fa-solid fa-arrow-down text-error text-3xl" />
@@ -42,7 +42,11 @@ import BoardGameDrawing from './BoardGameDrawing.vue'
     </p>
     <p class="mb-5">Les informations de la partie sont présentes au dessus du plateau.</p>
     <div class="flex justify-center mb-5">
-      <GameInformations :turn="5" :player1s-lost-pawns-number="0" :player2s-lost-pawns-number="3" />
+      <BoardInformations
+        :turn="5"
+        :player1s-lost-pawns-number="0"
+        :player2s-lost-pawns-number="3"
+      />
     </div>
     <p>On y retrouve le tour actuel du jeu et le nombre de pions restants pour chaque joueur.</p>
   </section>

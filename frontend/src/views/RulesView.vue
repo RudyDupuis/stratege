@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import PawnComponent from '@/components/boardgame/subcomponents/PawnComponent.vue'
+import PawnDisplay from '@/components/boardgame/pawns/display/PawnDisplay.vue'
 import MoveRules from '@/components/rules/actions/MoveRules.vue'
 import PullRules from '@/components/rules/actions/PullRules.vue'
 import PushRules from '@/components/rules/actions/PushRules.vue'
@@ -35,11 +35,11 @@ import GameState from '@shared/gameState/entities/GameState'
         tour.
       </p>
       <div class="flex justify-center mb-32">
-        <PawnComponent sizeClass="size-16" colorClass="bg-dark_light" orientationClass="rotate-0">
+        <PawnDisplay sizeClass="size-16" colorClass="bg-dark_light" orientationClass="rotate-0">
           <p class="text-light font-primary_bold absolute top-0 left-0 px-1 md:px-3 md:py-2">
             {{ GameState.MAX_PAWN_MOVEMENT }}
           </p>
-        </PawnComponent>
+        </PawnDisplay>
       </div>
       <div class="flex flex-col space-y-16 mb-20">
         <div class="flex flex-col xl:flex-row xl:space-x-32 space-x-0 xl:space-y-0 space-y-16">

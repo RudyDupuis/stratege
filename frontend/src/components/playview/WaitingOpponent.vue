@@ -1,19 +1,20 @@
 <script setup lang="ts">
-import ErrorDisplayer from '@/components/shared/ErrorDisplayer.vue'
-import { isDefined, isUndefined } from '@shared/utils/TypeGuard'
-import { ref } from 'vue'
+import { ErrorToDisplay, useErrorsStore } from '@/composables/error/useErrorsStore'
+import { requiredInject } from '@/utils/requiredInject'
+import { isUndefined } from '@shared/utils/TypeGuard'
+import { ref, type Ref } from 'vue'
 
-const props = defineProps<{
+defineProps<{
   roomType?: string
-  roomId: string
 }>()
 
-const FRONT_URL = import.meta.env.VITE_FRONT_URL
-const shareableLink = `${FRONT_URL}jouer?roomId=${props.roomId}`
-const copyStatus = ref<string | undefined>(undefined)
-const errorMessage = ref<string | undefined>(undefined)
+const roomId = requiredInject<Ref<string | undefined>>('roomId')
 
-const copyToClipboard = async (text: string) => {
+const FRONT_URL = import.meta.env.VITE_FRONT_URL
+const shareableLink = `${FRONT_URL}jouer?roomId=${roomId.value}`
+const copyStatus = ref<string | undefined>(undefined)
+
+async function copyToClipboard(text: string) {
   try {
     await navigator.clipboard.writeText(text)
     copyStatus.value = 'Lien copie !'
@@ -21,7 +22,9 @@ const copyToClipboard = async (text: string) => {
       copyStatus.value = undefined
     }, 2000)
   } catch (err) {
-    errorMessage.value = 'Une erreur est survenue lors de la copie du lien'
+    useErrorsStore().addError(
+      new ErrorToDisplay('Une erreur est survenue lors de la copie du lien')
+    )
   }
 }
 </script>
@@ -34,12 +37,19 @@ const copyToClipboard = async (text: string) => {
       <div class="w-3 h-3 bg-dark rounded-full animate-bounce-delay-02"></div>
       <div class="w-3 h-3 bg-dark rounded-full animate-bounce-delay-04"></div>
     </div>
-    <button v-if="roomType === 'private'" @click="copyToClipboard(shareableLink)" class="button">
+    <button
+      v-if="roomType === 'private'"
+      @click="copyToClipboard(shareableLink)"
+      class="button mb-5"
+    >
       <i class="fa-solid fa-copy mr-2" />
       {{ isUndefined(copyStatus) ? 'Copier le lien à donner à son ami' : copyStatus }}
     </button>
+    <RouterLink :to="{ name: 'home' }" class="danger-button">
+      <i class="fa-solid fa-home mr-2" />
+      Retourner au menu
+    </RouterLink>
   </div>
-  <ErrorDisplayer v-if="isDefined(errorMessage)" v-model="errorMessage" />
 </template>
 
 <style>

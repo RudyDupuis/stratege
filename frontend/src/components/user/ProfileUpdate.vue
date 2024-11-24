@@ -75,5 +75,5 @@ function updateUser() {
     <i class="fa-solid fa-floppy-disk mr-2" />
     Enregister
   </button>
-  <button class="button mb-10" @click="emit('close')">Annuler</button>
+  <button class="danger-button mb-10" @click="emit('close')">Annuler</button>
 </template>

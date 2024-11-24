@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import ErrorDisplayer from '@/components/shared/ErrorDisplayer.vue'
 import Loading from '@/components/shared/Loading.vue'
 import AvatarFinder from '@/components/user/AvatarFinder.vue'
 import ProfileUpdate from '@/components/user/ProfileUpdate.vue'
@@ -9,7 +8,7 @@ import { storeToRefs } from 'pinia'
 import { ref } from 'vue'
 
 const userStore = useUserStore()
-const { user, errorMessage, isLoading } = storeToRefs(userStore)
+const { user, isLoading } = storeToRefs(userStore)
 
 const isEditing = ref(false)
 </script>
@@ -35,7 +34,7 @@ const isEditing = ref(false)
             <i class="fa-solid fa-pen-to-square mr-2" />
             Modifier mon profil
           </button>
-          <button class="button mb-10" @click="userStore.logout">
+          <button class="danger-button mb-10" @click="userStore.logout">
             <i class="fa-solid fa-power-off mr-2" />
             Se déconnecter
           </button>
@@ -49,5 +48,4 @@ const isEditing = ref(false)
       </template>
     </template>
   </main>
-  <ErrorDisplayer v-if="isDefined(errorMessage)" v-model="errorMessage" />
 </template>

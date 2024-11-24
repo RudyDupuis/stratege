@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import PawnComponent from '@/components/boardgame/subcomponents/PawnComponent.vue'
+import PawnDisplay from '@/components/boardgame/pawns/display/PawnDisplay.vue'
 import BoardGameDrawing from '../BoardGameDrawing.vue'
 </script>
 
@@ -12,7 +12,7 @@ import BoardGameDrawing from '../BoardGameDrawing.vue'
     <div class="flex justify-center">
       <BoardGameDrawing sizeClass="size-48" :rows="5" :cols="5">
         <template v-slot:2-2>
-          <PawnComponent sizeClass="size-11/12" colorClass="bg-light" orientationClass="rotate-0" />
+          <PawnDisplay sizeClass="size-11/12" colorClass="bg-light" orientationClass="rotate-0" />
         </template>
         <template v-slot:0-2>
           <div class="size-full bg-moving"></div>

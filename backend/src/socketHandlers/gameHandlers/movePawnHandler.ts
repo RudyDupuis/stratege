@@ -43,7 +43,7 @@ export default function movePawnHandler(
       const positionsAvailableForMoving = gameState.determineAvailablePositionsForActions(
         pawn,
         player
-      ).returnedPositionsAvailableForMoving
+      ).positionsAvailableForMoving
 
       try {
         checkPawnPositionsAvailable(positionsAvailableForMoving, desiredPawnPosition)

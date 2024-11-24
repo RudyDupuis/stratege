@@ -1,48 +1,61 @@
 <script setup lang="ts">
 import { isDefined } from '@shared/utils/TypeGuard'
 import { Socket } from 'socket.io-client'
-import { onUnmounted, ref, watch } from 'vue'
+import { onUnmounted, provide, ref, watch, type Ref } from 'vue'
 import { PlayerRole } from '@shared/gameState/entities/PlayerRoleEnum'
 import GameState from '@shared/gameState/entities/GameState'
 import type GameStateDto from '@shared/gameState/entities/GameStateDto'
 import gameStateDtoToEntity from '@shared/gameState/mappers/gameStateMapper'
-import ErrorDisplayer from '../shared/ErrorDisplayer.vue'
-import WaitingOpponent from './subcomponents/WaitingOpponent.vue'
+import WaitingOpponent from './WaitingOpponent.vue'
 import BoardGameHandler from '../boardgame/BoardGameHandler.vue'
 import type User from '@shared/user/entities/User'
 import type PlayerInfo from '@shared/user/entities/PlayerInfo'
 import type PlayerInfoDto from '@shared/user/entities/PlayerInfoDto'
 import { playerInfoDtoToEntity } from '@shared/user/mappers/playerInfoMapper'
+import { requiredInject } from '@/utils/requiredInject'
+import type EndGameInformation from '@shared/gameState/entities/EndGameInformation'
+import { endGameInformationDtoToEntity } from '@shared/gameState/mappers/endGameInformationMapper'
+import type EndGameInformationDto from '@shared/gameState/entities/EndGameInformationDto'
+import { ErrorToDisplay, useErrorsStore } from '@/composables/error/useErrorsStore'
 
 const props = defineProps<{
-  socket: Socket
-  roomId: string
   roomType?: string
   userId?: User['id']
 }>()
 
-const errorMessage = ref<string | undefined>(undefined)
-const playerRole = ref<PlayerRole | undefined>(undefined)
-const gameState = ref<GameState | undefined>(undefined)
-const playersInfo = ref<PlayerInfo[]>([])
+const roomId = requiredInject<Ref<string | undefined>>('roomId')
+const socket = requiredInject<Socket>('socket')
 
-props.socket.on('gameState', (state: GameStateDto) => {
+const gameState = ref<GameState | undefined>(undefined)
+socket.on('gameState', (state: GameStateDto) => {
   gameState.value = gameStateDtoToEntity(state)
 })
+provide('gameState', gameState)
 
-props.socket.on('playersInfo', (playersInfoDto: PlayerInfoDto[]) => {
+const playersInfo = ref<PlayerInfo[]>([])
+socket.on('playersInfo', (playersInfoDto: PlayerInfoDto[]) => {
   playersInfo.value = playersInfoDto.map((playerInfoDto) => playerInfoDtoToEntity(playerInfoDto))
 })
+provide('playersInfo', playersInfo)
+
+const playerRole = ref<PlayerRole | undefined>(undefined)
+provide('playerRole', playerRole)
+
+const endGameInformation = ref<EndGameInformation | undefined>(undefined)
+socket.on('endGameInformation', (endGameInformationDto: EndGameInformationDto) => {
+  endGameInformation.value = endGameInformationDtoToEntity(endGameInformationDto)
+})
+provide('endGameInformation', endGameInformation)
 
 watch(
   () => props.userId,
   () => {
-    props.socket.emit('joinRoom', props.roomId, props.userId, (response: any) => {
+    socket.emit('joinRoom', roomId.value, props.userId, (response: any) => {
       if (response?.playerRole) {
         playerRole.value = response.playerRole
       }
       if (response?.error) {
-        errorMessage.value = response.error
+        useErrorsStore().addError(new ErrorToDisplay(response.error))
       }
     })
   },
@@ -50,19 +63,11 @@ watch(
 )
 
 onUnmounted(() => {
-  props.socket.emit('leaveSearchRoom')
+  socket.emit('leaveRoom', roomId.value)
 })
 </script>
 
 <template>
-  <BoardGameHandler
-    v-if="isDefined(gameState) && isDefined(playerRole)"
-    :room-id="props.roomId"
-    :socket="props.socket"
-    :player="playerRole"
-    :game-state="gameState"
-    :players-info="playersInfo"
-  />
-  <WaitingOpponent v-else :room-type="props.roomType" :room-id="props.roomId" />
-  <ErrorDisplayer v-if="isDefined(errorMessage)" v-model="errorMessage" />
+  <BoardGameHandler v-if="isDefined(gameState) && isDefined(playerRole)" />
+  <WaitingOpponent v-else :room-type="props.roomType" />
 </template>

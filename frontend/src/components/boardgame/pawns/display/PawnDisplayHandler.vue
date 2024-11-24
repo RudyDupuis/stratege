@@ -2,14 +2,18 @@
 import Pawn from '@shared/pawn/entities/Pawn'
 import { PlayerRole } from '@shared/gameState/entities/PlayerRoleEnum'
 import { Orientation } from '@shared/pawn/entities/OrientationEnum'
-import { computed, onMounted, ref } from 'vue'
-import PawnComponent from './subcomponents/PawnComponent.vue'
+import { computed, onMounted, ref, type Ref } from 'vue'
 import { isDefined } from '@shared/utils/TypeGuard'
 import { Action } from '@shared/pawn/entities/ActionEnum'
+import PawnDisplay from './PawnDisplay.vue'
+import { requiredInject } from '@/utils/requiredInject'
+
+const playerRole = requiredInject<Ref<PlayerRole>>('playerRole')
+const isPlayerTurn = requiredInject<Ref<boolean>>('isPlayerTurn')
 
 const props = defineProps<{
   pawn: Pawn
-  player: PlayerRole
+  targetPawn: Pawn | undefined
 }>()
 
 const pawnColor = computed(() => {
@@ -35,7 +39,7 @@ const pawnOrientation = computed(() => {
 })
 const remainingMoveOrientation = computed(() => {
   //Orientation according to the direction of the board game (reversed for player 2)
-  if (props.player === PlayerRole.Player2) {
+  if (playerRole.value === PlayerRole.Player2) {
     switch (props.pawn.orientation) {
       case Orientation.NW:
         return 'rotate-180'
@@ -62,7 +66,7 @@ const remainingMoveOrientation = computed(() => {
 
 const translateX = ref('0px')
 const translateY = ref('0px')
-const pawnRef = ref<InstanceType<typeof PawnComponent> | undefined>(undefined)
+const pawnRef = ref<InstanceType<typeof PawnDisplay> | undefined>(undefined)
 const caseSize = ref(0)
 const transition = ref(false)
 
@@ -91,12 +95,16 @@ onMounted(() => {
 </script>
 
 <template>
-  <PawnComponent
+  <PawnDisplay
     ref="pawnRef"
     :sizeClass="'size-11/12'"
     :colorClass="pawnColor"
     :orientationClass="pawnOrientation"
     :class="{
+      'opacity-60': targetPawn === pawn,
+      'cursor-pointer': isPlayerTurn && pawn.owner === playerRole,
+      'outline outline-3 outline-light':
+        isPlayerTurn && pawn.owner === playerRole && pawn.remainingMove > 0,
       'transition-transform duration-500 ease-in-out': transition,
       'outline outline-pulling': pawn.lastAction === Action.Pull && transition,
       'outline outline-pushing': pawn.lastAction === Action.Push && transition,
@@ -110,5 +118,5 @@ onMounted(() => {
     >
       {{ pawn.remainingMove }}
     </p>
-  </PawnComponent>
+  </PawnDisplay>
 </template>

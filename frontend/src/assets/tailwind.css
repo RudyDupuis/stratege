@@ -54,8 +54,16 @@ strong {
 }
 
 /*** Buttons ***/
+.button,
+.danger-button {
+  @apply text-center text-lg font-primary_bold border-4 rounded-lg md:w-96 w-full py-2 disabled:opacity-40;
+}
+
 .button {
-  @apply text-center text-lg font-primary_bold border-4 border-dark rounded-lg md:w-96 w-full py-2 disabled:opacity-40;
+  @apply border-dark;
+}
+.danger-button {
+  @apply border-error;
 }
 
 .small-button {
@@ -63,6 +71,7 @@ strong {
 }
 
 .button:hover,
+.danger-button:hover,
 .small-button:hover,
 .button:active,
 .small-button:active,

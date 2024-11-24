@@ -45,7 +45,7 @@ export default function killPawnHandler(
       const positionsAvailableForKilling = gameState.determineAvailablePositionsForActions(
         pawn,
         player
-      ).returnedPositionsAvailableForKilling
+      ).positionsAvailableForKilling
 
       try {
         checkPawnPositionsAvailable(positionsAvailableForKilling, desiredPawnPositionForKill)

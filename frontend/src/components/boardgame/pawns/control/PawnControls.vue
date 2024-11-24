@@ -1,34 +1,49 @@
 <script setup lang="ts">
 import useBoardGameOrientation from '@/composables/boardgame/useBoardGameOrientation'
-import type { gameData } from '../BoardGameHandler.vue'
-import { computed, ref } from 'vue'
+import { computed, type Ref } from 'vue'
 import { PlayerRole } from '@shared/gameState/entities/PlayerRoleEnum'
-import PawnComponent from './PawnComponent.vue'
-import { isDefined, isUndefined } from '@shared/utils/TypeGuard'
 import { Orientation } from '@shared/pawn/entities/OrientationEnum'
 import { handleSocketResponse, type SocketResponse } from '@/utils/socketHelpers'
-import ErrorDisplayer from '@/components/shared/ErrorDisplayer.vue'
 import { Action } from '@shared/pawn/entities/ActionEnum'
 import MovePawnSvg from '@/components/svgs/pawn/MovePawnSvg.vue'
 import PushPawnSvg from '@/components/svgs/pawn/PushPawnSvg.vue'
 import PullPawnSvg from '@/components/svgs/pawn/PullPawnSvg.vue'
 import KillPawnSvg from '@/components/svgs/pawn/KillPawnSvg.vue'
+import type Pawn from '@shared/pawn/entities/Pawn'
+import { requiredInject } from '@/utils/requiredInject'
+import type { Socket } from 'socket.io-client'
+import PawnDisplay from '../display/PawnDisplay.vue'
+import type { PositionsAvailableForActions } from '@shared/gameState/utils/determineAvailablePositionsForActions/determineAvailablePositionsForActions'
+
+const socket = requiredInject<Socket>('socket')
+const roomId = requiredInject<Ref<string>>('roomId')
+const playerRole = requiredInject<Ref<PlayerRole>>('playerRole')
 
 const props = defineProps<{
-  gameData: gameData
-  canMove: boolean
-  canKill: boolean
-  canPush: boolean
-  canPull: boolean
+  targetPawn: Pawn
+  positionsAvailableForActions: PositionsAvailableForActions
+  rowIndex: number
+  colIndex: number
 }>()
 
 const action = defineModel<Action | undefined>()
 const emit = defineEmits(['rotatePawn', 'unselectPawn'])
 
-const errorMessage = ref<string | undefined>(undefined)
+const canMove = computed(() => {
+  return props.positionsAvailableForActions.positionsAvailableForMoving.length > 0
+})
+const canKill = computed(() => {
+  return props.positionsAvailableForActions.positionsAvailableForKilling.length > 0
+})
+const canPush = computed(() => {
+  return props.positionsAvailableForActions.positionsAvailableForPushing.length > 0
+})
+const canPull = computed(() => {
+  return props.positionsAvailableForActions.positionsAvailableForPulling.length > 0
+})
 
 const pawnColorClass = computed(() => {
-  switch (props.gameData.playerRole) {
+  switch (playerRole.value) {
     case PlayerRole.Player1:
       return 'bg-player1'
     case PlayerRole.Player2:
@@ -37,12 +52,8 @@ const pawnColorClass = computed(() => {
 })
 
 function rotatePawn(orientation: Orientation) {
-  if (isUndefined(props.gameData.targetPawn) || !props.gameData.isPlayerTurn) {
-    return
-  }
-
   let orientationAccordingToBoardGameDirection: Orientation
-  if (props.gameData.playerRole === PlayerRole.Player2) {
+  if (playerRole.value === PlayerRole.Player2) {
     switch (orientation) {
       case Orientation.NW:
         orientationAccordingToBoardGameDirection = Orientation.SE
@@ -61,14 +72,14 @@ function rotatePawn(orientation: Orientation) {
     orientationAccordingToBoardGameDirection = orientation
   }
 
-  props.gameData.socket.emit(
+  socket.emit(
     'rotatePawn',
-    props.gameData.roomId,
-    props.gameData.playerRole,
-    props.gameData.targetPawn,
+    roomId.value,
+    playerRole.value,
+    props.targetPawn,
     orientationAccordingToBoardGameDirection,
     (response: SocketResponse) => {
-      handleSocketResponse(errorMessage, response)
+      handleSocketResponse(response)
     }
   )
 
@@ -78,14 +89,15 @@ function rotatePawn(orientation: Orientation) {
 
 <template>
   <section
-    class="absolute grid grid-cols-3 grid-rows-3 place-items-center size-36 md:size-60 sm:size-52 z-50"
-    :class="useBoardGameOrientation(gameData.playerRole)"
+    v-if="targetPawn.position.row === rowIndex && targetPawn.position.col === colIndex"
+    class="absolute grid grid-cols-3 grid-rows-3 place-items-center size-36 md:size-60 sm:size-52 z-20"
+    :class="useBoardGameOrientation(playerRole)"
   >
     <div
       class="bg-light size-10 sm:size-16 flex items-center justify-center rounded-full cursor-pointer hover:opacity-50"
       @click="rotatePawn(Orientation.NW)"
     >
-      <PawnComponent
+      <PawnDisplay
         sizeClass="size-5 sm:size-8"
         :colorClass="pawnColorClass"
         orientationClass="rotate-0"
@@ -99,9 +111,7 @@ function rotatePawn(orientation: Orientation) {
       @click="action = Action.Move"
     >
       <MovePawnSvg
-        :pawnfillClass="
-          gameData.playerRole === PlayerRole.Player1 ? 'fill-player1' : 'fill-player2'
-        "
+        :pawnfillClass="playerRole === PlayerRole.Player1 ? 'fill-player1' : 'fill-player2'"
         class="size-8 sm:size-10"
       />
     </div>
@@ -109,7 +119,7 @@ function rotatePawn(orientation: Orientation) {
       class="bg-light size-10 sm:size-16 flex items-center justify-center rounded-full cursor-pointer hover:opacity-50"
       @click="rotatePawn(Orientation.NE)"
     >
-      <PawnComponent
+      <PawnDisplay
         sizeClass="size-5 sm:size-8"
         :colorClass="pawnColorClass"
         orientationClass="rotate-90"
@@ -123,9 +133,7 @@ function rotatePawn(orientation: Orientation) {
       @click="action = Action.Push"
     >
       <PushPawnSvg
-        :pawnfillClass="
-          gameData.playerRole === PlayerRole.Player1 ? 'fill-player1' : 'fill-player2'
-        "
+        :pawnfillClass="playerRole === PlayerRole.Player1 ? 'fill-player1' : 'fill-player2'"
         class="size-8 sm:size-10"
       />
     </div>
@@ -138,9 +146,7 @@ function rotatePawn(orientation: Orientation) {
       @click="action = Action.Pull"
     >
       <PullPawnSvg
-        :pawnfillClass="
-          gameData.playerRole === PlayerRole.Player1 ? 'fill-player1' : 'fill-player2'
-        "
+        :pawnfillClass="playerRole === PlayerRole.Player1 ? 'fill-player1' : 'fill-player2'"
         class="size-8 sm:size-10"
       />
     </div>
@@ -148,7 +154,7 @@ function rotatePawn(orientation: Orientation) {
       class="bg-light size-10 sm:size-16 flex items-center justify-center rounded-full cursor-pointer hover:opacity-50"
       @click="rotatePawn(Orientation.SW)"
     >
-      <PawnComponent
+      <PawnDisplay
         sizeClass="size-5 sm:size-8"
         :colorClass="pawnColorClass"
         orientationClass="rotate-270"
@@ -162,9 +168,7 @@ function rotatePawn(orientation: Orientation) {
       @click="action = Action.Kill"
     >
       <KillPawnSvg
-        :pawnfillClass="
-          gameData.playerRole === PlayerRole.Player1 ? 'fill-player1' : 'fill-player2'
-        "
+        :pawnfillClass="playerRole === PlayerRole.Player1 ? 'fill-player1' : 'fill-player2'"
         class="size-8 sm:size-10"
       />
     </div>
@@ -172,16 +176,11 @@ function rotatePawn(orientation: Orientation) {
       class="bg-light size-10 sm:size-16 flex items-center justify-center rounded-full cursor-pointer hover:opacity-50"
       @click="rotatePawn(Orientation.SE)"
     >
-      <PawnComponent
+      <PawnDisplay
         sizeClass="size-5 sm:size-8"
         :colorClass="pawnColorClass"
         orientationClass="rotate-180"
       />
     </div>
   </section>
-  <ErrorDisplayer
-    v-if="isDefined(errorMessage)"
-    v-model="errorMessage"
-    :class="useBoardGameOrientation(gameData.playerRole)"
-  />
 </template>

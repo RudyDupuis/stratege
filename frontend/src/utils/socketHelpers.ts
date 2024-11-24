@@ -1,14 +1,11 @@
-import type { Ref } from 'vue'
+import { ErrorToDisplay, useErrorsStore } from '@/composables/error/useErrorsStore'
 
 export interface SocketResponse {
   error?: string
 }
 
-export function handleSocketResponse(
-  errorMessage: Ref<string | undefined>,
-  response: SocketResponse
-) {
+export function handleSocketResponse(response: SocketResponse) {
   if (response.error) {
-    errorMessage.value = response.error
+    useErrorsStore().addError(new ErrorToDisplay(response.error))
   }
 }

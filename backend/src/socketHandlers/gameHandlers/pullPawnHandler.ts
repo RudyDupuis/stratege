@@ -46,7 +46,7 @@ export default function pullPawnHandler(
       const positionsAvailableForPulling = gameState.determineAvailablePositionsForActions(
         pawn,
         player
-      ).returnedPositionsAvailableForPulling
+      ).positionsAvailableForPulling
 
       try {
         checkPawnPositionsAvailable(positionsAvailableForPulling, desiredPawnPositionAfterPulling)

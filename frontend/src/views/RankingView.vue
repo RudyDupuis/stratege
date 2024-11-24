@@ -1,25 +1,23 @@
 <script setup lang="ts">
-import ErrorDisplayer from '@/components/shared/ErrorDisplayer.vue'
 import Loading from '@/components/shared/Loading.vue'
 import AvatarFinder from '@/components/user/AvatarFinder.vue'
+import { ErrorToDisplay, useErrorsStore } from '@/composables/error/useErrorsStore'
 import { useUserStore } from '@/composables/user/useUserStore'
 import { getTop100 } from '@/utils/api'
 import User from '@shared/user/entities/User'
-import { isDefined } from '@shared/utils/TypeGuard'
 import { storeToRefs } from 'pinia'
 import { ref } from 'vue'
 
 const users = ref<User[]>([])
 const currentUser = storeToRefs(useUserStore()).user
 const isLoading = ref(true)
-const errorMessage = ref<string | undefined>(undefined)
 
 getTop100()
   .then((fetchedUsers) => {
     users.value = fetchedUsers
   })
   .catch(() => {
-    errorMessage.value = 'Erreur lors de la récupération du classement'
+    useErrorsStore().addError(new ErrorToDisplay('Erreur lors de la récupération du classement'))
   })
   .finally(() => {
     isLoading.value = false
@@ -69,5 +67,4 @@ getTop100()
       </RouterLink>
     </template>
   </main>
-  <ErrorDisplayer v-if="isDefined(errorMessage)" v-model="errorMessage" />
 </template>

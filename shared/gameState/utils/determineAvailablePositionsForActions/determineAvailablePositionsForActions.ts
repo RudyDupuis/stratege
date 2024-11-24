@@ -16,11 +16,18 @@ export const PAWN_POSITION_DIRECTIONS = [
   PAWN_POSITION_RIGHT
 ]
 
+export interface PositionsAvailableForActions {
+  positionsAvailableForMoving: PawnPosition[]
+  positionsAvailableForKilling: PawnPosition[]
+  positionsAvailableForPushing: PawnPosition[]
+  positionsAvailableForPulling: PawnPosition[]
+}
+
 export function determineAvailablePositionsForActions(
   gameState: GameState,
   pawn: Pawn,
   player: PlayerRole
-) {
+): PositionsAvailableForActions {
   const positionsAvailableForMoving: PawnPosition[] = []
   const positionsAvailableForKilling: PawnPosition[] = []
   const positionsAvailableForPushing: PawnPosition[] = []
@@ -43,9 +50,9 @@ export function determineAvailablePositionsForActions(
   )
 
   return {
-    returnedPositionsAvailableForMoving: positionsAvailableForMoving,
-    returnedPositionsAvailableForKilling: positionsAvailableForKilling,
-    returnedPositionsAvailableForPushing: positionsAvailableForPushing,
-    returnedPositionsAvailableForPulling: positionsAvailableForPulling
+    positionsAvailableForMoving,
+    positionsAvailableForKilling,
+    positionsAvailableForPushing,
+    positionsAvailableForPulling
   }
 }

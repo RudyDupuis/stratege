@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import PawnComponent from '../boardgame/subcomponents/PawnComponent.vue'
+import PawnDisplay from '../boardgame/pawns/display/PawnDisplay.vue'
 import BoardGameDrawing from './BoardGameDrawing.vue'
 </script>
 
@@ -14,7 +14,7 @@ import BoardGameDrawing from './BoardGameDrawing.vue'
       <li class="flex flex-col items-center space-y-2">
         <p>8 pions pour le joueur 1</p>
         <div class="flex space-x-1">
-          <PawnComponent
+          <PawnDisplay
             v-for="_ in 8"
             sizeClass="size-8"
             colorClass="bg-player1"
@@ -25,7 +25,7 @@ import BoardGameDrawing from './BoardGameDrawing.vue'
       <li class="flex flex-col items-center space-y-2">
         <p>8 pions pour le joueur 2</p>
         <div class="flex space-x-1">
-          <PawnComponent
+          <PawnDisplay
             v-for="_ in 8"
             sizeClass="size-8"
             colorClass="bg-player2"
