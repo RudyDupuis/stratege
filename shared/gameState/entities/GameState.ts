@@ -15,6 +15,7 @@ export default class GameState implements GameStateDto {
   public static readonly BOARD_WIDTH = 8
   public static readonly BOARD_HEIGHT = 8
   public static readonly TURN_TIME_SECONDS = 100
+  public static readonly GIVE_UP_TIME_SECONDS = 30
 
   public board: Array<Array<Pawn | null>>
   public winner: PlayerRole | undefined

@@ -8,10 +8,10 @@ import type { Socket } from 'socket.io-client'
 const gameState = requiredInject<Ref<GameState>>('gameState')
 const socket = requiredInject<Socket>('socket')
 
-const turnTimeRemaining = ref<number>(GameState.TURN_TIME_SECONDS)
+const turnRemainingTime = ref<number>(GameState.TURN_TIME_SECONDS)
 
-socket.on('gameTurnRemainingTime', (turnRemainingTime: number) => {
-  turnTimeRemaining.value = turnRemainingTime
+socket.on('gameTurnRemainingTime', (fetchedTurnRemainingTime: number) => {
+  turnRemainingTime.value = fetchedTurnRemainingTime
 })
 </script>
 
@@ -43,13 +43,13 @@ socket.on('gameTurnRemainingTime', (turnRemainingTime: number) => {
     </div>
     <p
       class="small-title w-24 py-1 rounded-t-lg bg-dark_light remaning-time"
-      :class="{ 'text-error': turnTimeRemaining <= 10 }"
+      :class="{ 'text-error': turnRemainingTime <= 10 }"
     >
       <i
         class="fa-solid fa-hourglass-half mr-2"
-        :class="{ 'text-error': turnTimeRemaining <= 10 }"
+        :class="{ 'text-error': turnRemainingTime <= 10 }"
       />
-      {{ turnTimeRemaining }} s
+      {{ turnRemainingTime }} s
     </p>
   </section>
 </template>

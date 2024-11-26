@@ -15,6 +15,10 @@ export default async function winnerHandler(
   io: Server,
   callback: Callback
 ) {
+  if (isUndefined(rooms[roomId])) {
+    return
+  }
+
   gameState.checkIfThereIsAWinner()
   const winnerRole = gameState.winner
 

@@ -87,7 +87,7 @@ export default function joinRoomHanlder(socket: Socket, rooms: Record<string, Ro
     emitPlayersInfo(io, rooms, roomId)
 
     if (rooms[roomId].playersInfo.length === 2) {
-      createOrRetrieveGame(roomId, io)
+      createOrRetrieveGame(roomId, io, callback)
     }
   })
 }

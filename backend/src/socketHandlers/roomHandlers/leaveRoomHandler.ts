@@ -2,6 +2,7 @@ import { emitPlayersInfo } from '../../utils/roomMethods'
 import { Server, Socket } from 'socket.io'
 import { Room } from './roomHandlers'
 import { isUndefined } from '../../../shared/utils/TypeGuard'
+import { setGameGiveUpTimer } from '../gameHandlers/gamesHandlers'
 
 function leaveRoom(roomId: string, socket: Socket, rooms: Record<string, Room>, io: Server) {
   if (isUndefined(rooms[roomId])) {
@@ -9,6 +10,8 @@ function leaveRoom(roomId: string, socket: Socket, rooms: Record<string, Room>, 
   }
 
   const playerIndex = rooms[roomId].playersInfo.findIndex((player) => player.socketId === socket.id)
+
+  setGameGiveUpTimer(roomId, rooms[roomId].playersInfo[playerIndex].role, io)
 
   if (playerIndex !== -1) {
     rooms[roomId].playersInfo[playerIndex].isConnected = false

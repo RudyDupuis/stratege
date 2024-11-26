@@ -9,9 +9,11 @@ import PawnDisplay from '../pawns/display/PawnDisplay.vue'
 import { requiredInject } from '@/utils/requiredInject'
 import { ref, type Ref } from 'vue'
 import Dialog from '@/components/shared/Dialog.vue'
+import type { Socket } from 'socket.io-client'
 
 const isPlayerTurn = requiredInject<Ref<boolean>>('isPlayerTurn')
 const playersInfo = requiredInject<Ref<PlayerInfo[]>>('playersInfo')
+const socket = requiredInject<Socket>('socket')
 
 defineProps<{
   usersLinkedToConnectedPlayers: Record<string, User>
@@ -21,6 +23,11 @@ defineProps<{
 const emit = defineEmits(['passTurn', 'giveUp'])
 
 const showGiveUpDialog = ref<boolean>(false)
+const giveUpRemainingTime = ref<number | undefined>(undefined)
+
+socket.on('gameGiveUpRemainingTime', (fetchedGiveUpRemainingTime: number) => {
+  giveUpRemainingTime.value = fetchedGiveUpRemainingTime
+})
 </script>
 
 <template>
@@ -58,6 +65,12 @@ const showGiveUpDialog = ref<boolean>(false)
         <button class="button small-button" @click="showGiveUpDialog = false">Non</button>
       </div>
     </Dialog>
+
+    <p v-if="playersInfo.some((playerInfo) => !playerInfo.isConnected)" class="mb-10">
+      <i class="fa-solid fa-triangle-exclamation mr-2 text-error" />
+      Votre adversaire est déconnecté. Si il ne se reconnecte pas dans
+      {{ giveUpRemainingTime }} s, la partie sera finit.
+    </p>
 
     <section class="flex justify-center space-x-5 md:space-x-10 mb-10">
       <div
