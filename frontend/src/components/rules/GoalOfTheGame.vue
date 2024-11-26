@@ -40,14 +40,5 @@ import BoardGameDrawing from './BoardGameDrawing.vue'
     <p class="mb-1">
       <strong>La partie se termine lorsqu'un joueur n'a plus de pion</strong>. Il aura perdu.
     </p>
-    <p class="mb-5">Les informations de la partie sont présentes au dessus du plateau.</p>
-    <div class="flex justify-center mb-5">
-      <BoardInformations
-        :turn="5"
-        :player1s-lost-pawns-number="0"
-        :player2s-lost-pawns-number="3"
-      />
-    </div>
-    <p>On y retrouve le tour actuel du jeu et le nombre de pions restants pour chaque joueur.</p>
   </section>
 </template>

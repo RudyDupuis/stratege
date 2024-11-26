@@ -70,7 +70,7 @@ function passTurn() {
       :usersLinkedToConnectedPlayers="usersLinkedToConnectedPlayers"
       :usersLinkedToConnectedPlayersIsLoading="usersLinkedToConnectedPlayersIsLoading"
       @passTurn="passTurn()"
-      @giveUp="socket.emit('giveUpGame', roomId)"
+      @giveUp="socket.emit('giveUp', roomId, playerRole)"
     />
     <EndGameInformations v-else :usersLinkedToConnectedPlayers="usersLinkedToConnectedPlayers" />
   </div>

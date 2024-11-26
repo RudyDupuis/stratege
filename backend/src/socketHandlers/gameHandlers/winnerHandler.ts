@@ -10,6 +10,7 @@ import { calculateEloScore } from '../../utils/gameMethods'
 
 export default async function winnerHandler(
   gameState: GameState,
+  gameTurnTimers: Record<string, NodeJS.Timeout>,
   roomId: string,
   io: Server,
   callback: Callback
@@ -18,6 +19,11 @@ export default async function winnerHandler(
   const winnerRole = gameState.winner
 
   if (isDefined(winnerRole)) {
+    if (isDefined(gameTurnTimers[roomId])) {
+      clearTimeout(gameTurnTimers[roomId])
+      delete gameTurnTimers[roomId]
+    }
+
     const playersInfo = rooms[roomId].playersInfo
 
     const winningPlayerInfo = playersInfo.find((player) => player.role === winnerRole)

@@ -20,6 +20,7 @@ import winnerHandler from './winnerHandler'
 export default function killPawnHandler(
   socket: Socket,
   games: Record<string, GameState>,
+  gameTurnTimers: Record<string, NodeJS.Timeout>,
   io: Server
 ) {
   socket.on(
@@ -79,7 +80,7 @@ export default function killPawnHandler(
       gameState.updateBoard()
 
       io.to(roomId).emit('gameState', gameState)
-      winnerHandler(gameState, roomId, io, callback)
+      winnerHandler(gameState, gameTurnTimers, roomId, io, callback)
     }
   )
 }

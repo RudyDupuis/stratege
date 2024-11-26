@@ -1,5 +1,5 @@
 import Pawn from '../../pawn/entities/Pawn'
-import { isNotNull } from '../../utils/TypeGuard'
+import { isDefined, isNotNull } from '../../utils/TypeGuard'
 import { PlayerRole } from './PlayerRoleEnum'
 import type GameStateDto from './GameStateDto'
 import buildBoard from '../utils/buildBoard'
@@ -14,6 +14,7 @@ export default class GameState implements GameStateDto {
   public static readonly MAX_PAWNS_PER_PLAYER = 8
   public static readonly BOARD_WIDTH = 8
   public static readonly BOARD_HEIGHT = 8
+  public static readonly TURN_TIME_SECONDS = 100
 
   public board: Array<Array<Pawn | null>>
   public winner: PlayerRole | undefined
@@ -45,6 +46,10 @@ export default class GameState implements GameStateDto {
   }
 
   public checkIfThereIsAWinner() {
+    if (isDefined(this.winner)) {
+      return
+    }
+
     this.winner = determineWinner(
       this.determinePlayersLostPawns().player1sLostPawns,
       this.determinePlayersLostPawns().player2sLostPawns

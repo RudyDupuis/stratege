@@ -12,9 +12,11 @@ import type { Action } from '@shared/pawn/entities/ActionEnum'
 import type { PositionsAvailableForActions } from '@shared/gameState/utils/determineAvailablePositionsForActions/determineAvailablePositionsForActions'
 import PawnControls from './pawns/control/PawnControls.vue'
 import PawnActions from './pawns/control/PawnActions.vue'
+import type EndGameInformation from '@shared/gameState/entities/EndGameInformation'
 
 const gameState = requiredInject<Ref<GameState>>('gameState')
 const playerRole = requiredInject<Ref<PlayerRole>>('playerRole')
+const endGameInformation = requiredInject<Ref<EndGameInformation | undefined>>('endGameInformation')
 
 const targetPawn = ref<Pawn | undefined>(undefined)
 const openPawnControls = ref<boolean>(false)
@@ -33,7 +35,11 @@ const positionsAvailableForActions = ref<PositionsAvailableForActions>({
 })
 
 function selectPawn(pawn: Pawn) {
-  if (pawn.owner !== playerRole.value || !isPlayerTurn.value || isDefined(gameState.value.winner)) {
+  if (
+    pawn.owner !== playerRole.value ||
+    !isPlayerTurn.value ||
+    isDefined(endGameInformation.value)
+  ) {
     return
   }
   resetTarget()
@@ -59,7 +65,7 @@ function resetTarget() {
 const isPlayerTurn = computed(() => {
   return (
     gameState.value.determinePlayerBasedOnTurn() === playerRole.value &&
-    isUndefined(gameState.value.winner)
+    isUndefined(endGameInformation.value)
   )
 })
 provide('isPlayerTurn', isPlayerTurn)
