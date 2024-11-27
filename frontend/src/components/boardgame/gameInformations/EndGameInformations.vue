@@ -73,7 +73,7 @@ defineProps<{
       </div>
     </section>
 
-    <RouterLink :to="{ name: 'home' }" class="button">
+    <RouterLink :to="{ name: 'home' }" class="button mb-5">
       <i class="fa-solid fa-home mr-2" />
       Retourner au menu
     </RouterLink>

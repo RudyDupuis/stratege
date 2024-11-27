@@ -1,13 +1,13 @@
 import { Server, Socket } from 'socket.io'
 import { Callback } from '../socketHandlers'
 import { isNull, isUndefined } from '../../../shared/utils/TypeGuard'
-import { emitPlayersInfo } from '../../utils/roomMethods'
-import { createOrRetrieveGame } from '../gameHandlers/gamesHandlers'
 import { PlayerRole } from '../../../shared/gameState/entities/PlayerRoleEnum'
-import { Room } from './roomHandlers'
 import User from '../../../shared/user/entities/User'
+import { rooms } from './record/roomRecords'
+import emitPlayersInfo from '../utils/room/emitPlayersInfo'
+import { createOrRetrieveGame } from '../gameHandlers/record/gameRecords'
 
-export default function joinRoomHanlder(socket: Socket, rooms: Record<string, Room>, io: Server) {
+export default function joinRoomHanlder(socket: Socket, io: Server) {
   socket.on('joinRoom', (roomId: string, userId: User['id'] | null, callback: Callback) => {
     if (isUndefined(rooms[roomId])) {
       return callback({ error: 'Cet url ne fonctionne pas' })

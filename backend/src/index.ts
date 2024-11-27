@@ -9,6 +9,7 @@ import passport from './config/passport'
 import googleAuthRoutes from './routes/auth/googleAuthRoutes'
 import session from './config/session'
 import userRoutes from './routes/userRoutes'
+import adminRoutes from './routes/adminRoutes'
 
 const app = express()
 app.use(express.json())
@@ -27,6 +28,7 @@ passport.session()
 
 app.use('/auth/google', googleAuthRoutes)
 app.use('/user', userRoutes)
+app.use('/admin', adminRoutes)
 
 sequelize.sync().then(() => {
   console.log('Base de donnée initialisée')

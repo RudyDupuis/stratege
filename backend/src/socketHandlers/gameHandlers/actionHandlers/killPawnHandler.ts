@@ -1,28 +1,23 @@
-import GameState from '../../../shared/gameState/entities/GameState'
-import PawnDto from '../../../shared/pawn/entities/PawnDto'
-import PawnPositionDto from '../../../shared/pawnPosition/entities/PawnPositionDto'
-import { PlayerRole } from '../../../shared/gameState/entities/PlayerRoleEnum'
+import PawnDto from '../../../../shared/pawn/entities/PawnDto'
+import PawnPositionDto from '../../../../shared/pawnPosition/entities/PawnPositionDto'
+import { PlayerRole } from '../../../../shared/gameState/entities/PlayerRoleEnum'
 import { Server, Socket } from 'socket.io'
-import { Callback } from '../socketHandlers'
+import { Callback } from '../../socketHandlers'
 import {
   checkIfGameExistAndIfIsPlayerTurn,
   checkIfIsPawnOwner,
   checkPawnPositionsAvailable
-} from '../../utils/gameChecks'
-import { calculatePawnRemainingMoves } from '../../utils/gameMethods'
-import pawnDtoToEntity from '../../../shared/pawn/mappers/pawnMapper'
-import pawnPositionDtoToEntity from '../../../shared/pawnPosition/mappers/pawnPositionMapper'
-import { isUndefined } from '../../../shared/utils/TypeGuard'
-import { Action, ReceivedAction } from '../../../shared/pawn/entities/ActionEnum'
-import PawnPosition from '../../../shared/pawnPosition/entities/PawnPosition'
-import winnerHandler from './winnerHandler'
+} from '../../utils/game/gameChecks'
+import pawnDtoToEntity from '../../../../shared/pawn/mappers/pawnMapper'
+import pawnPositionDtoToEntity from '../../../../shared/pawnPosition/mappers/pawnPositionMapper'
+import { isUndefined } from '../../../../shared/utils/TypeGuard'
+import { Action, ReceivedAction } from '../../../../shared/pawn/entities/ActionEnum'
+import PawnPosition from '../../../../shared/pawnPosition/entities/PawnPosition'
+import { games } from '../record/gameRecords'
+import endGameHandler from '../../../socketHandlers/utils/game/endGameHandler'
+import calculatePawnRemainingMoves from '../../utils/game/calculatePawnRemainingMoves'
 
-export default function killPawnHandler(
-  socket: Socket,
-  games: Record<string, GameState>,
-  gameTurnTimers: Record<string, NodeJS.Timeout>,
-  io: Server
-) {
+export default function killPawnHandler(socket: Socket, io: Server) {
   socket.on(
     'killPawn',
     (
@@ -80,7 +75,7 @@ export default function killPawnHandler(
       gameState.updateBoard()
 
       io.to(roomId).emit('gameState', gameState)
-      winnerHandler(gameState, gameTurnTimers, roomId, io, callback)
+      endGameHandler(roomId, io, callback)
     }
   )
 }

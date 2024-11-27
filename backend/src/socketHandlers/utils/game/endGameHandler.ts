@@ -1,21 +1,18 @@
-import GameState from '../../../shared/gameState/entities/GameState'
-import { isDefined, isNull, isUndefined } from '../../../shared/utils/TypeGuard'
+import { endGameInformationToDto } from '../../../../shared/gameState/mappers/endGameInformationMapper'
+import { isDefined, isNull, isUndefined } from '../../../../shared/utils/TypeGuard'
 import { Server } from 'socket.io'
-import { rooms } from '../roomHandlers/roomHandlers'
-import { Callback } from '../socketHandlers'
-import UserModel from '../../models/user/UserModel'
-import userModelToEntity from '../../models/user/userModelToEntity'
-import { endGameInformationToDto } from '../../../shared/gameState/mappers/endGameInformationMapper'
-import { calculateEloScore } from '../../utils/gameMethods'
+import UserModel from '../../../models/user/UserModel'
+import userModelToEntity from '../../../models/user/userModelToEntity'
+import { games } from '../../../socketHandlers/gameHandlers/record/gameRecords'
+import { deleteGameTurnTimer } from '../../../socketHandlers/gameHandlers/record/gameTurnTimerRecords'
+import { rooms } from '../../../socketHandlers/roomHandlers/record/roomRecords'
+import { Callback } from '../../../socketHandlers/socketHandlers'
 
-export default async function winnerHandler(
-  gameState: GameState,
-  gameTurnTimers: Record<string, NodeJS.Timeout>,
-  roomId: string,
-  io: Server,
-  callback: Callback
-) {
-  if (isUndefined(rooms[roomId])) {
+export default async function endGameHandler(roomId: string, io: Server, callback: Callback) {
+  const gameState = games[roomId]
+  const room = rooms[roomId]
+
+  if (isUndefined(gameState) || isUndefined(room)) {
     return
   }
 
@@ -23,10 +20,7 @@ export default async function winnerHandler(
   const winnerRole = gameState.winner
 
   if (isDefined(winnerRole)) {
-    if (isDefined(gameTurnTimers[roomId])) {
-      clearTimeout(gameTurnTimers[roomId])
-      delete gameTurnTimers[roomId]
-    }
+    deleteGameTurnTimer(roomId)
 
     const playersInfo = rooms[roomId].playersInfo
 
@@ -95,4 +89,10 @@ export default async function winnerHandler(
       })
     )
   }
+}
+
+function calculateEloScore(playerElo: number, opponentElo: number, didPlayerWin: boolean) {
+  const K = 32
+  const expectedScore = 1 / (1 + Math.pow(10, (opponentElo - playerElo) / 400))
+  return Math.round(playerElo + K * ((didPlayerWin ? 1 : 0) - expectedScore))
 }

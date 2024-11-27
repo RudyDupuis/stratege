@@ -1,18 +1,14 @@
-import GameState from '../../../shared/gameState/entities/GameState'
-import PawnDto from '../../../shared/pawn/entities/PawnDto'
-import { PlayerRole } from '../../../shared/gameState/entities/PlayerRoleEnum'
-import { Orientation } from '../../../shared/pawn/entities/OrientationEnum'
+import PawnDto from '../../../../shared/pawn/entities/PawnDto'
+import { PlayerRole } from '../../../../shared/gameState/entities/PlayerRoleEnum'
+import { Orientation } from '../../../../shared/pawn/entities/OrientationEnum'
 import { Server, Socket } from 'socket.io'
-import { Callback } from '../socketHandlers'
-import { checkIfGameExistAndIfIsPlayerTurn, checkIfIsPawnOwner } from '../../utils/gameChecks'
-import pawnDtoToEntity from '../../../shared/pawn/mappers/pawnMapper'
-import { Action } from '../../../shared/pawn/entities/ActionEnum'
+import { Callback } from '../../socketHandlers'
+import { checkIfGameExistAndIfIsPlayerTurn, checkIfIsPawnOwner } from '../../utils/game/gameChecks'
+import pawnDtoToEntity from '../../../../shared/pawn/mappers/pawnMapper'
+import { Action } from '../../../../shared/pawn/entities/ActionEnum'
+import { games } from '../record/gameRecords'
 
-export default function rotatePawnHandler(
-  socket: Socket,
-  games: Record<string, GameState>,
-  io: Server
-) {
+export default function rotatePawnHandler(socket: Socket, io: Server) {
   socket.on(
     'rotatePawn',
     (

@@ -1,26 +1,22 @@
-import GameState from '../../../shared/gameState/entities/GameState'
-import PawnDto from '../../../shared/pawn/entities/PawnDto'
-import PawnPosition from '../../../shared/pawnPosition/entities/PawnPosition'
-import PawnPositionDto from '../../../shared/pawnPosition/entities/PawnPositionDto'
-import { PlayerRole } from '../../../shared/gameState/entities/PlayerRoleEnum'
+import PawnDto from '../../../../shared/pawn/entities/PawnDto'
+import PawnPosition from '../../../../shared/pawnPosition/entities/PawnPosition'
+import PawnPositionDto from '../../../../shared/pawnPosition/entities/PawnPositionDto'
+import { PlayerRole } from '../../../../shared/gameState/entities/PlayerRoleEnum'
 import { Server, Socket } from 'socket.io'
-import { Callback } from '../socketHandlers'
+import { Callback } from '../../socketHandlers'
 import {
   checkIfGameExistAndIfIsPlayerTurn,
   checkIfIsPawnOwner,
   checkPawnPositionsAvailable
-} from '../../utils/gameChecks'
-import { calculatePawnRemainingMoves } from '../../utils/gameMethods'
-import { isUndefined } from '../../../shared/utils/TypeGuard'
-import pawnDtoToEntity from '../../../shared/pawn/mappers/pawnMapper'
-import pawnPositionDtoToEntity from '../../../shared/pawnPosition/mappers/pawnPositionMapper'
-import { Action, ReceivedAction } from '../../../shared/pawn/entities/ActionEnum'
+} from '../../utils/game/gameChecks'
+import calculatePawnRemainingMoves from '../../utils/game/calculatePawnRemainingMoves'
+import { isUndefined } from '../../../../shared/utils/TypeGuard'
+import pawnDtoToEntity from '../../../../shared/pawn/mappers/pawnMapper'
+import pawnPositionDtoToEntity from '../../../../shared/pawnPosition/mappers/pawnPositionMapper'
+import { Action, ReceivedAction } from '../../../../shared/pawn/entities/ActionEnum'
+import { games } from '../record/gameRecords'
 
-export default function pushPawnHandler(
-  socket: Socket,
-  games: Record<string, GameState>,
-  io: Server
-) {
+export default function pushPawnHandler(socket: Socket, io: Server) {
   socket.on(
     'pushPawn',
     (

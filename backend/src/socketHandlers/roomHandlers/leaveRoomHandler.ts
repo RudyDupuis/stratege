@@ -1,10 +1,15 @@
-import { emitPlayersInfo } from '../../utils/roomMethods'
 import { Server, Socket } from 'socket.io'
-import { Room } from './roomHandlers'
 import { isUndefined } from '../../../shared/utils/TypeGuard'
-import { setGameGiveUpTimer } from '../gameHandlers/gamesHandlers'
+import { deleteRoom, rooms } from './record/roomRecords'
+import {
+  deleteGameGiveUpTimer,
+  setGameGiveUpTimer
+} from '../gameHandlers/record/gameGiveUpTimerRecord'
+import emitPlayersInfo from '../utils/room/emitPlayersInfo'
+import { deleteGame } from '../gameHandlers/record/gameRecords'
+import { deleteGameTurnTimer } from '../gameHandlers/record/gameTurnTimerRecords'
 
-function leaveRoom(roomId: string, socket: Socket, rooms: Record<string, Room>, io: Server) {
+function leaveRoom(roomId: string, socket: Socket, io: Server) {
   if (isUndefined(rooms[roomId])) {
     return
   }
@@ -19,11 +24,14 @@ function leaveRoom(roomId: string, socket: Socket, rooms: Record<string, Room>, 
   }
 
   if (!rooms[roomId].playersInfo.find((player) => player.isConnected === true)) {
-    delete rooms[roomId]
+    deleteRoom(roomId)
+    deleteGame(roomId)
+    deleteGameTurnTimer(roomId)
+    deleteGameGiveUpTimer(roomId)
   }
 }
 
-export default function leaveRoomHandler(socket: Socket, rooms: Record<string, Room>, io: Server) {
+export default function leaveRoomHandler(socket: Socket, io: Server) {
   socket.on('disconnect', () => {
     for (const roomId in rooms) {
       const playerIndex = rooms[roomId].playersInfo.findIndex(
@@ -31,10 +39,10 @@ export default function leaveRoomHandler(socket: Socket, rooms: Record<string, R
       )
 
       if (playerIndex !== -1) {
-        leaveRoom(roomId, socket, rooms, io)
+        leaveRoom(roomId, socket, io)
         break
       }
     }
   })
-  socket.on('leaveRoom', (roomId: string) => leaveRoom(roomId, socket, rooms, io))
+  socket.on('leaveRoom', (roomId: string) => leaveRoom(roomId, socket, io))
 }

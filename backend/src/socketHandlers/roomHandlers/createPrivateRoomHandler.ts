@@ -1,14 +1,10 @@
 import { Server, Socket } from 'socket.io'
 import { Callback } from '../socketHandlers'
-import { emitPlayersInfo } from '../../utils/roomMethods'
-import { Room } from './roomHandlers'
 import { PlayerRole } from '../../../shared/gameState/entities/PlayerRoleEnum'
+import { rooms } from './record/roomRecords'
+import emitPlayersInfo from '../utils/room/emitPlayersInfo'
 
-export default function createPrivateRoomHandler(
-  socket: Socket,
-  rooms: Record<string, Room>,
-  io: Server
-) {
+export default function createPrivateRoomHandler(socket: Socket, io: Server) {
   socket.on('createPrivateRoom', (callback: Callback) => {
     const roomId = socket.id
     rooms[roomId] = {
