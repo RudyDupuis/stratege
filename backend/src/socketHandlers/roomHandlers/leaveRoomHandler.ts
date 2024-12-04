@@ -16,14 +16,16 @@ function leaveRoom(roomId: string, socket: Socket, io: Server) {
 
   const playerIndex = rooms[roomId].playersInfo.findIndex((player) => player.socketId === socket.id)
 
-  setGameGiveUpTimer(roomId, rooms[roomId].playersInfo[playerIndex].role, io)
-
   if (playerIndex !== -1) {
     rooms[roomId].playersInfo[playerIndex].isConnected = false
+    setGameGiveUpTimer(roomId, rooms[roomId].playersInfo[playerIndex].role, io)
     emitPlayersInfo(io, rooms, roomId)
   }
 
-  if (!rooms[roomId].playersInfo.find((player) => player.isConnected === true)) {
+  if (
+    !rooms[roomId].playersInfo.find((player) => player.isConnected === true) ||
+    rooms[roomId].type === 'ai'
+  ) {
     deleteRoom(roomId)
     deleteGame(roomId)
     deleteGameTurnTimer(roomId)

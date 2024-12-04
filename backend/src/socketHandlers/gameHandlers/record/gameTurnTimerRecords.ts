@@ -3,6 +3,9 @@ import { isDefined, isUndefined } from '../../../../shared/utils/TypeGuard'
 import { Server } from 'socket.io'
 import { games } from './gameRecords'
 import { passTurn } from '../controlHandlers/passTurnHandler'
+import { rooms } from '../../roomHandlers/record/roomRecords'
+import { PlayerRole } from '../../../../shared/gameState/entities/PlayerRoleEnum'
+import endGameHandler from '../../utils/game/endGameHandler'
 
 export const gameTurnTimers: Record<string, NodeJS.Timeout> = {}
 
@@ -23,6 +26,14 @@ export function setTurnTimer(roomId: string, io: Server) {
     }
     if (remainingTime === 0) {
       clearTimeout(gameTurnTimers[roomId])
+
+      if (rooms[roomId].type === 'ai') {
+        gameState.winner = PlayerRole.Player2
+
+        endGameHandler(roomId, io, () => {})
+        return
+      }
+
       passTurn(gameState, roomId, io)
       setTurnTimer(roomId, io)
     }

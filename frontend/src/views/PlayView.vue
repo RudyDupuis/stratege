@@ -20,7 +20,7 @@ const route = useRoute()
 const roomId = ref<string | undefined>(route.query.roomId as string | undefined)
 provide('roomId', roomId)
 
-const roomType = ref<'private' | 'public' | undefined>(undefined)
+const roomType = ref<'private' | 'public' | 'ai' | undefined>(undefined)
 
 function getRoomIdAndChangeURL(id: string) {
   roomId.value = id
@@ -41,6 +41,11 @@ watch(roomType, () => {
       return
     }
     socket.emit('searchPublicRoom', user.value.id, (id: string) => {
+      getRoomIdAndChangeURL(id)
+    })
+  }
+  if (roomType.value === 'ai') {
+    socket.emit('createAiRoom', (id: string) => {
       getRoomIdAndChangeURL(id)
     })
   }

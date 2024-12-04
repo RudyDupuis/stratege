@@ -5,6 +5,8 @@ import GameState from '../../../../shared/gameState/entities/GameState'
 import { checkIfGameExistAndIfIsPlayerTurn } from '../../utils/game/gameChecks'
 import { games } from '../record/gameRecords'
 import { deleteGameTurnTimer, setTurnTimer } from '../record/gameTurnTimerRecords'
+import { rooms } from '../../roomHandlers/record/roomRecords'
+import aiHandlers from '../aiHandlers/aiHandlers'
 
 export function passTurnHandler(socket: Socket, io: Server) {
   socket.on('passTurn', (roomId: string, player: PlayerRole, callback: Callback) => {
@@ -16,10 +18,18 @@ export function passTurnHandler(socket: Socket, io: Server) {
       return callback({ error: error })
     }
 
-    deleteGameTurnTimer(roomId)
-    passTurn(gameState, roomId, io)
-    setTurnTimer(roomId, io)
+    passTurnAndHandleTurnTimer(gameState, roomId, io)
+
+    if (rooms[roomId].type === 'ai') {
+      aiHandlers(roomId, io, callback)
+    }
   })
+}
+
+export function passTurnAndHandleTurnTimer(gameState: GameState, roomId: string, io: Server) {
+  deleteGameTurnTimer(roomId)
+  passTurn(gameState, roomId, io)
+  setTurnTimer(roomId, io)
 }
 
 export function passTurn(gameState: GameState, roomId: string, io: Server) {

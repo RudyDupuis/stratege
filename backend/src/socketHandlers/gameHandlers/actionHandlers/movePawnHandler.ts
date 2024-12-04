@@ -14,6 +14,8 @@ import {
 } from '../../utils/game/gameChecks'
 import calculatePawnRemainingMoves from '../../utils/game/calculatePawnRemainingMoves'
 import { games } from '../record/gameRecords'
+import Pawn from '../../../../shared/pawn/entities/Pawn'
+import GameState from '../../../../shared/gameState/entities/GameState'
 
 export default function movePawnHandler(socket: Socket, io: Server) {
   socket.on(
@@ -29,34 +31,45 @@ export default function movePawnHandler(socket: Socket, io: Server) {
       const pawn = pawnDtoToEntity(pawnDto)
       const desiredPawnPosition = pawnPositionDtoToEntity(desiredPawnPositionDto)
 
-      try {
-        checkIfGameExistAndIfIsPlayerTurn(gameState, player)
-        checkIfIsPawnOwner(gameState, pawn, player)
-      } catch (error) {
-        return callback({ error: error })
-      }
-
-      const positionsAvailableForMoving = gameState.determineAvailablePositionsForActions(
-        pawn,
-        player
-      ).positionsAvailableForMoving
-
-      try {
-        checkPawnPositionsAvailable(positionsAvailableForMoving, desiredPawnPosition)
-      } catch (error) {
-        return callback({ error: error })
-      }
-
-      calculatePawnRemainingMoves(pawn, desiredPawnPosition)
-
-      pawn.lastPosition = new PawnPosition(pawn.position.row, pawn.position.col)
-      pawn.position = desiredPawnPosition
-      pawn.lastAction = Action.Move
-
-      gameState.updatePawn(pawn)
-      gameState.updateBoard()
-
-      io.to(roomId).emit('gameState', gameState)
+      movePawn(gameState, roomId, player, pawn, desiredPawnPosition, io, callback)
     }
   )
+}
+
+export function movePawn(
+  gameState: GameState,
+  roomId: string,
+  player: PlayerRole,
+  pawn: Pawn,
+  desiredPawnPosition: PawnPosition,
+  io: Server,
+  callback: Callback
+) {
+  try {
+    checkIfGameExistAndIfIsPlayerTurn(gameState, player)
+    checkIfIsPawnOwner(gameState, pawn, player)
+  } catch (error) {
+    return callback({ error: error })
+  }
+
+  const positionsAvailableForMoving = gameState.determineAvailablePositionsForActions(
+    pawn,
+    player
+  ).positionsAvailableForMoving
+
+  try {
+    checkPawnPositionsAvailable(positionsAvailableForMoving, desiredPawnPosition)
+  } catch (error) {
+    return callback({ error: error })
+  }
+  calculatePawnRemainingMoves(pawn, desiredPawnPosition)
+
+  pawn.lastPosition = new PawnPosition(pawn.position.row, pawn.position.col)
+  pawn.position = desiredPawnPosition
+  pawn.lastAction = Action.Move
+
+  gameState.updatePawn(pawn)
+  gameState.updateBoard()
+
+  io.to(roomId).emit('gameState', gameState)
 }

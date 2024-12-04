@@ -83,6 +83,19 @@ export default function joinRoomHanlder(socket: Socket, io: Server) {
       socket.join(roomId)
     }
 
+    //AI room
+    if (rooms[roomId].type === 'ai') {
+      const playerIndex = 0
+      playerRole = PlayerRole.Player1
+
+      rooms[roomId].playersInfo[playerIndex] = {
+        ...rooms[roomId].playersInfo[playerIndex],
+        isConnected: true
+      }
+
+      socket.join(roomId)
+    }
+
     callback({ playerRole: playerRole })
     emitPlayersInfo(io, rooms, roomId)
 

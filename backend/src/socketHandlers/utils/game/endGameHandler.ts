@@ -33,7 +33,7 @@ export default async function endGameHandler(roomId: string, io: Server, callbac
       })
     }
 
-    if (rooms[roomId].type === 'private') {
+    if (rooms[roomId].type !== 'public') {
       return io.to(roomId).emit(
         'endGameInformation',
         endGameInformationToDto({

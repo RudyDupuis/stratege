@@ -1,7 +1,7 @@
 import PlayerInfo from '../../../../shared/user/entities/PlayerInfo'
 
 export interface Room {
-  type: 'private' | 'public'
+  type: 'private' | 'public' | 'ai'
   playersInfo: PlayerInfo[]
 }
 
