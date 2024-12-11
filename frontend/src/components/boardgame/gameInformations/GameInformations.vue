@@ -40,10 +40,12 @@ socket.on('gameGiveUpRemainingTime', (fetchedGiveUpRemainingTime: number) => {
 
     <section v-show="isPlayerTurn" class="flex flex-col justify-center items-center size-full">
       <p class="mb-10">Cliquez sur l'un de vos pions</p>
-      <button @click="emit('passTurn')" class="button mb-4">Passer son tour</button>
+      <button v-button-click-sound @click="emit('passTurn')" class="button mb-4">
+        Passer son tour
+      </button>
     </section>
 
-    <button class="danger-button mb-10" @click="showGiveUpDialog = true">
+    <button v-button-click-sound class="danger-button mb-10" @click="showGiveUpDialog = true">
       <i class="fa-regular fa-flag mr-2" />
       Abandonner
     </button>
@@ -54,6 +56,7 @@ socket.on('gameGiveUpRemainingTime', (fetchedGiveUpRemainingTime: number) => {
         class="flex flex-col space-y-5 md:space-y-0 md:space-x-5 md:flex-row items-center justify-center"
       >
         <button
+          v-button-click-sound
           class="danger-button small-button"
           @click="
             () => {
@@ -64,7 +67,9 @@ socket.on('gameGiveUpRemainingTime', (fetchedGiveUpRemainingTime: number) => {
         >
           Oui
         </button>
-        <button class="button small-button" @click="showGiveUpDialog = false">Non</button>
+        <button v-button-click-sound class="button small-button" @click="showGiveUpDialog = false">
+          Non
+        </button>
       </div>
     </Dialog>
 
@@ -92,9 +97,9 @@ socket.on('gameGiveUpRemainingTime', (fetchedGiveUpRemainingTime: number) => {
             class="small-title mr-1"
           >
             IA
-            <i v-if="aiLevel === AiLevel.Easy" class="fa-solid fa-leaf" />
-            <i v-if="aiLevel === AiLevel.Medium" class="fa-solid fa-scale-balanced" />
-            <i v-if="aiLevel === AiLevel.Hard" class="fa-solid fa-skull-crossbones" />
+            <i v-if="aiLevel === AiLevel.Easy" class="fa-solid fa-seedling" />
+            <i v-if="aiLevel === AiLevel.Medium" class="fa-solid fa-dumbbell" />
+            <i v-if="aiLevel === AiLevel.Hard" class="fa-solid fa-skull" />
           </span>
           <span v-else class="small-title mr-1">
             {{ playerInfo.role === PlayerRole.Player1 ? 'Joueur 1' : 'Joueur 2' }}

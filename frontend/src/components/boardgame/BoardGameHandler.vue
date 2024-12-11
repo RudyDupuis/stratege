@@ -13,6 +13,7 @@ import type { PositionsAvailableForActions } from '@shared/gameState/utils/deter
 import PawnControls from './pawns/control/PawnControls.vue'
 import PawnActions from './pawns/control/PawnActions.vue'
 import type EndGameInformation from '@shared/gameState/entities/EndGameInformation'
+import { SoundManager } from '@/utils/soundManager'
 
 const gameState = requiredInject<Ref<GameState>>('gameState')
 const playerRole = requiredInject<Ref<PlayerRole>>('playerRole')
@@ -69,6 +70,16 @@ const isPlayerTurn = computed(() => {
   )
 })
 provide('isPlayerTurn', isPlayerTurn)
+
+watch(
+  isPlayerTurn,
+  () => {
+    if (isPlayerTurn.value) {
+      SoundManager.getInstance().playSound('player_turn')
+    }
+  },
+  { immediate: true }
+)
 </script>
 
 <template>

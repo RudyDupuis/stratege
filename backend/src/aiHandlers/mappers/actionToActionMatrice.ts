@@ -1,10 +1,10 @@
-import Pawn from '../../../../../shared/pawn/entities/Pawn'
+import Pawn from '../../../shared/pawn/entities/Pawn'
 import { ActionWithPassTurn } from './boardAndActionsDataToStateMatriceAndActionsMatrice'
-import PawnPosition from '../../../../../shared/pawnPosition/entities/PawnPosition'
-import { Orientation } from '../../../../../shared/pawn/entities/OrientationEnum'
+import PawnPosition from '../../../shared/pawnPosition/entities/PawnPosition'
+import { Orientation } from '../../../shared/pawn/entities/OrientationEnum'
 import pawnIdToNumber from './pawnIdToNumber'
-import { isDefined } from '../../../../../shared/utils/TypeGuard'
-import { Action } from '../../../../../shared/pawn/entities/ActionEnum'
+import { isDefined } from '../../../shared/utils/TypeGuard'
+import { Action } from '../../../shared/pawn/entities/ActionEnum'
 
 export default function actionToActionMatrice(
   action: ActionWithPassTurn,

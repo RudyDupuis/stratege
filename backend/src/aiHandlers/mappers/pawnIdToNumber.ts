@@ -1,5 +1,5 @@
-import { PlayerRole } from '../../../../../shared/gameState/entities/PlayerRoleEnum'
-import Pawn from '../../../../../shared/pawn/entities/Pawn'
+import { PlayerRole } from '../../../shared/gameState/entities/PlayerRoleEnum'
+import Pawn from '../../../shared/pawn/entities/Pawn'
 
 export default function pawnIdToNumber(pawn: Pawn) {
   return {

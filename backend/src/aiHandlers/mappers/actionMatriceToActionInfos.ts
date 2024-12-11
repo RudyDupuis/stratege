@@ -1,10 +1,10 @@
-import GameState from '../../../../../shared/gameState/entities/GameState'
-import Pawn from '../../../../../shared/pawn/entities/Pawn'
+import GameState from '../../../shared/gameState/entities/GameState'
+import Pawn from '../../../shared/pawn/entities/Pawn'
 import { ActionWithPassTurn } from './boardAndActionsDataToStateMatriceAndActionsMatrice'
-import { Action } from '../../../../../shared/pawn/entities/ActionEnum'
-import { isUndefined } from '../../../../../shared/utils/TypeGuard'
-import PawnPosition from '../../../../../shared/pawnPosition/entities/PawnPosition'
-import { Orientation } from '../../../../../shared/pawn/entities/OrientationEnum'
+import { Action } from '../../../shared/pawn/entities/ActionEnum'
+import { isUndefined } from '../../../shared/utils/TypeGuard'
+import PawnPosition from '../../../shared/pawnPosition/entities/PawnPosition'
+import { Orientation } from '../../../shared/pawn/entities/OrientationEnum'
 
 export default function actionMatriceToActionInfos(actionMatrice: string, gameState: GameState) {
   const actionMatriceArray = Array.from(actionMatrice, (char) => parseInt(char))

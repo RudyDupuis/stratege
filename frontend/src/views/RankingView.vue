@@ -61,7 +61,7 @@ getTop100()
           </tbody>
         </table>
       </section>
-      <RouterLink :to="{ name: 'play' }" class="button mb-5">
+      <RouterLink v-button-click-sound :to="{ name: 'play' }" class="button mb-5">
         <i class="fa-solid fa-gamepad mr-2" />
         Jouer !
       </RouterLink>

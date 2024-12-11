@@ -6,7 +6,7 @@ import { checkIfGameExistAndIfIsPlayerTurn } from '../../utils/game/gameChecks'
 import { games } from '../record/gameRecords'
 import { deleteGameTurnTimer, setTurnTimer } from '../record/gameTurnTimerRecords'
 import { rooms } from '../../roomHandlers/record/roomRecords'
-import aiHandlers from '../aiHandlers/aiHandlers'
+import aiHandlers from '../../../aiHandlers/aiHandlers'
 import { RoomType } from '../../../../shared/room/entities/RoomTypeEnum'
 
 export function passTurnHandler(socket: Socket, io: Server) {

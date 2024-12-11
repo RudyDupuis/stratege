@@ -1,7 +1,7 @@
-import GameState from '../../../../../shared/gameState/entities/GameState'
-import { PlayerRole } from '../../../../../shared/gameState/entities/PlayerRoleEnum'
-import { Action } from '../../../../../shared/pawn/entities/ActionEnum'
-import { Orientation } from '../../../../../shared/pawn/entities/OrientationEnum'
+import GameState from '../../../shared/gameState/entities/GameState'
+import { PlayerRole } from '../../../shared/gameState/entities/PlayerRoleEnum'
+import { Action } from '../../../shared/pawn/entities/ActionEnum'
+import { Orientation } from '../../../shared/pawn/entities/OrientationEnum'
 import actionToActionMatrice from './actionToActionMatrice'
 import pawnIdToNumber from './pawnIdToNumber'
 

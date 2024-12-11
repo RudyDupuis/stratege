@@ -36,14 +36,15 @@ async function copyToClipboard(text: string) {
       <div class="w-3 h-3 bg-dark rounded-full animate-bounce-delay-04"></div>
     </div>
     <button
-      v-if="roomType === RoomType.Public"
+      v-button-click-sound
+      v-if="roomType === RoomType.Private"
       @click="copyToClipboard(shareableLink)"
       class="button mb-5"
     >
       <i class="fa-solid fa-copy mr-2" />
       {{ isUndefined(copyStatus) ? 'Copier le lien à donner à son ami' : copyStatus }}
     </button>
-    <RouterLink :to="{ name: 'home' }" class="danger-button">
+    <RouterLink v-button-click-sound :to="{ name: 'home' }" class="danger-button">
       <i class="fa-solid fa-home mr-2" />
       Retourner au menu
     </RouterLink>

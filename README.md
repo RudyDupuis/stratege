@@ -2,7 +2,7 @@
 
 ---
 
-Stratège est un jeu de plateau en ligne ressemblant au dames ou aux échecs. Il se joue à deux joueurs. On peut y faire des parties classées et monter son score ELO, des parties privées et des parties contre des IAs.
+Stratège est un jeu de plateau en ligne ressemblant aux dames ou aux échecs. Il se joue à deux joueurs. On peut y disputer des parties classées pour monter son score ELO, des parties privées et des parties contre des IA.
 
 ---
 
