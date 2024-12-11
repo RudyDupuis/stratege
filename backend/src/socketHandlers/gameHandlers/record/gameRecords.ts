@@ -6,6 +6,7 @@ import initialBoardPawns from '../../../../shared/gameState/utils/initialBoardPa
 import { deleteGameGiveUpTimer } from './gameGiveUpTimerRecord'
 import { setTurnTimer } from './gameTurnTimerRecords'
 import { rooms } from '../../roomHandlers/record/roomRecords'
+import { RoomType } from '../../../../shared/room/entities/RoomTypeEnum'
 
 export const games: Record<string, GameState> = {}
 
@@ -24,7 +25,7 @@ export function createOrRetrieveGame(roomId: string, io: Server, callback: Callb
   games[roomId] = newGame
   io.to(roomId).emit('gameState', newGame)
 
-  if (rooms[roomId].type !== 'ai') {
+  if (rooms[roomId].type !== RoomType.AI) {
     setTurnTimer(roomId, io)
   }
 }

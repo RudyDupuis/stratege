@@ -1,9 +1,11 @@
+import { AiLevel } from '../../../../shared/room/entities/AiLevelEnum'
+import { RoomType } from '../../../../shared/room/entities/RoomTypeEnum'
 import PlayerInfo from '../../../../shared/user/entities/PlayerInfo'
 
 export interface Room {
-  type: 'private' | 'public' | 'ai'
+  type: RoomType
   playersInfo: PlayerInfo[]
-  aiLevel?: 'easy' | 'medium' | 'hard'
+  aiLevel?: AiLevel
 }
 
 export const rooms: Record<string, Room> = {}

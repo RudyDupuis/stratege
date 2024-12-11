@@ -7,6 +7,7 @@ import { games } from '../../../socketHandlers/gameHandlers/record/gameRecords'
 import { deleteGameTurnTimer } from '../../../socketHandlers/gameHandlers/record/gameTurnTimerRecords'
 import { rooms } from '../../../socketHandlers/roomHandlers/record/roomRecords'
 import { Callback } from '../../../socketHandlers/socketHandlers'
+import { RoomType } from '../../../../shared/room/entities/RoomTypeEnum'
 
 export default async function endGameHandler(roomId: string, io: Server, callback: Callback) {
   const gameState = games[roomId]
@@ -33,7 +34,7 @@ export default async function endGameHandler(roomId: string, io: Server, callbac
       })
     }
 
-    if (rooms[roomId].type !== 'public') {
+    if (rooms[roomId].type !== RoomType.Public) {
       return io.to(roomId).emit(
         'endGameInformation',
         endGameInformationToDto({

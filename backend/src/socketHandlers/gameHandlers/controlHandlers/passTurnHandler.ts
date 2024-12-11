@@ -7,6 +7,7 @@ import { games } from '../record/gameRecords'
 import { deleteGameTurnTimer, setTurnTimer } from '../record/gameTurnTimerRecords'
 import { rooms } from '../../roomHandlers/record/roomRecords'
 import aiHandlers from '../aiHandlers/aiHandlers'
+import { RoomType } from '../../../../shared/room/entities/RoomTypeEnum'
 
 export function passTurnHandler(socket: Socket, io: Server) {
   socket.on('passTurn', (roomId: string, player: PlayerRole, callback: Callback) => {
@@ -20,7 +21,7 @@ export function passTurnHandler(socket: Socket, io: Server) {
 
     passTurnAndHandleTurnTimer(gameState, roomId, io)
 
-    if (rooms[roomId].type === 'ai') {
+    if (rooms[roomId].type === RoomType.AI) {
       aiHandlers(roomId, io, callback)
     }
   })
@@ -29,7 +30,7 @@ export function passTurnHandler(socket: Socket, io: Server) {
 export function passTurnAndHandleTurnTimer(gameState: GameState, roomId: string, io: Server) {
   passTurn(gameState, roomId, io)
 
-  if (rooms[roomId].type !== 'ai') {
+  if (rooms[roomId].type !== RoomType.AI) {
     deleteGameTurnTimer(roomId)
     setTurnTimer(roomId, io)
   }

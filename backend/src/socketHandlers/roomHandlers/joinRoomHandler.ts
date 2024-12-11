@@ -6,6 +6,7 @@ import User from '../../../shared/user/entities/User'
 import { rooms } from './record/roomRecords'
 import emitPlayersInfo from '../utils/room/emitPlayersInfo'
 import { createOrRetrieveGame } from '../gameHandlers/record/gameRecords'
+import { RoomType } from '../../../shared/room/entities/RoomTypeEnum'
 
 export default function joinRoomHanlder(socket: Socket, io: Server) {
   socket.on('joinRoom', (roomId: string, userId: User['id'] | null, callback: Callback) => {
@@ -16,7 +17,7 @@ export default function joinRoomHanlder(socket: Socket, io: Server) {
     let playerRole: PlayerRole | undefined = undefined
 
     //Public room
-    if (rooms[roomId].type === 'public') {
+    if (rooms[roomId].type === RoomType.Public) {
       if (isNull(userId)) {
         return callback({ error: 'Vous devez vous connecter pour jouer en partie classée' })
       }
@@ -38,7 +39,7 @@ export default function joinRoomHanlder(socket: Socket, io: Server) {
     }
 
     //Private room
-    if (rooms[roomId].type === 'private') {
+    if (rooms[roomId].type === RoomType.Private) {
       const playerIndex = rooms[roomId].playersInfo.findIndex(
         (player) => player.socketId === socket.id
       )
@@ -84,7 +85,7 @@ export default function joinRoomHanlder(socket: Socket, io: Server) {
     }
 
     //AI room
-    if (rooms[roomId].type === 'ai') {
+    if (rooms[roomId].type === RoomType.AI) {
       const playerIndex = 0
       playerRole = PlayerRole.Player1
 

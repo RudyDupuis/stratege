@@ -10,11 +10,12 @@ import { requiredInject } from '@/utils/requiredInject'
 import { ref, type Ref } from 'vue'
 import Dialog from '@/components/shared/Dialog.vue'
 import type { Socket } from 'socket.io-client'
+import { AiLevel } from '@shared/room/entities/AiLevelEnum'
 
 const isPlayerTurn = requiredInject<Ref<boolean>>('isPlayerTurn')
 const playersInfo = requiredInject<Ref<PlayerInfo[]>>('playersInfo')
 const socket = requiredInject<Socket>('socket')
-const aiLevel = requiredInject<Ref<string | undefined>>('aiLevel')
+const aiLevel = requiredInject<Ref<AiLevel | undefined>>('aiLevel')
 
 defineProps<{
   usersLinkedToConnectedPlayers: Record<string, User>
@@ -83,9 +84,21 @@ socket.on('gameGiveUpRemainingTime', (fetchedGiveUpRemainingTime: number) => {
           sizeClass="size-5"
           :colorClass="playerInfo.role === PlayerRole.Player1 ? 'bg-player1' : 'bg-player2'"
           orientationClass="rotate-0"
+          class="mb-2"
         />
-        <p class="small-title">
-          {{ playerInfo.role === PlayerRole.Player1 ? 'Joueur 1' : 'Joueur 2' }}
+        <p>
+          <span
+            v-if="isDefined(aiLevel) && playerInfo.role === PlayerRole.Player2"
+            class="small-title mr-1"
+          >
+            IA
+            <i v-if="aiLevel === AiLevel.Easy" class="fa-solid fa-leaf" />
+            <i v-if="aiLevel === AiLevel.Medium" class="fa-solid fa-scale-balanced" />
+            <i v-if="aiLevel === AiLevel.Hard" class="fa-solid fa-skull-crossbones" />
+          </span>
+          <span v-else class="small-title mr-1">
+            {{ playerInfo.role === PlayerRole.Player1 ? 'Joueur 1' : 'Joueur 2' }}
+          </span>
           <span :class="playerInfo.isConnected ? 'text-success' : 'text-error'">●</span>
         </p>
 

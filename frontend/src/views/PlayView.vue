@@ -9,6 +9,8 @@ import router from '@/router'
 import { useUserStore } from '@/composables/user/useUserStore'
 import { storeToRefs } from 'pinia'
 import { ErrorToDisplay, useErrorsStore } from '@/composables/error/useErrorsStore'
+import { RoomType } from '@shared/room/entities/RoomTypeEnum'
+import type { AiLevel } from '@shared/room/entities/AiLevelEnum'
 
 const SOCKET_URL = import.meta.env.VITE_SOCKET_URL
 const user = storeToRefs(useUserStore()).user
@@ -20,10 +22,10 @@ const route = useRoute()
 const roomId = ref<string | undefined>(route.query.roomId as string | undefined)
 provide('roomId', roomId)
 
-const roomType = ref<'private' | 'public' | 'ai' | undefined>(undefined)
+const roomType = ref<RoomType | undefined>(undefined)
 provide('roomType', roomType)
 
-const aiLevel = ref<'easy' | 'medium' | 'hard' | undefined>(undefined)
+const aiLevel = ref<AiLevel | undefined>(undefined)
 provide('aiLevel', aiLevel)
 
 function getRoomIdAndChangeURL(id: string) {
@@ -32,12 +34,12 @@ function getRoomIdAndChangeURL(id: string) {
 }
 
 watch([roomType, aiLevel], () => {
-  if (roomType.value === 'private') {
+  if (roomType.value === RoomType.Private) {
     socket.emit('createPrivateRoom', (id: string) => {
       getRoomIdAndChangeURL(id)
     })
   }
-  if (roomType.value === 'public') {
+  if (roomType.value === RoomType.Public) {
     if (isUndefined(user.value)) {
       useErrorsStore().addError(
         new ErrorToDisplay('Vous devez vous connecter pour jouer en partie classée')
@@ -48,7 +50,7 @@ watch([roomType, aiLevel], () => {
       getRoomIdAndChangeURL(id)
     })
   }
-  if (roomType.value === 'ai' && isDefined(aiLevel.value)) {
+  if (roomType.value === RoomType.AI && isDefined(aiLevel.value)) {
     socket.emit('createAiRoom', aiLevel.value, (id: string) => {
       getRoomIdAndChangeURL(id)
     })

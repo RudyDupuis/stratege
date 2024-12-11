@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { ErrorToDisplay, useErrorsStore } from '@/composables/error/useErrorsStore'
 import { requiredInject } from '@/utils/requiredInject'
+import { RoomType } from '@shared/room/entities/RoomTypeEnum'
 import { isUndefined } from '@shared/utils/TypeGuard'
 import { ref, type Ref } from 'vue'
 
-const roomType = requiredInject<Ref<'private' | 'public' | 'ai'>>('roomType')
+const roomType = requiredInject<Ref<RoomType>>('roomType')
 const roomId = requiredInject<Ref<string | undefined>>('roomId')
 
 const FRONT_URL = import.meta.env.VITE_FRONT_URL
@@ -35,7 +36,7 @@ async function copyToClipboard(text: string) {
       <div class="w-3 h-3 bg-dark rounded-full animate-bounce-delay-04"></div>
     </div>
     <button
-      v-if="roomType === 'private'"
+      v-if="roomType === RoomType.Public"
       @click="copyToClipboard(shareableLink)"
       class="button mb-5"
     >

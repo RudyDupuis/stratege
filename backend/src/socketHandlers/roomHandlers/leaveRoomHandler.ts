@@ -8,6 +8,7 @@ import {
 import emitPlayersInfo from '../utils/room/emitPlayersInfo'
 import { deleteGame } from '../gameHandlers/record/gameRecords'
 import { deleteGameTurnTimer } from '../gameHandlers/record/gameTurnTimerRecords'
+import { RoomType } from '../../../shared/room/entities/RoomTypeEnum'
 
 function leaveRoom(roomId: string, socket: Socket, io: Server) {
   if (isUndefined(rooms[roomId])) {
@@ -24,7 +25,7 @@ function leaveRoom(roomId: string, socket: Socket, io: Server) {
 
   if (
     !rooms[roomId].playersInfo.find((player) => player.isConnected === true) ||
-    rooms[roomId].type === 'ai'
+    rooms[roomId].type === RoomType.AI
   ) {
     deleteRoom(roomId)
     deleteGame(roomId)

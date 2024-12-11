@@ -4,8 +4,9 @@ import PawnDisplay from './pawns/display/PawnDisplay.vue'
 import { ref, type Ref } from 'vue'
 import { requiredInject } from '@/utils/requiredInject'
 import type { Socket } from 'socket.io-client'
+import { RoomType } from '@shared/room/entities/RoomTypeEnum'
 
-const roomType = requiredInject<Ref<'private' | 'public' | 'ai'>>('roomType')
+const roomType = requiredInject<Ref<RoomType>>('roomType')
 const gameState = requiredInject<Ref<GameState>>('gameState')
 const socket = requiredInject<Socket>('socket')
 
@@ -43,7 +44,7 @@ socket.on('gameTurnRemainingTime', (fetchedTurnRemainingTime: number) => {
       </p>
     </div>
     <p
-      v-if="roomType !== 'ai'"
+      v-if="roomType !== RoomType.AI"
       class="small-title w-24 py-1 rounded-t-lg bg-dark_light remaning-time"
       :class="{ 'text-error': turnRemainingTime <= 10 }"
     >
