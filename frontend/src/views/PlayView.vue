@@ -21,13 +21,17 @@ const roomId = ref<string | undefined>(route.query.roomId as string | undefined)
 provide('roomId', roomId)
 
 const roomType = ref<'private' | 'public' | 'ai' | undefined>(undefined)
+provide('roomType', roomType)
+
+const aiLevel = ref<'easy' | 'medium' | 'hard' | undefined>(undefined)
+provide('aiLevel', aiLevel)
 
 function getRoomIdAndChangeURL(id: string) {
   roomId.value = id
   router.push({ path: '/jouer', query: { roomId: id } })
 }
 
-watch(roomType, () => {
+watch([roomType, aiLevel], () => {
   if (roomType.value === 'private') {
     socket.emit('createPrivateRoom', (id: string) => {
       getRoomIdAndChangeURL(id)
@@ -44,8 +48,8 @@ watch(roomType, () => {
       getRoomIdAndChangeURL(id)
     })
   }
-  if (roomType.value === 'ai') {
-    socket.emit('createAiRoom', (id: string) => {
+  if (roomType.value === 'ai' && isDefined(aiLevel.value)) {
+    socket.emit('createAiRoom', aiLevel.value, (id: string) => {
       getRoomIdAndChangeURL(id)
     })
   }
@@ -54,7 +58,7 @@ watch(roomType, () => {
 
 <template>
   <main>
-    <PlayingRoom v-if="isDefined(roomId)" :room-type="roomType" :userId="user?.id" />
-    <RoomTypeSelector v-else v-model="roomType" />
+    <PlayingRoom v-if="isDefined(roomId)" :userId="user?.id" />
+    <RoomTypeSelector v-else v-model:roomType="roomType" v-model:aiLevel="aiLevel" />
   </main>
 </template>

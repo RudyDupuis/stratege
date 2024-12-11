@@ -4,10 +4,7 @@ import { requiredInject } from '@/utils/requiredInject'
 import { isUndefined } from '@shared/utils/TypeGuard'
 import { ref, type Ref } from 'vue'
 
-defineProps<{
-  roomType?: string
-}>()
-
+const roomType = requiredInject<Ref<'private' | 'public' | 'ai'>>('roomType')
 const roomId = requiredInject<Ref<string | undefined>>('roomId')
 
 const FRONT_URL = import.meta.env.VITE_FRONT_URL

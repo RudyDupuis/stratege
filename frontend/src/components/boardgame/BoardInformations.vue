@@ -5,6 +5,7 @@ import { ref, type Ref } from 'vue'
 import { requiredInject } from '@/utils/requiredInject'
 import type { Socket } from 'socket.io-client'
 
+const roomType = requiredInject<Ref<'private' | 'public' | 'ai'>>('roomType')
 const gameState = requiredInject<Ref<GameState>>('gameState')
 const socket = requiredInject<Socket>('socket')
 
@@ -42,6 +43,7 @@ socket.on('gameTurnRemainingTime', (fetchedTurnRemainingTime: number) => {
       </p>
     </div>
     <p
+      v-if="roomType !== 'ai'"
       class="small-title w-24 py-1 rounded-t-lg bg-dark_light remaning-time"
       :class="{ 'text-error': turnRemainingTime <= 10 }"
     >

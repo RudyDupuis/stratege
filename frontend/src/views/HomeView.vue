@@ -20,15 +20,21 @@
     >
       <div class="flex flex-col md:flex-row md:space-x-5 items-center">
         <p>
-          <a href="https://discord.gg/rKAgbnVEs5"><i class="fa-brands fa-discord mr-1" />Discord</a>
+          <a href="https://discord.gg/rKAgbnVEs5" class="mr-5"
+            ><i class="fa-brands fa-discord mr-1" />Discord</a
+          >
+          <a href="https://github.com/RudyDupuis/stratege">
+            <i class="fa-brands fa-github mr-1" />Github</a
+          >
         </p>
+
         <RouterLink :to="{ name: 'privacy-policy' }">
           <i class="fa-solid fa-user-lock mr-1" />
           Politique de confidentialité
         </RouterLink>
       </div>
       <div class="flex flex-col items-center md:items-end">
-        <p class="text-sm">Version beta 0.6.0</p>
+        <p class="text-sm">Version beta 0.6.1</p>
         <p class="text-sm">Copyright © {{ new Date().getFullYear() }} Rudy Dupuis</p>
       </div>
     </footer>

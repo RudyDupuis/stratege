@@ -27,13 +27,6 @@ export function setTurnTimer(roomId: string, io: Server) {
     if (remainingTime === 0) {
       clearTimeout(gameTurnTimers[roomId])
 
-      if (rooms[roomId].type === 'ai') {
-        gameState.winner = PlayerRole.Player2
-
-        endGameHandler(roomId, io, () => {})
-        return
-      }
-
       passTurn(gameState, roomId, io)
       setTurnTimer(roomId, io)
     }

@@ -27,9 +27,12 @@ export function passTurnHandler(socket: Socket, io: Server) {
 }
 
 export function passTurnAndHandleTurnTimer(gameState: GameState, roomId: string, io: Server) {
-  deleteGameTurnTimer(roomId)
   passTurn(gameState, roomId, io)
-  setTurnTimer(roomId, io)
+
+  if (rooms[roomId].type !== 'ai') {
+    deleteGameTurnTimer(roomId)
+    setTurnTimer(roomId, io)
+  }
 }
 
 export function passTurn(gameState: GameState, roomId: string, io: Server) {

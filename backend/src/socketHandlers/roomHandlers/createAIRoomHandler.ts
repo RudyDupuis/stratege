@@ -5,7 +5,7 @@ import { PlayerRole } from '../../../shared/gameState/entities/PlayerRoleEnum'
 import emitPlayersInfo from '../utils/room/emitPlayersInfo'
 
 export default function createAIRoomHandler(socket: Socket, io: Server) {
-  socket.on('createAiRoom', (callback: Callback) => {
+  socket.on('createAiRoom', (aiLevel: 'easy' | 'medium' | 'hard', callback: Callback) => {
     const roomId = socket.id
     rooms[roomId] = {
       type: 'ai',
@@ -19,7 +19,8 @@ export default function createAIRoomHandler(socket: Socket, io: Server) {
           role: PlayerRole.Player2,
           isConnected: true
         }
-      ]
+      ],
+      aiLevel
     }
 
     callback(roomId)

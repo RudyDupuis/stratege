@@ -19,7 +19,6 @@ import type EndGameInformationDto from '@shared/gameState/entities/EndGameInform
 import { ErrorToDisplay, useErrorsStore } from '@/composables/error/useErrorsStore'
 
 const props = defineProps<{
-  roomType?: string
   userId?: User['id']
 }>()
 
@@ -69,5 +68,5 @@ onUnmounted(() => {
 
 <template>
   <BoardGameHandler v-if="isDefined(gameState) && isDefined(playerRole)" />
-  <WaitingOpponent v-else :room-type="props.roomType" />
+  <WaitingOpponent v-else />
 </template>

@@ -14,6 +14,7 @@ import type { Socket } from 'socket.io-client'
 const isPlayerTurn = requiredInject<Ref<boolean>>('isPlayerTurn')
 const playersInfo = requiredInject<Ref<PlayerInfo[]>>('playersInfo')
 const socket = requiredInject<Socket>('socket')
+const aiLevel = requiredInject<Ref<string | undefined>>('aiLevel')
 
 defineProps<{
   usersLinkedToConnectedPlayers: Record<string, User>
