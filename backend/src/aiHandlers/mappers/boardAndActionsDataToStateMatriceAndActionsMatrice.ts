@@ -11,7 +11,7 @@ export default function boardAndActionsDataToStateMatriceAndActionsMatrice(
   gameState: GameState,
   aiRole: PlayerRole
 ) {
-  let pawnsPositionsOnBoardMatrice: number[] = []
+  const pawnsPositionsOnBoardMatrice: number[] = []
 
   gameState.board.forEach((row) => {
     row.forEach((pawn) => {
@@ -25,7 +25,7 @@ export default function boardAndActionsDataToStateMatriceAndActionsMatrice(
     })
   })
 
-  let pawnsInfosMatrice: number[] = []
+  const pawnsInfosMatrice: number[] = []
 
   gameState.boardPawns.forEach((pawn) => {
     pawnsInfosMatrice.push(pawnIdToNumber(pawn).player)
@@ -45,7 +45,7 @@ export default function boardAndActionsDataToStateMatriceAndActionsMatrice(
   })
 
   //Each action is merged with board infos
-  let actionsMatrice: number[][] = []
+  const actionsMatrice: number[][] = []
 
   playerPawns.forEach((pawn) => {
     const availablePositionsForActions = gameState.determineAvailablePositionsForActions(

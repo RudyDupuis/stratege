@@ -1,7 +1,8 @@
 {
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
-    "build": "tsc",
+    "build": "tsc && npm run copy-ai-models",
+    "copy-ai-models": "cp -r ./src/aiHandlers/models/ ./dist/src/aiHandlers/models/",
     "start": "node dist/src/index.js"
   },
   "dependencies": {

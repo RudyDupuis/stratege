@@ -3,9 +3,6 @@ import { isDefined, isUndefined } from '../../../../shared/utils/TypeGuard'
 import { Server } from 'socket.io'
 import { games } from './gameRecords'
 import { passTurn } from '../controlHandlers/passTurnHandler'
-import { rooms } from '../../roomHandlers/record/roomRecords'
-import { PlayerRole } from '../../../../shared/gameState/entities/PlayerRoleEnum'
-import endGameHandler from '../../utils/game/endGameHandler'
 
 export const gameTurnTimers: Record<string, NodeJS.Timeout> = {}
 

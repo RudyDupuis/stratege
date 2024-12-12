@@ -34,7 +34,7 @@
         </RouterLink>
       </div>
       <div class="flex flex-col items-center md:items-end">
-        <p class="text-sm">Version beta 0.6.1</p>
+        <p class="text-sm">Version beta 0.7.0</p>
         <p class="text-sm">Copyright © {{ new Date().getFullYear() }} Rudy Dupuis</p>
       </div>
     </footer>
