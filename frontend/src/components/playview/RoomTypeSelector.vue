@@ -43,14 +43,16 @@ const user = storeToRefs(useUserStore()).user
       Facile
     </button>
 
-    <button v-button-click-sound class="button mt-5" @click="aiLevel = AiLevel.Medium">
+    <button v-button-click-sound class="button mt-5" @click="aiLevel = AiLevel.Medium" disabled>
       <i class="fa-solid fa-dumbbell mr-2" />
       Moyen
     </button>
+    <p>L'IA est encore en entrainement et n'a pas atteint le niveau moyen.</p>
 
-    <button v-button-click-sound class="button mt-5" @click="aiLevel = AiLevel.Hard">
+    <button v-button-click-sound class="button mt-5" @click="aiLevel = AiLevel.Hard" disabled>
       <i class="fa-solid fa-skull mr-2" />
       Difficile
     </button>
+    <p>L'IA est encore en entrainement et n'a pas atteint le niveau difficile.</p>
   </template>
 </template>
