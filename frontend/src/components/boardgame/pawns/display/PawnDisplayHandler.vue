@@ -7,6 +7,7 @@ import { isDefined } from '@shared/utils/TypeGuard'
 import { Action } from '@shared/pawn/entities/ActionEnum'
 import PawnDisplay from './PawnDisplay.vue'
 import { requiredInject } from '@/utils/requiredInject'
+import { SoundManager } from '@/utils/soundManager'
 
 const playerRole = requiredInject<Ref<PlayerRole>>('playerRole')
 const isPlayerTurn = requiredInject<Ref<boolean>>('isPlayerTurn')
@@ -76,6 +77,14 @@ onMounted(() => {
   }
 
   if (isDefined(props.pawn.lastPosition)) {
+    if (props.pawn.lastAction === Action.Kill) {
+      if (playerRole.value === props.pawn.owner) {
+        SoundManager.getInstance().playSound('kill_pawn')
+      } else {
+        SoundManager.getInstance().playSound('lose_pawn')
+      }
+    }
+
     translateX.value =
       (props.pawn.lastPosition.col - props.pawn.position.col) * caseSize.value + 'px'
     translateY.value =

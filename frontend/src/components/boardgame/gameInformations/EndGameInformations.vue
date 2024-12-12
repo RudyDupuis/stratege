@@ -6,6 +6,7 @@ import type EndGameInformation from '@shared/gameState/entities/EndGameInformati
 import { requiredInject } from '@/utils/requiredInject'
 import { isDefined } from '@shared/utils/TypeGuard'
 import type { Ref } from 'vue'
+import { SoundManager } from '@/utils/soundManager'
 
 const playerRole = requiredInject<Ref<PlayerRole>>('playerRole')
 const endGameInformation = requiredInject<Ref<EndGameInformation>>('endGameInformation')
@@ -13,6 +14,12 @@ const endGameInformation = requiredInject<Ref<EndGameInformation>>('endGameInfor
 defineProps<{
   usersLinkedToConnectedPlayers: Record<string, User>
 }>()
+
+if (endGameInformation.value.winner.playerRole === playerRole.value) {
+  SoundManager.getInstance().playSound('win')
+} else {
+  SoundManager.getInstance().playSound('lose')
+}
 </script>
 
 <template>
@@ -73,7 +80,7 @@ defineProps<{
       </div>
     </section>
 
-    <RouterLink :to="{ name: 'home' }" class="button mb-5">
+    <RouterLink v-button-click-sound :to="{ name: 'home' }" class="button mb-5">
       <i class="fa-solid fa-home mr-2" />
       Retourner au menu
     </RouterLink>

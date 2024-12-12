@@ -9,6 +9,8 @@ import router from '@/router'
 import { useUserStore } from '@/composables/user/useUserStore'
 import { storeToRefs } from 'pinia'
 import { ErrorToDisplay, useErrorsStore } from '@/composables/error/useErrorsStore'
+import { RoomType } from '@shared/room/entities/RoomTypeEnum'
+import type { AiLevel } from '@shared/room/entities/AiLevelEnum'
 
 const SOCKET_URL = import.meta.env.VITE_SOCKET_URL
 const user = storeToRefs(useUserStore()).user
@@ -20,20 +22,24 @@ const route = useRoute()
 const roomId = ref<string | undefined>(route.query.roomId as string | undefined)
 provide('roomId', roomId)
 
-const roomType = ref<'private' | 'public' | 'ai' | undefined>(undefined)
+const roomType = ref<RoomType | undefined>(undefined)
+provide('roomType', roomType)
+
+const aiLevel = ref<AiLevel | undefined>(undefined)
+provide('aiLevel', aiLevel)
 
 function getRoomIdAndChangeURL(id: string) {
   roomId.value = id
   router.push({ path: '/jouer', query: { roomId: id } })
 }
 
-watch(roomType, () => {
-  if (roomType.value === 'private') {
+watch([roomType, aiLevel], () => {
+  if (roomType.value === RoomType.Private) {
     socket.emit('createPrivateRoom', (id: string) => {
       getRoomIdAndChangeURL(id)
     })
   }
-  if (roomType.value === 'public') {
+  if (roomType.value === RoomType.Public) {
     if (isUndefined(user.value)) {
       useErrorsStore().addError(
         new ErrorToDisplay('Vous devez vous connecter pour jouer en partie classée')
@@ -44,8 +50,8 @@ watch(roomType, () => {
       getRoomIdAndChangeURL(id)
     })
   }
-  if (roomType.value === 'ai') {
-    socket.emit('createAiRoom', (id: string) => {
+  if (roomType.value === RoomType.AI && isDefined(aiLevel.value)) {
+    socket.emit('createAiRoom', aiLevel.value, (id: string) => {
       getRoomIdAndChangeURL(id)
     })
   }
@@ -54,7 +60,7 @@ watch(roomType, () => {
 
 <template>
   <main>
-    <PlayingRoom v-if="isDefined(roomId)" :room-type="roomType" :userId="user?.id" />
-    <RoomTypeSelector v-else v-model="roomType" />
+    <PlayingRoom v-if="isDefined(roomId)" :userId="user?.id" />
+    <RoomTypeSelector v-else v-model:roomType="roomType" v-model:aiLevel="aiLevel" />
   </main>
 </template>

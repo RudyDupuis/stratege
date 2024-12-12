@@ -68,6 +68,7 @@ function updateUser() {
   </section>
 
   <button
+    v-button-click-sound
     :disabled="newPseudo.length < 3 || newPseudo.length > 20"
     class="button mb-2"
     @click="updateUser"
@@ -75,5 +76,5 @@ function updateUser() {
     <i class="fa-solid fa-floppy-disk mr-2" />
     Enregister
   </button>
-  <button class="danger-button mb-10" @click="emit('close')">Annuler</button>
+  <button v-button-click-sound class="danger-button mb-10" @click="emit('close')">Annuler</button>
 </template>

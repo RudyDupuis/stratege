@@ -5,12 +5,13 @@ import { PlayerRole } from '../../../shared/gameState/entities/PlayerRoleEnum'
 import User from '../../../shared/user/entities/User'
 import { rooms } from './record/roomRecords'
 import emitPlayersInfo from '../utils/room/emitPlayersInfo'
+import { RoomType } from '../../../shared/room/entities/RoomTypeEnum'
 
 export default function searchPublicRoomHandler(socket: Socket, io: Server) {
   socket.on('searchPublicRoom', (userId: User['id'], callback: Callback) => {
     const availableRoomId = Object.entries(rooms).find(
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      ([_, room]) => room.type === 'public' && room.playersInfo.length === 1
+      ([_, room]) => room.type === RoomType.Public && room.playersInfo.length === 1
     )?.[0]
 
     let roomId: string
@@ -18,7 +19,7 @@ export default function searchPublicRoomHandler(socket: Socket, io: Server) {
     if (isUndefined(availableRoomId)) {
       roomId = socket.id
       rooms[roomId] = {
-        type: 'public',
+        type: RoomType.Public,
         playersInfo: [
           {
             userId: userId,

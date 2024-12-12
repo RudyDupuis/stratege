@@ -6,8 +6,9 @@
     "outDir": "./dist",
     "rootDir": ".",
     "strict": true,
-    "baseUrl": "./"
+    "baseUrl": "./",
+    "skipLibCheck": true
   },
-  "include": ["src/**/*.ts", "shared/**/*.ts"],
+  "include": ["src/**/*", "shared/**/*"],
   "exclude": ["node_modules"]
 }

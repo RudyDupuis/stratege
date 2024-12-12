@@ -1,10 +1,12 @@
 {
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
-    "build": "tsc",
+    "build": "tsc && npm run copy-ai-models",
+    "copy-ai-models": "cp -r ./src/aiHandlers/models/ ./dist/src/aiHandlers/models/",
     "start": "node dist/src/index.js"
   },
   "dependencies": {
+    "@tensorflow/tfjs-node": "^4.22.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.21.0",
